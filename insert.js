@@ -36,3 +36,5 @@ async function insertAdmin(firstName, middleName, lastName, AdminID, createdBy, 
 
 // Example usage: insert a new admin record
 insertAdmin('John', 'D', 'Doe', '123456891', null, 'laidaniel06@gmail.com');
+
+//hi my name is daniel
