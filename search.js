@@ -8,35 +8,43 @@
     <form>
     <label for="selectType"> Select Type: </label>
         <select id="searchType" name="searchType">
-            <option value="book">Book</option><br></br>
-            <option value="media">Media</option><br></br>
-            <option value="electronic">Electronic</option><br></br>
-            <option value="object">Object</option><br></br>
+            <option value="book">Book</option>
+            <option value="media">Media</option>
+            <option value="electronic">Electronic</option>
+            <option value="object">Object</option>
         <br></br></select>
     </form>
     <div id='booksid' >
     <form action="/searchBooks" method="post">
         <input hidden name='searchBy' value='book'></input>
 
-        <label for="bookName"> Book Name: </label>
+        <label for="bookName"> Name: </label>
         <input type="text" id="bookname" name="BookName"><br></br></input>
 
         <label for="Author"> Author: </label>
         <input type="text" id="author" name="Author"><br></br></input>
 
         <label for="Genre"> Genre: </label>
-        <input type="text" id="genre" name="Genre"><br></br></input>
-
-        <label for="Genre"> Genre: </label>
         <select id="genre" name="Genre">
-            <option value="adventure">Adventure</option><br></br>
-            <option value="action">Action</option><br></br>
-            <option value="fantasy">Fantasy</option><br></br>
-            <option value="drama">Drama</option><br></br>
+            <option value="adventure">Adventure</option>
+            <option value="action">Action</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="drama">Drama</option>
+            <option value="romance">Romance</option>
+            <option value="scifi">SciFi</option>
+            <option value="thriller">Thriller</option>
+            <option value="horror">Horror</option>
+            <option value="comedy">Comedy</option>
+            <option value="mystery">Mystery</option>
+            <option value="supernatural">Supernatural</option>
         </select><br></br>
 
         <label for="Language"> Language: </label>
-        <input type="text" id="language" name="Language"><br></br></input>
+        <select id="language" name="Language">
+            <option value="english">English</option>
+            <option value="french">French</option>
+            <option value="spanish">Spanish</option>
+        </select><br></br>
 
         <label for="ISBN"> ISBN: </label>
         <input type="text" id="isbn" name="ISBN"><br></br></input>
@@ -50,14 +58,19 @@
     <form action="/searchMedia" method="post">
         <input hidden name='searchBy' value='media'></input>
 
-        <label for="mediaName"> Media Name: </label>
+        <label for="mediaName"> Name: </label>
         <input type="text" id="medianame" name="MediaName"><br></br></input>
 
-        <label for="Author">  Media Author: </label>
+        <label for="Author"> Author: </label>
         <input type="text" id="author" name="Author"><br></br></input>
 
-        <label for="Genre"> Genre: </label>
-        <input type="text" id="genre" name="Genre"><br></br></input>
+        <label for="MediaType"> Type of Media: </label>
+        <select id="mediatype" name="mediaType">
+            <option value="dvd">DVD</option>
+            <option value="cd">CD</option>
+            <option value="newspaper">Newspaper</option>
+            <option value="magazine">Magazine</option>
+        </select><br></br>
 
         <input type="submit" value="Search" />
 
@@ -68,7 +81,7 @@
     <form action="/searchElectronics" method="post">
         <input hidden name='searchBy' value='electronic'></input>
 
-        <label for="electronicName"> Electronic Name: </label>
+        <label for="electronicName"> Name: </label>
         <input type="text" id="electronicname" name="ElectronicName"><br></br></input>
 
         <label for="serialNo"> Serial #: </label>
