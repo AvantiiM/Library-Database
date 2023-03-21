@@ -120,6 +120,14 @@ function search(response) {
     response.end();
 }
 
+function adminUI(response){
+    console.log("Request handler 'admin' was called.");
+    var adata = fs.readFileSync('adminUI.js');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(adata);
+    response.end();
+}
+
 /*
 function searchresults(response, searchData) {
     var querystring = require('querystring');
@@ -138,6 +146,7 @@ exports.login = login;
 exports.loginverify = loginverify;
 
 exports.search = search;
+exports.adminUI = adminUI;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;
