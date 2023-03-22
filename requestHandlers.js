@@ -121,10 +121,18 @@ function search(response) {
 }
 
 function adminUI(response){
-    console.log("Request handler 'admin' was called.");
+    console.log("Request handler 'adminUI' was called.");
     var adata = fs.readFileSync('adminUI.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(adata);
+    response.end();
+}
+
+function Entry(response){
+    console.log("Request handler 'Entry' was called.");
+    var edata = fs.readFileSync('Entry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
     response.end();
 }
 
@@ -147,6 +155,7 @@ exports.loginverify = loginverify;
 
 exports.search = search;
 exports.adminUI = adminUI;
+exports.Entry = Entry;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

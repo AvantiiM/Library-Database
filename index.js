@@ -11,6 +11,7 @@ handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
 handle["/addLogin"] = requestHandlers.addLogin; //not an actual page
 handle["/adminUI"] = requestHandlers.adminUI; //http://localhost:3000/adminUI
+handle["/Entry"] = requestHandlers.Entry; //http://localhost:3000/Entry
 
 
 server.start(router.route, handle);

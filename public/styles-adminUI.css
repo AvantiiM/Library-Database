@@ -1,5 +1,5 @@
 .tab {
-    background-color: orange;
+    background-color: #ce796b;
     color: white;
     display: inline-block;
     padding: 10px 20px;
@@ -9,16 +9,16 @@
 }
 
 .tab.active {
-    background-color: white;
-    color: orange;
-    border: 1px solid orange;
+    background-color: #ecc8af;
+    color: #ce796b;
+    border: 1px solid #ce796b;
     border-bottom: none;
 }
 
 .tabcontent {
     display: none;
     padding: 20px;
-    border: 1px solid orange;
+    border: 1px solid #ce796b;
     }
 
 .tabcontent.active {
@@ -30,8 +30,8 @@
     width: 200px;
     height: 40px;
     border-radius: 20px;
-    border: 2px solid #ccc;
+    border: 2px solid white;
     text-align: center;
-    background-color: orange;
+    background-color: #ce796b;
     color: white;
 }
