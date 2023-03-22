@@ -75,7 +75,7 @@ function login(response, postData) {
 
 function createUser(response, postData) {
     console.log("Request handler 'createUser' was called.");
-    var data = fs.readFileSync('createUser.js');
+    var data = fs.readFileSync('createUser.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(data);
     response.end();
@@ -114,7 +114,7 @@ function addLogin(response, postData) {
 
 function search(response) {
     console.log("Request handler 'search' was called.");
-    var sdata = fs.readFileSync('search.js');
+    var sdata = fs.readFileSync('search.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(sdata);
     response.end();
