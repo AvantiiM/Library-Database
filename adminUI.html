@@ -1,33 +1,7 @@
 <html>
 <head>
 	<title>My Tabs</title>
-	<style>
-		.tab {
-			background-color: orange;
-			color: white;
-			display: inline-block;
-			padding: 10px 20px;
-			cursor: pointer;
-			border-radius: 5px 5px 0 0;
-			margin-right: 5px;
-		}
-
-		.tab.active {
-			background-color: white;
-			color: orange;
-		}
-
-		.tabcontent {
-			display: none;
-			padding: 20px;
-			border: 1px solid orange;
-			border-top: none;
-		}
-
-		.tabcontent.active {
-			display: block;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="public/styles-adminUI.css">
 </head>
 <body>
 	<div class="tabs">
@@ -37,6 +11,17 @@
 	<div class="tabcontent active" id="datamanagement">
 		<h2>Data Management Content Goes Here</h2>
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mauris sed libero pharetra finibus in eget sapien. Donec tincidunt, nibh a eleifend fringilla, purus dolor facilisis est, eget dignissim eros mi eu urna.</p>
+
+		<div>
+			<select class="Drop-down" id="TableSelection" onchange="selectOption()">
+				<option value="">Please select a table</option>
+				<option value="Books">Books</option>
+				<option value="Electronics">Electronics</option>
+				<option value="Objects">Objects</option>
+				<option value="Media">Media</option>
+			</select>
+			<div id="content"></div>
+		</div>
 	</div>
 	<div class="tabcontent" id="datareports">
 		<h2>Data Reports Content Goes Here</h2>
@@ -56,8 +41,35 @@
 			}
 			document.getElementById(tabName).classList.add("active");
 			event.currentTarget.classList.add("active");
+			
 		}
+
+
+
+		function selectOption() {
+ 			 var selectedOption = document.getElementById("TableSelection").value;
+ 			 var contentDiv = document.getElementById("content");
+
+ 			 switch (selectedOption) {
+   			 case "Books":
+			contentDiv.innerHTML = "<h1>Option 1 Content</h1><p>This is the content for Books.</p>";
+     		 break;
+    		case "Electronics":
+      		contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Electronics.</p>";
+     		 break;
+    		case "Objects":
+     	    contentDiv.innerHTML = "<h1>Option 3 Content</h1><p>This is the content for Objects.</p>";
+      		break;
+			  case "Media":
+     	    contentDiv.innerHTML = "<h1>Option 4 Content</h1><p>This is the content for Media.</p>";
+      		break;
+    		default:
+     		 contentDiv.innerHTML = "";
+  }
+}
 	</script>
+
+	
 </body>
 </html>
 

@@ -1,0 +1,37 @@
+.tab {
+    background-color: orange;
+    color: white;
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+}
+
+.tab.active {
+    background-color: white;
+    color: orange;
+    border: 1px solid orange;
+    border-bottom: none;
+}
+
+.tabcontent {
+    display: none;
+    padding: 20px;
+    border: 1px solid orange;
+    }
+
+.tabcontent.active {
+    display: block;
+}
+.Drop-down{
+
+    
+    width: 200px;
+    height: 40px;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    text-align: center;
+    background-color: orange;
+    color: white;
+}
