@@ -1,6 +1,8 @@
 var http = require("http");
 var url = require("url");
 var querystring = require("querystring");
+var fs = require("fs");
+var path = require("path");
 
 function start(route, handle) {
   function onRequest(request, response) {
@@ -8,6 +10,29 @@ function start(route, handle) {
     var pathname = url.parse(request.url).pathname;
     console.log("Request for " + pathname + " received.");
 
+    if (pathname.startsWith("/public/")) {
+      var filePath = path.join(__dirname, pathname);
+      fs.readFile(filePath, function(err, data) {
+        if (err) {
+          response.writeHead(404, {"Content-Type": "text/plain"});
+          response.write("404 Not Found\n");
+          response.end();
+        } else {
+          var contentType;
+          if (pathname.endsWith(".css")) {
+            contentType = "text/css";
+          } else if (pathname.endsWith(".js")) {
+            contentType = "text/javascript";
+          } else {
+            contentType = "text/plain";
+          }
+          response.writeHead(200, {"Content-Type": contentType});
+          response.write(data);
+          response.end();
+        }
+      });
+    }
+    else{
     request.setEncoding("utf8"); //new
 
     request.addListener("data", function(chunk) { //new
@@ -17,7 +42,7 @@ function start(route, handle) {
     request.addListener("end", function() {
       route(handle, pathname, response, postData); //new
     });
-
+  }
     // route(handle, pathname, response);
   }
 

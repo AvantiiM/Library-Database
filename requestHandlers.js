@@ -66,7 +66,7 @@ function loginverify(response, postData) {
 
 function login(response, postData) {
     console.log("Request handler 'login' was called.");
-    var data = fs.readFileSync('login.js');
+    var data = fs.readFileSync('login.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(data);
     response.end();
