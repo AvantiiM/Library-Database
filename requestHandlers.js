@@ -122,7 +122,7 @@ function search(response) {
 
 function adminUI(response){
     console.log("Request handler 'admin' was called.");
-    var adata = fs.readFileSync('adminUI.js');
+    var adata = fs.readFileSync('adminUI.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(adata);
     response.end();
