@@ -1,11 +1,12 @@
 <html>
 <head>
-	<title>My Tabs</title>
+	<title>Administrator</title>
 	<link rel="stylesheet" type="text/css" href="public/styles-adminUI.css">
 </head>
 <body>
 	<div class="tabs">
 		<div class="tab active" onclick="openTab('datamanagement')">Data Entry</div>
+		<div class="tab" onclick="openTab('datamodification')">Data Modification</div>
 		<div class="tab" onclick="openTab('datareports')">Data Reports</div>
 	</div>
 	<div class="tabcontent active" id="datamanagement">
@@ -27,10 +28,36 @@
 			<div id="content"></div>
 		</div>
 	</div>
+
+
+
 	<div class="tabcontent" id="datareports">
 		<h2>Data Reports Content Goes Here</h2>
 		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
 	</div>
+	<div class="tabcontent" id="datamodification">
+		<h2>Data Modification Content Goes Here</h2>
+		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+		<div>
+			<select class="Drop-down" id="TableSelectionEdit" onchange="SelectOptionEdit()">
+				<option value="">Please select a table</option>
+				<option value="Transactions">Transactions</option>
+				<option value="Books">Books</option>
+				<option value="Electronics">Electronics</option>
+				<option value="Objects">Objects</option>
+				<option value="Media">Media</option>
+				<option value="Student">Student</option>
+				<option value="Faculty">Faculty</option>
+				<option value="Guest">Guest</option>
+				</select>
+				<div id="Editcontent"></div>
+				</div>
+				
+	</div>
+
+
+
+
 
 	<script>
 		function openTab(tabName) {
@@ -86,6 +113,51 @@
      		 contentDiv.innerHTML = "";
   }
 }
+
+		function SelectOptionEdit(){
+			var selectedOption = document.getElementById("TableSelectionEdit").value;
+ 			 var contentDiv = document.getElementById("Editcontent");
+
+
+			  switch (selectedOption) {
+			 case "transactions":
+			contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Transactions.</p>";
+   			 case "Books":
+				fetch("http://localhost:3000/BookEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
+     		 break;
+    		case "Electronics":
+      		contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Electronics.</p>";
+     		 break;
+    		case "Objects":
+     	    contentDiv.innerHTML = "<h1>Option 3 Content</h1><p>This is the content for Objects.</p>";
+      		break;
+			case "Media":
+     	    contentDiv.innerHTML = "<h1>Option 4 Content</h1><p>This is the content for Media.</p>";
+      		break;
+			case "Student":
+     	    contentDiv.innerHTML = "<h1>Option 5 Content</h1><p>This is the content for Student.</p>";
+      		break;
+			case "Faculty":
+     	    contentDiv.innerHTML = "<h1>Option 6 Content</h1><p>This is the content for Faculty.</p>";
+      		break;
+			case "Guest":
+     	    contentDiv.innerHTML = "<h1>Option 7 Content</h1><p>This is the content for Guest.</p>";
+      		break;
+    		default:
+     		 contentDiv.innerHTML = "";
+  }
+
+
+}
+
+
+
+
+
 	</script>
 
 	
