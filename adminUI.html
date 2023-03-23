@@ -123,29 +123,53 @@
 			 case "transactions":
 			contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Transactions.</p>";
    			 case "Books":
-				fetch("http://localhost:3000/BookEntry")
+				fetch("http://localhost:3000/BookEdit")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
      		 break;
     		case "Electronics":
-      		contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Electronics.</p>";
+			fetch("http://localhost:3000/ElectronicsEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
      		 break;
     		case "Objects":
-     	    contentDiv.innerHTML = "<h1>Option 3 Content</h1><p>This is the content for Objects.</p>";
+			fetch("http://localhost:3000/ObjectEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Media":
-     	    contentDiv.innerHTML = "<h1>Option 4 Content</h1><p>This is the content for Media.</p>";
+			fetch("http://localhost:3000/MediaEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Student":
-     	    contentDiv.innerHTML = "<h1>Option 5 Content</h1><p>This is the content for Student.</p>";
+			fetch("http://localhost:3000/StudentEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Faculty":
-     	    contentDiv.innerHTML = "<h1>Option 6 Content</h1><p>This is the content for Faculty.</p>";
+			fetch("http://localhost:3000/FacultyEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Guest":
-     	    contentDiv.innerHTML = "<h1>Option 7 Content</h1><p>This is the content for Guest.</p>";
+			fetch("http://localhost:3000/GuestEdit")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
     		default:
      		 contentDiv.innerHTML = "";

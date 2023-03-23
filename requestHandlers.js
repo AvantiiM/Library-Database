@@ -136,6 +136,88 @@ function Entry(response){
     response.end();
 }
 
+function BookEdit(response){
+
+    console.log("Request handler 'BookEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/BookEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function ElectronicsEdit(response){
+
+    console.log("Request handler 'ElectornicsEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ElectronicsEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function ObjectEdit(response){
+
+    console.log("Request handler 'ObjectEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ObjectEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function MediaEdit(response){
+
+    console.log("Request handler 'MediaEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/MediaEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function FacultyEdit(response){
+
+    console.log("Request handler 'FacultyEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/FacultyEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function StudentEdit(response){
+
+    console.log("Request handler 'StudentEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/StudentEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function GuestEdit(response){
+
+    console.log("Request handler 'GuestEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/GuestEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+function TransactionsEdit(response){
+
+    console.log("Request handler 'TransactionsEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/TransactionsEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+
+}
+
+
+
 /*
 function searchresults(response, searchData) {
     var querystring = require('querystring');
@@ -156,6 +238,14 @@ exports.loginverify = loginverify;
 exports.search = search;
 exports.adminUI = adminUI;
 exports.Entry = Entry;
+exports.BookEdit = BookEdit;
+exports.ElectronicsEdit = ElectronicsEdit;
+exports.ObjectEdit = ObjectEdit;
+exports.MediaEdit = MediaEdit;
+exports.FacultyEdit = FacultyEdit;
+exports.StudentEdit = StudentEdit;
+exports.GuestEdit = GuestEdit;
+exports.TransactionsEdit = TransactionsEdit;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

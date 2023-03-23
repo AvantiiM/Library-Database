@@ -1,0 +1,25 @@
+<br></br>
+</form>
+</div>
+
+<div id='mediaid' >
+<form action="/searchMedia" method="post">
+    <input hidden name='searchBy' value='media'></input>
+
+    <label for="mediaName"> Name: </label>
+    <input type="text" id="medianame" name="MediaName"><br></br></input>
+
+    <label for="Author"> Author: </label>
+    <input type="text" id="author" name="Author"><br></br></input>
+
+    <label for="MediaType"> Type of Media: </label>
+    <select id="mediatype" name="mediaType">
+        <option value="dvd">DVD</option>
+        <option value="cd">CD</option>
+        <option value="newspaper">Newspaper</option>
+        <option value="magazine">Magazine</option>
+    </select><br></br>
+
+    <input type="submit" value="Search" />
+
+</form>
