@@ -5,7 +5,7 @@
 </head>
 <body>
 	<div class="tabs">
-		<div class="tab active" onclick="openTab('datamanagement')">Data Management</div>
+		<div class="tab active" onclick="openTab('datamanagement')">Data Entry</div>
 		<div class="tab" onclick="openTab('datareports')">Data Reports</div>
 	</div>
 	<div class="tabcontent active" id="datamanagement">
@@ -15,6 +15,7 @@
 		<div>
 			<select class="Drop-down" id="TableSelection" onchange="selectOption()">
 				<option value="">Please select a table</option>
+				<option value="Transactions">Transactions</option>
 				<option value="Books">Books</option>
 				<option value="Electronics">Electronics</option>
 				<option value="Objects">Objects</option>
@@ -54,8 +55,14 @@
  			 var contentDiv = document.getElementById("content");
 
  			 switch (selectedOption) {
+			 case "transactions":
+			contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Transactions.</p>";
    			 case "Books":
-			contentDiv.innerHTML = "<h1>Option 1 Content</h1><p>This is the content for Books.</p>";
+				fetch("http://localhost:3000/BookEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
      		 break;
     		case "Electronics":
       		contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Electronics.</p>";
@@ -63,16 +70,16 @@
     		case "Objects":
      	    contentDiv.innerHTML = "<h1>Option 3 Content</h1><p>This is the content for Objects.</p>";
       		break;
-			  case "Media":
+			case "Media":
      	    contentDiv.innerHTML = "<h1>Option 4 Content</h1><p>This is the content for Media.</p>";
       		break;
-			  case "Student":
+			case "Student":
      	    contentDiv.innerHTML = "<h1>Option 5 Content</h1><p>This is the content for Student.</p>";
       		break;
-			  case "Faculty":
+			case "Faculty":
      	    contentDiv.innerHTML = "<h1>Option 6 Content</h1><p>This is the content for Faculty.</p>";
       		break;
-			  case "Guest":
+			case "Guest":
      	    contentDiv.innerHTML = "<h1>Option 7 Content</h1><p>This is the content for Guest.</p>";
       		break;
     		default:

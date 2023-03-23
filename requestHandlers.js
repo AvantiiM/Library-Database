@@ -130,7 +130,7 @@ function adminUI(response){
 
 function Entry(response){
     console.log("Request handler 'Entry' was called.");
-    var edata = fs.readFileSync('Entry.html');
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(edata);
     response.end();
