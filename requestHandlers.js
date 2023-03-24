@@ -264,6 +264,14 @@ function GuestEntry(response){
     response.end();
 }
 
+function FacultyEntry(response){
+    console.log("Request handler 'FacultyEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/FacultyEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
 
 
 /*
@@ -292,6 +300,7 @@ exports.ObjectEntry = ObjectEntry;
 exports.TransactionEntry = TransactionEntry;
 exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
+exports.FacultyEntry = FacultyEntry;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;

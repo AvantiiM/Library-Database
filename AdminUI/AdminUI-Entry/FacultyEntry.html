@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="US">
     <head>
-        <title>Student Entry</title>
+        <title>Faculty Entry</title>
         <style>
             table {
                 border-collapse: collapse;
@@ -35,27 +35,28 @@
     </head>
 
     <body>
-        <h1>Student Entry Form</h1>
+        <h1>Faculty Entry Form</h1>
         <form>
             <div style = "overflow-x: auto">
             <table>
                 <thead>
                     <tr>
-                        <th>Student ID</th>
+                        <th>Faculty ID</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Middle Name</th>
                         <th>Race</th>
-                        <th>Major</th>
+                        <th>Department</th>
                         <th>Phone Num</th>
                         <th>Email</th>
                         <th>Gender</th>
                         <th>Birth Date</th>
+                        <th>Admin Permission</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" name="Student_ID"></td>
+                        <td><input type="text" name="Faculty_ID"></td>
                         <td><input type="text" name="FirstN"></td>
                         <td><input type="text" name="LastN"></td>
                         <td><input type="text" name="MiddleN"></td>
@@ -71,33 +72,26 @@
                             </select>
                         </td>
                         <td>
-                            <select name="Major">
-                                <option value="Undecided">Undecided</option>
-                                <option value="Accounting">Accounting</option>
-                                <option value="Anthropology">Anthropology</option>
-                                <option value="Art">Art</option>
-                                <option value="Biology">Biology</option>
-                                <option value="Chemical Engineering">Chemical Engineering</option>
-                                <option value="Chemistry">Chemistry</option>
-                                <option value="Civil Engineering">Civil Engineering</option>
-                                <option value="Computer Engineering">Computer Engineering</option>
-                                <option value="Dance">Dance</option>
-                                <option value="Economics">Economics</option>
-                                <option value="English">English</option>
-                                <option value="Environmental Science">Environmental Science</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Geography">Geography</option>
-                                <option value="Geology">Geology</option>
-                                <option value="History">History</option>
-                                <option value="Information Technology">Information Technology</option>
-                                <option value="International Business">International Business</option>
-                                <option value="International Studies">International Studies</option>
-                                <option value="Journalism">Journalism</option>
-                                <option value="Management">Management</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Mathematics">Mathematics</option>
-                                <option value="Mechanical Engineering">Mechanical Engineering</option>
-
+                            <select name="Department">
+                                <option value="College of Architecture">College of Architecture and Design</option>
+                                <option value="College of Engineering">College of Engineering</option>
+                                <option value="College of Education">College of Education</option>
+                                <option value="College of Hospitality">College of Hospitality</option>
+                                <option value="College of Liberal Arts">College of Liberal Arts</option>
+                                <option value="College of Nursing">College of Nursing</option>
+                                <option value="College of Optometry">College of Optometry</option>
+                                <option value="College of Pharmacy">College of Pharmacy</option>
+                                <option value="College of Technology">College of Technology</option>
+                                <option value="Graduate College of Social Work">Graduate College of Social Work</option>
+                                <option value="Honors College">Honors College</option>
+                                <option value="College of Business">College of Business</option>
+                                <option value="Law Center">Law Center</option>
+                                <option value="Graduate School of Biomedical Sciences">Graduate School of Biomedical Sciences</option>
+                                <option value="School of Public Affairs">School of Publix Affairs</option>
+                                <option value="University Library">University Library</option>
+                                <option value="Financial Aid Office">Financial Aid Office</option>
+                                <option value="Office of the University Registrar">Office of the University Registrar</option>
+                                <option value="Student Business Services">Student Business Services</option>
                             </select>
                         </td>
                         <td><input type="text" name="PhoneNum"></td>
@@ -112,6 +106,7 @@
                             </select>
                         </td>
                         <td><input type="date" name="BirthDate"></td>
+                        <td><input type="checkbox" name="Admin Permission" value="True"></td>
                     </tr>
                 </tbody>
             </table>
