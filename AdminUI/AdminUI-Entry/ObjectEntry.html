@@ -36,25 +36,27 @@
     <body>
         <h1>Object Entry Form</h1>
         <form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Object ID</th>
-                        <th>Name of Object</th>
-                        <th>Dollar Value</th>
-                        <!-- <th># of Copies</th> -->
-                        <!-- Commented out ^above^ to avoid possible duplicate data -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="Object ID"></td>
-                        <td><input type="text" name="Name of Electronic"></td>
-                        <td><input type="text" name="DollarValue"></td>
-                        <!-- <td><input type="number" name="NumCopies"></td> -->
-                    </tr>
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Object ID</th>
+                            <th>Name of Object</th>
+                            <th>Dollar Value</th>
+                            <!-- <th># of Copies</th> -->
+                            <!-- Commented out ^above^ to avoid possible duplicate data -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="Object ID"></td>
+                            <td><input type="text" name="Name of Electronic"></td>
+                            <td><input type="text" name="DollarValue"></td>
+                            <!-- <td><input type="number" name="NumCopies"></td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <input type="submit" value="Submit">
         </form>
     </body>

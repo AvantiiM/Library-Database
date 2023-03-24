@@ -1,78 +1,81 @@
+<!DOCTYPE html>
 <html>
-<head>
-	<title>Book Entry</title>
-	<style>
-		table {
-			border-collapse: collapse;
-			max-width: 750px
-		}
+	<head>
+		<title>Book Entry</title>
+		<style>
+			table {
+				border-collapse: collapse;
+				max-width: 750px
+			}
 
-		th, td {
-			text-align: center;
-            padding-top: 4px;
-            padding-bottom: 4px;
-			border-bottom: 2px solid white;
-			border-right: 2px solid white;
-            background-color: #ecc8af;
-		}
+			th, td {
+				text-align: center;
+				padding-top: 4px;
+				padding-bottom: 4px;
+				border-bottom: 2px solid white;
+				border-right: 2px solid white;
+				background-color: #ecc8af;
+			}
 
-		th:first-child, td:first-child {
-			border-left: 1px solid white;
-		}
+			th:first-child, td:first-child {
+				border-left: 1px solid white;
+			}
 
-		th {
-			background-color: #ce796b;
-            color: white
-		}
-        select,input{
-            background-color: #ecc8af;
-            color: white;
-            border: 1px #ecc8af;
-        }
-	</style>
-</head>
-<body>
-	<h1>Book Entry Form</h1>
-	<form>
-		<table>
-			<thead>
-				<tr>
-					<th>ISBN</th>
-					<th>Language</th>
-					<th>Author</th>
-					<th>Publisher</th>
-					<th>Book Title</th>
-					<th>Dollar Value</th>
-					<th># of Copies</th>
-					<th>Genre</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="text" name="ISBN"></td>
-					<td>
-                        <select name="Language">
-                          <option value="English">English</option>
-                          <option value="Spanish">Spanish</option>
-                          <option value="French">French</option>
-                        </select>
-                    </td>
-					<td><input type="text" name="Author"></td>
-					<td><input type="text" name="Publisher"></td>
-					<td><input type="text" name="BookTitle"></td>
-					<td><input type="text" name="DollarValue"></td>
-					<td><input type="number" name="NumCopies"></td>
-					<td>
-                        <select name="genre">
-                          <option value="Fiction">Fiction</option>
-                          <option value="Sci-Fi">Sci-Fi</option>
-                          <option value="Non-Fiction">Non-Fiction</option>
-                        </select>
-                    </td>
-				</tr>
-			</tbody>
-		</table>
-		<input type="submit" value="Submit">
-	</form>
-</body>
+			th {
+				background-color: #ce796b;
+				color: white
+			}
+			select,input{
+				background-color: #ecc8af;
+				color: white;
+				border: 1px #ecc8af;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Book Entry Form</h1>
+		<form>
+			<div style="overflow-x: auto;">
+				<table>
+					<thead>
+						<tr>
+							<th>ISBN</th>
+							<th>Language</th>
+							<th>Author</th>
+							<th>Publisher</th>
+							<th>Book Title</th>
+							<th>Dollar Value</th>
+							<th># of Copies</th>
+							<th>Genre</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="text" name="ISBN"></td>
+							<td>
+								<select name="Language">
+								<option value="English">English</option>
+								<option value="Spanish">Spanish</option>
+								<option value="French">French</option>
+								</select>
+							</td>
+							<td><input type="text" name="Author"></td>
+							<td><input type="text" name="Publisher"></td>
+							<td><input type="text" name="BookTitle"></td>
+							<td><input type="text" name="DollarValue"></td>
+							<td><input type="number" name="NumCopies"></td>
+							<td>
+								<select name="genre">
+								<option value="Fiction">Fiction</option>
+								<option value="Sci-Fi">Sci-Fi</option>
+								<option value="Non-Fiction">Non-Fiction</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<input type="submit" value="Submit">
+		</form>
+	</body>
 </html>
