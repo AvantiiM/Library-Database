@@ -35,41 +35,43 @@
     <body>
         <h1>Electronics Entry Form</h1>
         <form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Serial Number</th>
-                        <th>Name of Electronic</th>
-                        <!-- I kind of want to add a manufacturer column to our electronics table... -->
-                        <!-- <th>Manufacturer</th> -->
-                        <th>Dollar Value</th>
-                        <th>Availability</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="Serial Number"></td>
-                        <td><input type="text" name="Name of Electronic"></td>
-                        <!-- <td><input type="text" name="Manufacturer"></td> -->
-                        <td><input type="text" name="DollarValue"></td>
-                        <td>
-                            <select name="Availability">
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="Status">
-                            <option value="New">New</option>
-                            <option value="Used - Like New">Used - Like New</option>
-                            <option value="Used - Moderate">Used - Moderate</option>
-                            <option value="Used - Poor">Used - Poor</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Name of Electronic</th>
+                            <!-- I kind of want to add a manufacturer column to our electronics table... -->
+                            <!-- <th>Manufacturer</th> -->
+                            <th>Dollar Value</th>
+                            <th>Availability</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="Serial Number"></td>
+                            <td><input type="text" name="Name of Electronic"></td>
+                            <!-- <td><input type="text" name="Manufacturer"></td> -->
+                            <td><input type="text" name="DollarValue"></td>
+                            <td>
+                                <select name="Availability">
+                                <option value="Available">Available</option>
+                                <option value="Not Available">Not Available</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="Status">
+                                <option value="New">New</option>
+                                <option value="Used - Like New">Used - Like New</option>
+                                <option value="Used - Moderate">Used - Moderate</option>
+                                <option value="Used - Poor">Used - Poor</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <input type="submit" value="Submit">
         </form>
     </body>
