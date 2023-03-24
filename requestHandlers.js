@@ -128,9 +128,41 @@ function adminUI(response){
     response.end();
 }
 
-function Entry(response){
-    console.log("Request handler 'Entry' was called.");
+function BookEntry(response){
+    console.log("Request handler 'BookEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function ElectronicsEntry(response){
+    console.log("Request handler 'ElectronicsEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function MediaEntry(response){
+    console.log("Request handler 'MediaEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function ObjectEntry(response){
+    console.log("Request handler 'ObjectEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function TransactionEntry(response){
+    console.log("Request handler 'TransactionEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/TransactionEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(edata);
     response.end();
@@ -237,7 +269,11 @@ exports.loginverify = loginverify;
 
 exports.search = search;
 exports.adminUI = adminUI;
-exports.Entry = Entry;
+exports.BookEntry = BookEntry;
+exports.ElectronicsEntry = ElectronicsEntry;
+exports.MediaEntry = MediaEntry;
+exports.ObjectEntry = ObjectEntry;
+exports.TransactionEntry = TransactionEntry;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
