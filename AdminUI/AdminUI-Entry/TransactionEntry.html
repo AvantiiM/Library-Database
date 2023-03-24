@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="US">
+    <head>
+        <title>Transactions Entry</title>
+        <style>
+            table {
+                border-collapse: collapse;
+                border: 2px solid #75443c;
+                width: 50%;
+    
+            }
+    
+            th, td {
+                text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ecc8af;
+            }
+    
+            th:first-child, td:first-child {
+                border-left: 1px solid white;
+            }
+    
+            th {
+                background-color: #ce796b;
+                color: white
+            }
+            select,input{
+                background-color: #ecc8af;
+                color: white;
+                border: 1px #ecc8af;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Transaction Entry Form</h1>
+        <form>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reciept Num</th>
+                            <th>Pick Up Date</th>
+                            <th>Return Date</th>
+                            <th>Date Returned</th>
+                            <th>Creation Date</th>
+                            <th>Creation Time</th>
+                            <th>Expiration Date</th>
+                            <th>Borrower ID</th>
+                            <th>Item ID</th>
+                            <th>Item Type</th>
+                            <th>Reservation?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="Reciept Num"></td>
+                            <td><input type="date" name="Pick Up Date"></td>
+                            <td><input type="date" name="Return Date"></td>
+                            <td><input type="date" name="Date Returned"></td>
+                            <td><input type="date" name="Creation Date"></td>
+                            <td><input type="time" name="Creation Time"></td>
+                            <td><input type="date" name="Expiration Date"></td>
+                            <td><input type="text" name="Borrower ID"></td>
+                            <td><input type="text" name="Item ID"></td>
+                            <td><input type="text" name="Item Type"></td>
+                            <td><input type="checkbox" name="Reservation?" value="True"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
