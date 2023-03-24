@@ -128,7 +128,11 @@
      	    contentDiv.innerHTML = "<h1>Option 6 Content</h1><p>This is the content for Faculty.</p>";
       		break;
 			case "Guest":
-     	    contentDiv.innerHTML = "<h1>Option 7 Content</h1><p>This is the content for Guest.</p>";
+			fetch("http://localhost:3000/GuestEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
     		default:
      		 contentDiv.innerHTML = "";
