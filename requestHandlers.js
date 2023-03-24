@@ -248,6 +248,22 @@ function TransactionsEdit(response){
 
 }
 
+function StudentEntry(response){
+    console.log("Request handler 'StudentEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/StudentEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function GuestEntry(response){
+    console.log("Request handler 'GuestEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/GuestEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
 
 
 /*
@@ -274,6 +290,8 @@ exports.ElectronicsEntry = ElectronicsEntry;
 exports.MediaEntry = MediaEntry;
 exports.ObjectEntry = ObjectEntry;
 exports.TransactionEntry = TransactionEntry;
+exports.StudentEntry = StudentEntry;
+exports.GuestEntry = GuestEntry;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
