@@ -82,8 +82,13 @@
  			 var contentDiv = document.getElementById("content");
 
  			 switch (selectedOption) {
-			 case "transactions":
-			contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Transactions.</p>";
+			 case "Transactions":
+			 	fetch("http://localhost:3000/TransactionEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
+			break;
    			 case "Books":
 				fetch("http://localhost:3000/BookEntry")
                 .then(response => response.text())
@@ -92,13 +97,25 @@
                 });
      		 break;
     		case "Electronics":
-      		contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Electronics.</p>";
+				fetch("http://localhost:3000/ElectronicsEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
      		 break;
     		case "Objects":
-     	    contentDiv.innerHTML = "<h1>Option 3 Content</h1><p>This is the content for Objects.</p>";
+				fetch("http://localhost:3000/ObjectEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Media":
-     	    contentDiv.innerHTML = "<h1>Option 4 Content</h1><p>This is the content for Media.</p>";
+				fetch("http://localhost:3000/MediaEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Student":
      	    contentDiv.innerHTML = "<h1>Option 5 Content</h1><p>This is the content for Student.</p>";
