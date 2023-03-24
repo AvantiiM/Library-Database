@@ -23,5 +23,6 @@ handle["/MediaEdit"] = requestHandlers.MediaEdit; //http://localhost:3000/MediaE
 handle["/FacultyEdit"] = requestHandlers.FacultyEdit; //http://localhost:3000/FacultyEdit
 handle["/StudentEdit"] = requestHandlers.StudentEdit; //http://localhost:3000/StudentEdit
 handle["/GuestEdit"] = requestHandlers.GuestEdit; //http://localhost:3000/GuestEdit
-handle["TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localhost:3000/TransactionsEdit
+handle["/TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localhost:3000/TransactionsEdit
+handle["/StudentEntry"] = requestHandlers.StudentEntry; //http://localhost:3000/StudentEntry
 server.start(router.route, handle);

@@ -118,7 +118,11 @@
                 });
       		break;
 			case "Student":
-     	    contentDiv.innerHTML = "<h1>Option 5 Content</h1><p>This is the content for Student.</p>";
+			fetch("http://localhost:3000/StudentEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
       		break;
 			case "Faculty":
      	    contentDiv.innerHTML = "<h1>Option 6 Content</h1><p>This is the content for Faculty.</p>";
