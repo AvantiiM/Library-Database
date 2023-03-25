@@ -4,11 +4,26 @@ var querystring = require("querystring");
 var fs = require("fs");
 var path = require("path");
 
+//-- These are for session handling.
+//const {UserSession}  = require("./UserSession");
+//const crypto = require('crypto');
+//var sessions_map = require("./sessionhashmap");
+
 function start(route, handle) {
   function onRequest(request, response) {
     var postData = ""; // new
     var pathname = url.parse(request.url).pathname;
     console.log("Request for " + pathname + " received.");
+
+    if(pathname === "/favicon.ico") {
+      let frstream = fs.readFileSync("./favicon.ico");
+      console.log("--------- Serving favicon.ico");
+      response.statusCode = "200";
+      response.setHeader("Content-Type", "image/jpeg");
+      //frstream.pipe(response);
+      response.end(frstream);
+      return;          
+    }
 
     if (pathname.startsWith("/public/")) {
       var filePath = path.join(__dirname, pathname);

@@ -7,7 +7,6 @@ handle["/"] = requestHandlers.login; //http://localhost:3000/login
 handle["/login"] = requestHandlers.login; //http://localhost:3000/login
 handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
-//handle["/searchresults"] = requestHandlers.searchresults;
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
 handle["/addLogin"] = requestHandlers.addLogin; //not an actual page
 handle["/adminUI"] = requestHandlers.adminUI; //http://localhost:3000/adminUI
@@ -27,4 +26,5 @@ handle["/TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localho
 handle["/StudentEntry"] = requestHandlers.StudentEntry; //http://localhost:3000/StudentEntry
 handle["/GuestEntry"] = requestHandlers.GuestEntry; //http://localhost:3000/GuestEntry
 handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/FacultyEntry
+handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
 server.start(router.route, handle);

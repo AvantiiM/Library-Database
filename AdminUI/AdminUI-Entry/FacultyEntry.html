@@ -37,12 +37,14 @@
 
     <body>
         <h1>Faculty Entry Form</h1>
-        <form>
+        <form action="/addLogin" method="post">
+            <input hidden name='searchBy' value='faculty'></input>
             <div style = "overflow-x: auto">
             <table>
                 <thead>
                     <tr>
                         <th>Faculty ID</th>
+                        <th>Temporary Password</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Middle Name</th>
@@ -57,10 +59,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" name="Faculty_ID"></td>
-                        <td><input type="text" name="FirstN"></td>
-                        <td><input type="text" name="LastN"></td>
-                        <td><input type="text" name="MiddleN"></td>
+                        <td><input type="text" name="Username"></td>
+                        <td><input type="text" name="tempPassword"></td>
+                        <td><input type="text" name="FName"></td>
+                        <td><input type="text" name="LName"></td>
+                        <td><input type="text" name="MName"></td>
                         <td>
                             <select name="Race">
                               <option value="None">Choose Not to Answer</option>
@@ -107,12 +110,12 @@
                             </select>
                         </td>
                         <td><input type="date" name="BirthDate"></td>
-                        <td><input type="checkbox" name="Admin Permission" value="True"></td>
+                        <td><input type="checkbox" name="adminPermission"></td>
                     </tr>
                 </tbody>
             </table>
             </div>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Create New Faculty">
         </form>
     </body>
 </html>
