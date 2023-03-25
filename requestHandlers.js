@@ -170,25 +170,26 @@ function addLogin(response, postData) {
         if(!failed && mode!== "admin") {
 
             req.query(queryStr).then(function(recordset) {
-                console.log("New " + mode +" user entry inserted into database.");
-                
+                insertAdmin();
+                insertLogin();
             }).catch(function(err) {
                 console.log(err);
             });
 
+            function insertAdmin() {
+                if ( adminp === 1 && firstChar === 'F') {
+                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
+                    req.query(query).then(function(recordset) {
+                        console.log("New admin user entry inserted into database.");
+                        
+                    }).catch(function(err) {
+                        Console.error("Insert into admin failed");
+                        console.log(err);
+                    });
+                }       
+            }
 
-            if ( adminp === 1 && firstChar === 'F') {
-                query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
-                req.query(query).then(function(recordset) {
-                    console.log("New admin user entry inserted into database.");
-                    
-                }).catch(function(err) {
-                    Console.error("Insert into admin failed");
-                    console.log(err);
-                });
-            }       
-            
-
+            function insertLogin() {
             let squery = "INSERT INTO Login (Username, HashedPassword,";
             switch(firstChar) {
                 case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, @Username)"; break;
@@ -221,6 +222,8 @@ function addLogin(response, postData) {
                 });
             }
         }
+    }
+        
     }).catch(function(err) {
         console.error("Unable to get a DB connection");
         console.log(err);
