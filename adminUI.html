@@ -22,8 +22,9 @@
 				<option value="Objects">Objects</option>
 				<option value="Media">Media</option>
 				<option value="Student">Student</option>
-				<option value="Faculty">Faculty</option>
 				<option value="Guest">Guest</option>
+				<option value="Faculty">Faculty</option>
+				<option value="Admin">Admin</option>
 			</select>
 			<div id="content"></div>
 		</div>
@@ -124,6 +125,13 @@
                     contentDiv.innerHTML = html;
                 });
       		break;
+			case "Guest":
+			fetch("http://localhost:3000/GuestEntry")
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                });
+      		break;
 			case "Faculty":
 			fetch("http://localhost:3000/FacultyEntry")
                 .then(response => response.text())
@@ -131,8 +139,8 @@
                     contentDiv.innerHTML = html;
                 });
       		break;
-			case "Guest":
-			fetch("http://localhost:3000/GuestEntry")
+			case "Admin":
+			fetch("http://localhost:3000/AdminEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
