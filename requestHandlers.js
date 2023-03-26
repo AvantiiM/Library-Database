@@ -417,7 +417,7 @@ function FacultyEntry(response){
     response.end();
 }
 
-
+function SearchBooks(response, postData){
 
     sql.connect(config).then(function () {
         var req = new sql.Request();
@@ -567,7 +567,7 @@ try{
 }
 catch(err){
     console.log(err);
-}});
+}})};
     
     
 
@@ -605,6 +605,7 @@ exports.FacultyEdit = FacultyEdit;
 exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
+exports.SearchBooks = SearchBooks;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;
