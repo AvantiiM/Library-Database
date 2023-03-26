@@ -419,8 +419,159 @@ function FacultyEntry(response){
 
 
 
-/*
-function searchresults(response, postData) {
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var bookname = params['bookName'];
+        var dollarvalue = params['dollarValue'];
+        var numOfCompies = params['numOfCopies'];
+        var author = params['author'];
+        var genre = params['genre'];
+        var isbn = params['isbn'];
+        var language = params['language'];
+        var publisher = params['publisherName'];
+        var Created_BY = params['createdBy'];
+        var Created_date = params['createdDate'];
+        var Updated_BY = params['updatedBy'];
+        var Updated_date = params['updatedDate'];
+
+        // string query to hold the SQL query
+        var query = null;
+        // counter for the # of attributes
+        var counter = 0;
+        // array to hold the attributes
+        let StringArray = [];
+
+        // if the attribute is not empty, add it to the array
+
+        if(bookname != undefined && bookname != ""){
+            var bookstring = "Book_Name = '" + bookname + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(dollarvalue != undefined && dollarvalue != ""){
+            vardollarstring = "Dollar_Value = " + dollarvalue;
+            StringArray.push(vardollarstring);
+            counter++;
+        }
+        if(numOfCompies != undefined && numOfCompies != ""){
+            varnumofcopiesstring = "Num_Of_Copies = " + numOfCompies;
+            StringArray.push(varnumofcopiesstring);
+            counter++;
+        }
+        if(author != undefined && author != ""){
+            varauthorstring = "Author = '" + author + "'";
+            StringArray.push(varauthorstring);
+            counter++;
+        }
+        if(genre != undefined && genre != ""){
+            vargenrestring = "Genre = '" + genre + "'";
+            StringArray.push(vargenrestring);
+            counter++;
+        }
+        if(isbn != undefined && isbn != ""){
+            varisbnstring = "ISBN = '" + isbn + "'";
+            StringArray.push(varisbnstring);
+            counter++;
+        }
+        if(language != undefined && language != ""){
+            varlanguagestring = "Language = '" + language + "'";
+            StringArray.push(varlanguagestring);
+            counter++;
+        }
+        if(publisher != undefined && publisher != ""){
+            varpublisherstring = "Publisher_Name = '" + publisher + "'";
+            StringArray.push(varpublisherstring);
+            counter++;
+        }
+        if(Created_BY != undefined && Created_BY != ""){
+            varcreatedbystring = "Created_By = '" + Created_BY + "'";
+            StringArray.push(varcreatedbystring);
+            counter++;
+        }
+        if(Created_date != undefined && Created_date != ""){
+            varcreateddatestring = "Created_Date = '" + Created_date + "'";
+            StringArray.push(varcreateddatestring);
+            counter++;
+        }
+        if(Updated_BY != undefined && Updated_BY  != ""){
+            varupdatedbystring = "Updated_By = '" + Updated_BY + "'";
+            StringArray.push(varupdatedbystring);
+            counter++;
+        }
+        if(Updated_date != undefined && Updated_date != ""){
+            varupdateddatestring = "Updated_Date = '" + Updated_date + "'";
+            StringArray.push(varupdateddatestring);
+            counter++;
+        }
+        // if the array is empty let the user know else build the query
+        // this is the ultimate SELECT * query builder
+        switch(counter){
+            case 0: console.log("No attributes entered, please enter at least one attribute to search for.");
+            break;
+            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + ";";
+            break;
+            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+            break;
+            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+            break;
+            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+            break;
+            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+            break;
+            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+            break;
+            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+            break;
+            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+            break;
+            case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
+            break;
+            case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
+            break;
+            case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
+            break;
+            case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
+            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
+            break;
+
+        }
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            } else {
+                console.log("No records found")
+        }
+    }).catch(function(err) {
+        Console.error("Insert into admin failed");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+}});
+    
+    
+
+/*function searchresults(response, postData) {
     var querystring = require('querystring');
     var params = querystring.parse(postData);
     var bookname = params['BookName'];
