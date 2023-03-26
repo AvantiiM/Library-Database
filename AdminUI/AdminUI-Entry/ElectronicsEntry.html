@@ -35,8 +35,10 @@
         </style>
     </head>
     <body>
+        <form action="/addItem" method="post"></form>
         <h1>Electronics Entry Form</h1>
         <form>
+            <input hidden name = "searchBy" value = "Electronic"></input>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -52,10 +54,10 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" name="Serial Number"></td>
-                            <td><input type="text" name="Name of Electronic"></td>
+                            <td><input type="text" name="itemID"></td>
+                            <td><input type="text" name="itemName"></td>
                             <!-- <td><input type="text" name="Manufacturer"></td> -->
-                            <td><input type="text" name="DollarValue"></td>
+                            <td><input type="number" name="DValue"></td>
                             <td>
                                 <select name="Availability">
                                 <option value="Available">Available</option>

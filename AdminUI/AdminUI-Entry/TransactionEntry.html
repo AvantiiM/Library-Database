@@ -36,38 +36,36 @@
     </head>
 
     <body>
+        <form action="/addItem" method="post"></form>
         <h1>Transaction Entry Form</h1>
         <form>
+            <input hidden name = "searchBy" value = "Transaction"></input>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>Reciept Num</th>
                             <th>Pick Up Date</th>
-                            <th>Return Date</th>
                             <!-- <th>Date Returned</th>
                             <th>Creation Date</th>
                             <th>Creation Time</th>
                             <th>Expiration Date</th> -->
                             <th>Borrower ID</th>
                             <th>Item ID</th>
-                            <th>Item Type</th>
                             <th>Reservation?</th>
+                            <th>Active/Void Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" name="Reciept Num"></td>
-                            <td><input type="date" name="Pick Up Date"></td>
-                            <td><input type="date" name="Return Date"></td>
+                            <td><input type="date" name="PickDate"></td>
                             <!-- <td><input type="date" name="Date Returned"></td>
                             <td><input type="date" name="Creation Date"></td>
                             <td><input type="time" name="Creation Time"></td>
                             <td><input type="date" name="Expiration Date"></td> -->
-                            <td><input type="text" name="Borrower ID"></td>
-                            <td><input type="text" name="Item ID"></td>
-                            <td><input type="text" name="Item Type"></td>
-                            <td><input type="checkbox" name="Reservation?" value="True"></td>
+                            <td><input type="text" name="BID"></td>
+                            <td><input type="text" name="itemID"></td>
+                            <td><input type="checkbox" name="Reservation" value="True"></td>
+                            <td><input type="checkbox" name="AVStatus" value="True"></td>
                         </tr>
                     </tbody>
                 </table>

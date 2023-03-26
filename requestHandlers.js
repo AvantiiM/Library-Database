@@ -2,7 +2,7 @@ var fs = require('fs');
 var sql = require('mssql');
 var config = require('./db_connect');
 
-var bcrypt = require('bcryptjs'); 
+var bcrypt = require('bcryptjs'); //new
 const { Console } = require('console');
 const { callbackify } = require('util');
 
@@ -11,6 +11,7 @@ function loginverify(response, postData) {
     var params = querystring.parse(postData); 
     var username = params['Username'];
     var password = params['Password']; 
+//    var connect = fs.readFileSync('db_connect.js');
 
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function() {
@@ -19,9 +20,12 @@ function loginverify(response, postData) {
         req.input('password', sql.NVarChar, password);
         req.query("SELECT HashedPassword FROM Login WHERE Username=@username").then(function(recordset) {
             if (recordset.recordsets[0].length > 0) {
-                var hash = recordset.recordsets[0][0].HashedPassword; 
+                // Username and password are correct, show a success message
+                //response.writeHead(200, { "Content-Type": "text/html" });
+                //response.write("<p>Login successful</p>");
+                var hash = recordset.recordsets[0][0].HashedPassword; // new
 
-                bcrypt.compare(password, hash, function(err, result) { 
+                bcrypt.compare(password, hash, function(err, result) { //new
                     if (result) {
                         // Passwords match, show a success message
                         console.log("success");
@@ -34,12 +38,19 @@ function loginverify(response, postData) {
                         response.end();
                     }
                 });
+                //response.writeHead(302, { "Location": "/search" });
+                //response.end();
             } else {
+                // Username and password are incorrect, show an error message
+                //response.writeHead(200, { "Content-Type": "text/html" });
+                //response.write("<p>Login failed</p>");
                 response.writeHead(302, { "Location": "/login" });
                 response.end();
             }
+            //conn.close();
         }).catch(function(err) {
             console.log(err);
+            //conn.close();
         });
     }).catch(function(err) {
         console.log(err);
@@ -61,19 +72,40 @@ function createUser(response, postData) {
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(data);
     response.end();
-
 }
 
-function generateUsername() {
-    let username = '';
-    for (let i = 0; i < 6; i++) {
-      username += Math.floor(Math.random() * 10);
-    }
-    return username;
-  }
 
+function addItem(response, postData){
+    var conn = new sql.ConnectionPool(config);
+    sql.connect(config).then(function() {
+        var req = new sql.Request();
+        var querystring = require('querystring');
+        var params = querystring.parse(postData); 
+        var mode = params['searchBy'];
+        var ItemID = params['itemID'];
+        var ItemName = params['itemName'];
+        var DollarValue = params['DValue'];
+        var MediaType = params['MType'];
+        var Author = params['Author'];
+        var Publisher = params['Publisher'];
+        var PublishDate = params['PDate'];
+        var PickUpDate = params['PickDate'];
+        var NumCopies = params['NCopies'];
+        var BorrowerID = params['BID'];
+        var Reservation = params['Reservation'];
+        var Language = params['Language'];
+        var Genre = params['Genre'];
+        var Availability = params['Availability'];
+        var EStatus = params['Status'];
+
+
+
+        
+    });
+}
 function addLogin(response, postData) {
     var conn = new sql.ConnectionPool(config);
+    
     sql.connect(config).then(function() {
         var req = new sql.Request();
         
@@ -86,18 +118,11 @@ function addLogin(response, postData) {
         var params = querystring.parse(postData); 
         var Username = params['Username'];
         var FName = params['FName'];
-        var MName = params['MName'];
         var LName = params['LName'];
-        var Race = params['Race'];
-        var Major = params['Major'];
-        var PhoneNum = params['PhoneNum'];
         var Email = params['Email'];
-        var Gender = params['Gender'];
-        var BirthDate = params['BirthDate'];
         var Department = params['Department'];
         var tempPassword = params['tempPassword'];
 
-        
         var mode = params['searchBy'];
 
         var adminPermission = params['adminPermission']; // === 'on' ? 1 : 0;
@@ -105,19 +130,20 @@ function addLogin(response, postData) {
         if(adminPermission !== undefined) {
             adminp = 1;
         }
+        //console.log("admin permission: " + adminPermission);
         let firstChar = Username.charAt(0);
 
+        // if (adminPermission !== undefined) {
+        //   adminPermission = (adminPermission === 'on') ? 1 : 0;
+        // } else {
+        //   adminPermission = 0; // default to 0 if checkbox wasn't checked
+        // }
         req.input('adminpermission', sql.Bit, adminp);
+
         req.input('username', sql.NVarChar, Username);
         req.input('fname', sql.NVarChar, FName);
-        req.input('mname',sql.NVarChar, MName);
         req.input('lname', sql.NVarChar, LName);
-        req.input('race', sql.NVarChar, Race);
-        req.input('major', sql.NVarChar, Major);
-        req.input('phonenum', sql.NVarChar, PhoneNum);
         req.input('email', sql.NVarChar, Email);
-        req.input('gender', sql.NVarChar, Gender);
-        req.input('birthdate', sql.NVarChar, BirthDate);
         req.input('department', sql.NVarChar, Department);
         var failed = false;
         console.log("mode: " + mode);
@@ -131,7 +157,7 @@ function addLogin(response, postData) {
         }
         switch (firstChar) {
           case 'S':
-            queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Major, PhoneN, Email, Gender, Bday, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @major, @phonenum, @email, @gender, @birthdate, 'F111122223', 'F111122223', getdate(), getdate())";
+            queryStr = "INSERT INTO Students (StudentID, FirstN, LastN, Email, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
             break;
           case 'F':
             if(mode === 'admin') {
@@ -152,14 +178,16 @@ function addLogin(response, postData) {
                     response.write("Faculty ID: " + Username + " is not valid");
                     response.end();
                     return;
+                    //conn.close();
                 });
 
             } else {
-                queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Race, PhoneN, Email, Gender, Bday, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @phonenum, @email, @gender, @birthdate, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
+                queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, LastN, Email, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
             }
+            // has many other non-null attributes
             break;
           case 'G':
-            queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Race, PhoneN, Email, Gender, Bday, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @phonenum, @email, @gender, @birthdate, 'F111122223', 'F111122223', getdate(), getdate())";
+            queryStr = "INSERT INTO Guest (GuestID, FirstN, LastN, Email, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
             break;
             
         }
@@ -168,7 +196,6 @@ function addLogin(response, postData) {
         if(!failed && mode!== "admin") {
 
             req.query(queryStr).then(function(recordset) {
-                console.log("New " + mode + " user entry inserted into database.")
                 insertAdmin();
                 insertLogin();
             }).catch(function(err) {
@@ -177,7 +204,7 @@ function addLogin(response, postData) {
 
             function insertAdmin() {
                 if ( adminp === 1 && firstChar === 'F') {
-                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, MiddleN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
+                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
                     req.query(query).then(function(recordset) {
                         console.log("New admin user entry inserted into database.");
                         
@@ -206,7 +233,12 @@ function addLogin(response, postData) {
                                 m +=1;
                             }
                         }
+                        // const req2 = new sql.Request();
+                        // req2.input('username', sql.NVarChar, Username);
+                        // req2.input('password', sql.NVarChar, tempPassword);
                         req.input('hashedPassword', sql.NVarChar, hash);
+        //                req.query("INSERT INTO Login (Username, HashedPassword, StudentID, Faculty_ID, GuestID) VALUES (@username, @hashedPassword, @studentId, @facultyId, @guestId)").then(function(recordset) {
+                        console.log("Query: " + squery);
                         req.query(squery).then(function(recordset) {
                                 console.log("New " + mode + " login entry inserted into database.");
                         }).catch(function(err) {
@@ -255,15 +287,7 @@ function ElectronicsEntry(response){
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(edata);
     response.end();
-    //sendResponse(response, 'AdminUI/AdminUI-Entry/ElectronicsEntry.html');
 }
-
-// function sendResponse(response, file) {
-//     var edata = fs.readFileSync(file);
-//     response.writeHead(200, { "Content-Type": "text/html" });
-//     response.write(edata);
-//     response.end();
-// }
 
 function MediaEntry(response){
     console.log("Request handler 'MediaEntry' was called.");
@@ -336,6 +360,7 @@ function FacultyEdit(response){
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(fdata);
     response.end();
+
 }
 
 function StudentEdit(response){
@@ -393,52 +418,9 @@ function FacultyEntry(response){
 }
 
 
-function SearchBooks(response,postData){
-   
-   
-    var conn = new sql.ConnectionPool(config);
 
-    sql.connect(config).then(function () {
-        var req = new sql.Request();
-try{
-        var querystring = require('querystring');
-        var params = querystring.parse(postData);
-        var bookname = params['bookName'];
-        var dollarvalue = params['dollarValue'];
-        var numOfCompies = params['numOfCopies'];
-        var author = params['author'];
-        var genre = params['genre'];
-        var isbn = params['isbn'];
-        var language = params['language'];
-        var publisher = params['publisherName'];
-
-        console.log(bookname + " is being searched");
-        var query = "SELECT * FROM dbo.Book WHERE Book_Name = '" + bookname + "';";
-       // var query = "SELECT * FROM Book WHERE BookName LIKE '%" + bookname + "%' AND DollarValue LIKE '%" + dollarvalue + "%' AND NumOfCopies LIKE '%" + numOfCompies + "%' AND Author LIKE '%" + author + "%' AND Genre LIKE '%" + genre + "%' AND ISBN LIKE '%" + isbn + "%' AND Language LIKE '%" + language + "%' AND PublisherName LIKE '%" + publisher + "%'";
-       req.query(query).then(function(recordset) {
-        console.log("New admin user entry inserted into database.");
-        console.log(recordset);
-        if(recordset.recordsets.length > 0) {
-            console.log("Found " + recordset.recordsets.length + " records");
-            
-            const columns = ['Book_Name', 'Dollar_Value', 'Num_of_Copies', 'Author', 'Genre', 'ISBN', 'Language', 'Publisher_Name', 'Created_BY', 'Created_date', 'Updated_BY', 'Last_Updated'];
-            console.table(recordset.recordsets, columns);
-            } else {
-                console.log("No records found")
-        }
-    }).catch(function(err) {
-        Console.error("Insert into admin failed");
-        console.log(err);
-    });
-
-}
-catch(err){
-    console.log(err);
-}})}
-    
-    
-
-/*function searchresults(response, postData) {
+/*
+function searchresults(response, postData) {
     var querystring = require('querystring');
     var params = querystring.parse(postData);
     var bookname = params['BookName'];
@@ -447,50 +429,33 @@ catch(err){
     var language = params['Language'];
     var isbn = params['ISBN'];
 
+    
 }
 */
-
-    
-function AdminEntry(response){
-    console.log("Request handler 'AdminEntry' was called.");
-    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/AdminEntry.html');
-    response.writeHead(200, { "Content-Type": "text/html" });
-    response.write(edata);
-    response.end();
-}
-
-
-
 
 exports.login = login;
 exports.loginverify = loginverify;
 
 exports.search = search;
 exports.adminUI = adminUI;
-
 exports.BookEntry = BookEntry;
 exports.ElectronicsEntry = ElectronicsEntry;
-exports.ObjectEntry = ObjectEntry;
 exports.MediaEntry = MediaEntry;
+exports.ObjectEntry = ObjectEntry;
 exports.TransactionEntry = TransactionEntry;
-
 exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
 exports.FacultyEntry = FacultyEntry;
-exports.AdminEntry = AdminEntry;
-
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
 exports.MediaEdit = MediaEdit;
-exports.TransactionsEdit = TransactionsEdit;
-
+exports.FacultyEdit = FacultyEdit;
 exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
-exports.SearchBooks = SearchBooks;
 //exports.searchresults = searchresults;
-exports.FacultyEdit = FacultyEdit;
 
 exports.createUser = createUser;
 exports.addLogin = addLogin;
+exports.addItem = addItem;

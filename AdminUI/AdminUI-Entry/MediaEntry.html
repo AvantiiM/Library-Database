@@ -35,28 +35,29 @@
         </style>
     </head>
     <body>
+        <form action="/addItem" method="post"></form>
         <h1>Media Entry Form</h1>
         <form>
+            <input hidden name = "searchBy" value = "Media"></input>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>Media ID</th>
                             <th>Name of Media</th>
                             <th>Dollar Value</th>
                             <th>Media Type</th>
                             <th>Author</th>
                             <th>Publisher</th>
                             <th>Publishing Date</th>
+                            <th># of Copies</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" name="Media ID"></td>
-                            <td><input type="text" name="Name of Media"></td>
-                            <td><input type="text" name="DollarValue"></td>
+                            <td><input type="text" name="itemName"></td>
+                            <td><input type="number" name="DValue"></td>
                             <td>
-                                <select name="Media Type">
+                                <select name="MType">
                                 <option value="CD">CD</option>
                                 <option value="DVD">DVD</option>
                                 <option value="Magazine">Magazine</option>
@@ -65,7 +66,8 @@
                             </td>
                             <td><input type="text" name="Author"></td>
                             <td><input type="text" name="Publisher"></td>
-                            <td><input type="text" name="Publishing Date"></td>
+                            <td><input type="date" name="PDate"></td>
+                            <td><input type="number" name="NCopies"></td>
                         </tr>
                     </tbody>
                 </table>

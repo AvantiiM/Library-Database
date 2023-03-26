@@ -28,4 +28,5 @@ handle["/GuestEntry"] = requestHandlers.GuestEntry; //http://localhost:3000/Gues
 handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/FacultyEntry
 handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bookSearch
 handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
+handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 server.start(router.route, handle);
