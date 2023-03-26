@@ -392,7 +392,50 @@ function FacultyEntry(response){
 }
 
 
+function SearchBooks(response,postData){
+   
+   
+    var conn = new sql.ConnectionPool(config);
 
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var bookname = params['bookName'];
+        var dollarvalue = params['dollarValue'];
+        var numOfCompies = params['numOfCopies'];
+        var author = params['author'];
+        var genre = params['genre'];
+        var isbn = params['isbn'];
+        var language = params['language'];
+        var publisher = params['publisherName'];
+
+        console.log(bookname + " is being searched");
+        var query = "SELECT * FROM dbo.Book WHERE Book_Name = '" + bookname + "';";
+       // var query = "SELECT * FROM Book WHERE BookName LIKE '%" + bookname + "%' AND DollarValue LIKE '%" + dollarvalue + "%' AND NumOfCopies LIKE '%" + numOfCompies + "%' AND Author LIKE '%" + author + "%' AND Genre LIKE '%" + genre + "%' AND ISBN LIKE '%" + isbn + "%' AND Language LIKE '%" + language + "%' AND PublisherName LIKE '%" + publisher + "%'";
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry inserted into database.");
+        console.log(recordset);
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            
+            const columns = ['Book_Name', 'Dollar_Value', 'Num_of_Copies', 'Author', 'Genre', 'ISBN', 'Language', 'Publisher_Name', 'Created_BY', 'Created_date', 'Updated_BY', 'Last_Updated'];
+            console.table(recordset.recordsets, columns);
+            } else {
+                console.log("No records found")
+        }
+    }).catch(function(err) {
+        Console.error("Insert into admin failed");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+}})}
+    
+    
 /*
 function searchresults(response, postData) {
     var querystring = require('querystring');
@@ -428,6 +471,7 @@ exports.FacultyEdit = FacultyEdit;
 exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
+exports.SearchBooks = SearchBooks;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

@@ -1,69 +1,116 @@
+<!DOCTYPE html>
 <html>
-<br></br>  
+<head>
+	<title>Book Search</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			background-color: #4CAF50;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			background-color: #4CAF50;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			background-color: #45a049;
+		}
+		.form-group {
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			display: block;
+			width: 99%;
+		}
+	</style>
+</head>
 <body>
-    <div id='booksid' >
-    <form action="/searchBooks" method="post">
-        <input hidden name='searchBy' value='book'></input>
+	<h1>Book Search</h1>
+	<form action="/SearchBooks" method="post">
+		<div class="form-group">
+			<label for="bookName">Book Name:</label>
+			<input type="text" id="bookName" name="bookName" placeholder="Enter book name...">
+		</div>
+		<div class="form-group">
+			<label for="dollarValue">Dollar Value:</label>
+			<input type="text" id="dollarValue" name="dollarValue" placeholder="Enter dollar value...">
+		</div>
+		<div class="form-group">
+			<label for="numOfCopies">Number of Copies:</label>
+			<input type="text" id="numOfCopies" name="numOfCopies" placeholder="Enter number of copies...">
+		</div>
+		<div class="form-group">
+			<label for="author">Author:</label>
+			<input type="text" id="author" name="author" placeholder="Enter author...">
+		</div>
+		<div class="form-group">
+			<label for="genre">Genre:</label>
+			<input type="text" id="genre" name="genre" placeholder="Enter genre...">
+		</div>
+		<div class="form-group">
+			<label for="isbn">ISBN:</label>
+			<input type="text" id="isbn" name="isbn" placeholder="Enter ISBN...">
+		</div>
+		<div class="form-group">
+			<label for="language">Language:</label>
+			<input type="text" id="language" name="language" placeholder="Enter language...">
+		</div>
+		<div class="form-group">
+			<label for="publisherName">Publisher Name:</label>
+			<input type="text" id="publisherName" name="publisherName" placeholder="Enter publisher name...">
+		</div>
+		<input type="submit" value="Search">
+	</form>
+	<table>
+		<thead>
+			<tr>
+				<th>Book Name</th>
+				<th>Dollar Value</th>
+				<th>Number of Copies</th>
+				<th>Author</th>
+				<th>Genre</th>
+				<th>ISBN</th>
+				<th>Language</th>
+				<th>Publisher Name</th>
+				<th>Created By</th>
+				<th>Created Date</th>
+				<th>Updated By</th>
+				<th>Last Updated</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	
 
-        <label for="bookName"> Name: </label>
-        <input type="text" id="bookname" name="BookName"></input>
-
-        <label for="Author"> Author: </label>
-        <input type="text" id="author" name="Author"></input>
-
-        <label for="Genre"> Genre: </label>
-        <select id="genre" name="Genre">
-            <option value="adventure">Adventure</option>
-            <option value="action">Action</option>
-            <option value="fantasy">Fantasy</option>
-            <option value="drama">Drama</option>
-            <option value="romance">Romance</option>
-            <option value="scifi">SciFi</option>
-            <option value="thriller">Thriller</option>
-            <option value="horror">Horror</option>
-            <option value="comedy">Comedy</option>
-            <option value="mystery">Mystery</option>
-            <option value="supernatural">Supernatural</option>
-        </select><br></br>
-
-        <label for="Language"> Language: </label>
-        <select id="language" name="Language">
-            <option value="english">English</option>
-            <option value="french">French</option>
-            <option value="spanish">Spanish</option>
-        </select>
-
-        <label for="ISBN"> ISBN: </label>
-        <input type="text" id="isbn" name="ISBN"><br></br></input>
-
-        <input type="submit" value="Search" />
-
-    </form>
-    
-
-    <script>
-      const el = document.getElementById('searchType');
-      const bookdiv = document.getElementById('booksid');
-      const mediadiv = document.getElementById('mediaid');
-      const electronicdiv = document.getElementById('electronicid');
-      
-      mediadiv.style.display = 'none';
-      electronicdiv.style.display = 'none';
-      el.addEventListener('change', function handleChange(event) {
-         if (event.target.value === 'book') {
-            bookdiv.style.display = 'block';
-            mediadiv.style.display = 'none';
-            electronicdiv.style.display = 'none';
-         } else if (event.target.value === 'media') {
-            bookdiv.style.display = 'none';
-            mediadiv.style.display = 'block';
-            electronicdiv.style.display = 'none';
-         } else if(event.target.value === 'electronic') {
-            mediadiv.style.display = 'none';
-            bookdiv.style.display = 'none';
-            electronicdiv.style.display = 'block';
-         }
-      });
-   </script>    
-</body>    
+</body>
 </html>

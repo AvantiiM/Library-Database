@@ -27,4 +27,5 @@ handle["/TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localho
 handle["/StudentEntry"] = requestHandlers.StudentEntry; //http://localhost:3000/StudentEntry
 handle["/GuestEntry"] = requestHandlers.GuestEntry; //http://localhost:3000/GuestEntry
 handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/FacultyEntry
+handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bookSearch
 server.start(router.route, handle);
