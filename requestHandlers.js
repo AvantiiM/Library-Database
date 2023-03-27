@@ -82,26 +82,76 @@ function addItem(response, postData){
         var querystring = require('querystring');
         var params = querystring.parse(postData); 
         var mode = params['searchBy'];
-        var ItemID = params['itemID'];
-        var ItemName = params['itemName'];
-        var DollarValue = params['DValue'];
-        var MediaType = params['MType'];
+        var itemID = params['itemID'];
+        var itemName = params['itemName'];
+        var DValue = params['DValue'];
+        var MType = params['MType'];
         var Author = params['Author'];
         var Publisher = params['Publisher'];
-        var PublishDate = params['PDate'];
-        var PickUpDate = params['PickDate'];
-        var NumCopies = params['NCopies'];
-        var BorrowerID = params['BID'];
-        var Reservation = params['Reservation'];
+        var PDate = params['PDate'];
+        var NCopies = params['NCopies'];
         var Language = params['Language'];
         var Genre = params['Genre'];
         var Availability = params['Availability'];
-        var EStatus = params['Status'];
+        var Status = params['Status'];
+        req.input('itemID', sql.NVarChar, itemID);
+        req.input('itemName', sql.NVarChar, itemName);
+        req.input('DValue', sql.Int, DValue);
+        req.input('MType', sql.NVarChar, MType);
+        req.input('Author', sql.NVarChar, Author);
+        req.input('Publisher', sql.NVarChar, Publisher);
+        req.input('PDate', sql.Date, PDate);
+        req.input('NCopies', sql.Int, NCopies);
+        req.input('Language', sql.NVarChar, Language);
+        req.input('Genre', sql.NVarChar, Genre);
+        req.input('Availability', sql.Bit, Availability);
+        req.input('Status', sql.NVarChar, Status);
 
 
-
-        
-    });
+        var failed = false;
+        console.log("mode: " + mode);
+        var queryStr = ""; 
+        switch (mode) {
+            case 'Electronic':
+              queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
+              req.query(queryStr).then(function(recordset) {
+                console.log("Electronic entry inserted into database.");
+            }).catch(function(err) {
+                console.log(err);
+            });
+              break;
+            case 'Book':
+              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
+              req.query(queryStr).then(function(recordset) {
+                console.log("Book entry inserted into database.");
+            }).catch(function(err) {
+                console.log(err);
+            });
+              break;
+            case 'Media':
+              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+              req.query(queryStr).then(function(recordset) {
+                console.log("Media entry inserted into database.");
+            }).catch(function(err) {
+                console.log(err);
+            });
+              break;
+            case 'Object':
+              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+              req.query(queryStr).then(function(recordset) {
+                console.log("Object entry inserted into database.");
+            }).catch(function(err) {
+                console.log(err);
+            });
+              break;
+              
+          }   
+          
+        }).catch(function(err) {
+            console.error("Unable to get a DB connection");
+            console.log(err);
+        });
+    
 }
 function addLogin(response, postData) {
     var conn = new sql.ConnectionPool(config);
