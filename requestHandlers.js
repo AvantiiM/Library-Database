@@ -556,20 +556,44 @@ try{
         if(recordset.recordsets.length > 0) {
             console.log("Found " + recordset.recordsets.length + " records");
             console.log(recordset);
-            } else {
-                console.log("No records found")
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
         }
     }).catch(function(err) {
-        Console.error("Insert into admin failed");
+        console.error("error");
         console.log(err);
     });
 
 }
 catch(err){
     console.log(err);
+    response.write("Error");
 }})};
     
-    
+function DeleteBook(response, postData) {
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+        var bookISBN = data.deletebookisbn;
+        var query = "DELETE FROM dbo.Book WHERE ISBN = '" + bookISBN + "';";
+        console.log(query);
+        req.query(query).then(function(recordset) {
+            console.log("a tuple in the book table will be deleted from the database.");
+            response.write("Book deleted");
+            response.end();}
+        )
+        })};
+
+
 
 /*function searchresults(response, postData) {
     var querystring = require('querystring');
@@ -606,6 +630,7 @@ exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
 exports.SearchBooks = SearchBooks;
+exports.DeleteBook = DeleteBook;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

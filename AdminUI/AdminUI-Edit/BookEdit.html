@@ -3,31 +3,46 @@
 <head>
 	<title>Book Search</title>
 	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+			font-weight: 100;}
 		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
 			border-collapse: collapse;
 			width: 100%;
 			margin-top: 20px;
 		}
 		th, td {
-			text-align: left;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
 			padding: 8px;
 			border: 1px solid black;
 		}
 		th {
-			background-color: #4CAF50;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
 			color: white;
 		}
 		tr:nth-child(even) {
 			background-color: #f2f2f2;
 		}
 		input[type=text] {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
 			padding: 8px;
 			border: 1px solid black;
 			width: 100%;
 			margin-bottom: 10px;
 		}
 		input[type=submit] {
-			background-color: #4CAF50;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
 			color: white;
 			padding: 8px;
 			border: none;
@@ -35,30 +50,214 @@
 			margin-top: 10px;
 		}
 		input[type=submit]:hover {
-			background-color: #45a049;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
 		}
 		.form-group {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
 			margin-bottom: 20px;
 			display: block;
 			clear: both;
 		}
 		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
 			display: block;
 			margin-bottom: 5px;
 			font-weight: bold;
 		}
 		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
 			display: block;
 			width: 99%;
 		}
+
+		.edit-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 10px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
 	</style>
+
+
+
+	<script type="text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'http://localhost:3000/SearchBooks');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("BookTableBody");	
+				
+				responseData.forEach(book => {
+					console.log(book);
+					const row = table.insertRow();
+					const isbn = row.insertCell();
+					isbn.innerText = book.ISBN;
+					const bookName = row.insertCell();
+					bookName.innerText = book.Book_Name;
+					const dollarValue = row.insertCell();
+					dollarValue.innerText = book.Dollar_Value;
+					const numOfCopies = row.insertCell();
+					numOfCopies.innerText = book.Num_of_Copies;
+					const author = row.insertCell();
+					author.innerText = book.Author;
+					const genre = row.insertCell();
+					genre.innerText = book.Genre;
+					const language = row.insertCell();
+					language.innerText = book.Language;
+					const publisherName = row.insertCell();
+					publisherName.innerText = book.Publisher_Name;
+					const createdBy = row.insertCell();
+					createdBy.innerText = book.Created_BY;
+					const createdDate = row.insertCell();
+					createdDate.innerText = book.Created_date;
+					const updatedBy = row.insertCell();
+					updatedBy.innerText = book.Updated_BY;
+					const lastUpdated = row.insertCell();
+					lastUpdated.innerText = book.Last_Updated;
+
+
+
+					// Create the cell for the edit and delete buttons
+					const actionsCell = row.insertCell();
+
+					// Create the edit button
+					const editButton = document.createElement("button");
+					editButton.innerText = "Edit";
+					editButton.className = "edit-btn";
+					editButton.addEventListener("click", () => {
+						// Handle the edit button click event
+						//open a modal or redirect the user to another page for editing the book
+					});
+					actionsCell.appendChild(editButton);
+
+					// Create the delete button
+					const deleteButton = document.createElement("button");
+					deleteButton.innerText = "Delete";
+					deleteButton.className = "delete-btn";
+					deleteButton.setAttribute("data-isbn", book.ISBN);
+					deleteButton.addEventListener("click", () => {
+						// prompting the user for confirmation and send a DELETE request to the server
+						const confirmation = confirm("Are you sure you want to delete this book?");
+						if(confirmation){
+						// Handle the delete button click event
+							const deleteisbn = deleteButton.getAttribute("data-isbn");
+							const data = { deletebookisbn: deleteisbn };
+							console.log(data);
+							xhr.open("DELETE", `http://localhost:3000/DeleteBook`);
+							xhr.setRequestHeader("Content-Type", "application/json");
+							xhr.send(new URLSearchParams(data).toString());
+							xhr.onload = function() {
+								if (xhr.status === 200) {
+									alert("Book deleted successfully");
+								} else {
+									console.log("Error deleting book");
+								}
+							};
+							
+						
+						
+						}
+						
+
+					});
+					actionsCell.appendChild(deleteButton);
+
+
+
+
+
+
+					table.appendChild(row);
+					});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
 </head>
 <body>
+	
+
 	<h1>Book Search</h1>
-	<form action="/SearchBooks" method="post">
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+	<!-- <form action="/SearchBooks" method="post"> -->
 		<div class="form-group">
 			<label for="bookName">Book Name:</label>
-			<input type="text" id="bookName" name="bookName" placeholder="Enter book name...">
+			<input type="text" id="bookNameInput" name="bookName" placeholder="Enter book name...">
 		</div>
 		<div class="form-group">
 			<label for="dollarValue">Dollar Value:</label>
@@ -106,27 +305,28 @@
 		</div>
 		<input type="submit" value="Search">
 	</form>
-	<table>
+	<table id="BookTable">
 		<thead>
 			<tr>
+				<th>ISBN</th>
 				<th>Book Name</th>
 				<th>Dollar Value</th>
 				<th>Number of Copies</th>
 				<th>Author</th>
 				<th>Genre</th>
-				<th>ISBN</th>
 				<th>Language</th>
 				<th>Publisher Name</th>
 				<th>Created By</th>
 				<th>Created Date</th>
 				<th>Updated By</th>
 				<th>Last Updated</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="BookTableBody">
 		</tbody>
 	</table>
-	
+
 
 </body>
 </html>
