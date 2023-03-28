@@ -35,3 +35,16 @@
     background-color: #ce796b;
     color: white;
 }
+
+.Button{
+    width: 200px;
+    height: 40px;
+    border-radius: 20px;
+    border: 2px solid white;
+    text-align: center;
+    background-color: #ce796b;
+    color: white;
+
+
+
+}
