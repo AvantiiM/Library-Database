@@ -4,7 +4,7 @@ var config = require('./db_connect');
 var querystring = require('querystring');
 var bcrypt = require('bcryptjs'); 
 
-var cons = require('consolidate');
+//var cons = require('consolidate');
 
 
 const { Console } = require('console');
