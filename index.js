@@ -32,10 +32,9 @@ handle["/TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localho
 handle["/StudentEntry"] = requestHandlers.StudentEntry; //http://localhost:3000/StudentEntry
 handle["/GuestEntry"] = requestHandlers.GuestEntry; //http://localhost:3000/GuestEntry
 handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/FacultyEntry
+handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bookSearch
 handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
 
-//Only as sample. 
-handle["/ListData"] = requestHandlers.ListData; //http://localhost:3000/AdminEntry
-
-
+handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
+handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
 server.start(router.route, handle);

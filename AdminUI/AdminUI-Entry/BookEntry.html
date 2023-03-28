@@ -35,8 +35,10 @@
 		</style>
 	</head>
 	<body>
+
 		<h1>Book Entry Form</h1>
-		<form>
+		<form action="/addItem" method="post">
+			<input hidden name = "searchBy" value = "Book"></input>
 			<div style="overflow-x: auto;">
 				<table>
 					<thead>
@@ -49,11 +51,12 @@
 							<th>Dollar Value</th>
 							<th># of Copies</th>
 							<th>Genre</th>
+							<th>Published Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td><input type="text" name="ISBN"></td>
+							<td><input type="text" name="itemID"></td>
 							<td>
 								<select name="Language">
 								<option value="English">English</option>
@@ -63,11 +66,11 @@
 							</td>
 							<td><input type="text" name="Author"></td>
 							<td><input type="text" name="Publisher"></td>
-							<td><input type="text" name="BookTitle"></td>
-							<td><input type="text" name="DollarValue"></td>
-							<td><input type="number" name="NumCopies"></td>
+							<td><input type="text" name="itemName"></td>
+							<td><input type="number" name="DValue"></td>
+							<td><input type="number" name="NCopies"></td>
 							<td>
-								<select name="genre">
+								<select name="Genre">
 								<option value="Adventure">Adventure</option>
 								<option value="Action">Action</option>
 								<option value="Fantasy">Fantasy</option>
@@ -81,6 +84,7 @@
 								<option value="Supernatural">Supernatural</option>
 								</select>
 							</td>
+							<td><input type="date" name="PDate"></td>
 						</tr>
 					</tbody>
 				</table>
