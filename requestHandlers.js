@@ -106,8 +106,24 @@ function addItem(response, postData){
         req.input('Genre', sql.NVarChar, Genre);
         req.input('Availability', sql.Bit, Availability);
         req.input('Status', sql.NVarChar, Status);
-
-
+        function generateMediaID(){
+            const timestamp = new Date().getTime();
+            const randomNumber = Math.floor(Math.random() * 100000000)
+            const id = `${timestamp}${randomNumber}`;
+            const truncatedID = id.slice(-8);
+            return truncatedID.toString();
+        }
+        function generateObjectID(){
+            const timestamp = new Date().getTime();
+            const randomNumber = Math.floor(Math.random() * 1000000)
+            const id = `${timestamp}${randomNumber}`;
+            const truncatedID = id.slice(-6);
+            return truncatedID.toString();
+        }
+        var MID = generateMediaID();
+        var OID = generateObjectID();
+        req.input('MID', sql.NVarChar, MID);
+        req.input('OID', sql.NVarChar, OID);
         var failed = false;
         console.log("mode: " + mode);
         var queryStr = ""; 
@@ -129,7 +145,7 @@ function addItem(response, postData){
             });
               break;
             case 'Media':
-              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@MID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Media entry inserted into database.");
             }).catch(function(err) {
@@ -137,7 +153,7 @@ function addItem(response, postData){
             });
               break;
             case 'Object':
-              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@OID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
               req.query(queryStr).then(function(recordset) {
                 console.log("Object entry inserted into database.");
             }).catch(function(err) {
