@@ -149,7 +149,27 @@
     		default:
      		 contentDiv.innerHTML = "";
   }
-}
+}	
+
+		function checkUserStuname (form) {
+			if(form.Username.value.charAt(0) !== 'S' || form.Username.value.length !== 10) {
+				alert("Username must start with 'S' and contain 9 numbers to create a new student.");
+				return false;
+			} else {
+				form.submit();
+			}
+
+		}
+
+		function checkUserFacname (form) {
+			if(form.Username.value.charAt(0) !== 'F' || form.Username.value.length !== 10) {
+				alert("Username must start with 'F' and contain 9 numbers to create a new faculty.");
+				return false;
+			} else {
+				form.submit();
+			}
+
+		}
 
 		function SelectOptionEdit(){
 			var selectedOption = document.getElementById("TableSelectionEdit").value;

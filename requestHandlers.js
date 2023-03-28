@@ -1,13 +1,16 @@
 var fs = require('fs');
 var sql = require('mssql');
 var config = require('./db_connect');
-
+var querystring = require('querystring');
 var bcrypt = require('bcryptjs'); 
+
+var cons = require('consolidate');
+
+
 const { Console } = require('console');
 const { callbackify } = require('util');
 
 function loginverify(response, postData) {
-    var querystring = require('querystring');
     var params = querystring.parse(postData); 
     var username = params['Username'];
     var password = params['Password']; 
@@ -17,16 +20,33 @@ function loginverify(response, postData) {
         var req = new sql.Request();
         req.input('username', sql.NVarChar, username);
         req.input('password', sql.NVarChar, password);
-        req.query("SELECT HashedPassword FROM Login WHERE Username=@username").then(function(recordset) {
+        req.query("SELECT HashedPassword, TemporaryPassword FROM Login WHERE Username=@username").then(function(recordset) {
             if (recordset.recordsets[0].length > 0) {
                 var hash = recordset.recordsets[0][0].HashedPassword; 
-
+                var temp = recordset.recordsets[0][0].TemporaryPassword;
                 bcrypt.compare(password, hash, function(err, result) { 
                     if (result) {
                         // Passwords match, show a success message
                         console.log("success");
-                        response.writeHead(302, { "Location": "/search" });
-                        response.end();
+                        //sessionData.setLogginId(username)
+                        console.log("Temp =" + temp);
+                        if(temp) {
+                            cons.ejs('./changePassword.html',{username: username, oldpassword: password}, function(err, html){
+                                if(err) {
+                                    console.error('Error templating with EJS');
+                                    throw err;
+                                }
+                                response.write(html);
+                                response.end();
+                                //return;
+                            });
+
+                            //response.writeHead(302, {"Location": "/changePassword"})
+                        } else {
+                            response.writeHead(302, { "Location": "/search" });
+                            response.end();
+                        }
+                        console.log("response ended");
                     } else {
                         // Passwords do not match, show an error message
                         console.log("Failed");
@@ -44,6 +64,50 @@ function loginverify(response, postData) {
     }).catch(function(err) {
         console.log(err);
     });
+
+}
+
+function ListData(response, postData) {
+    data = [];
+    data.push({firstName: 'Lia', lastName: 'casey', DOB: '10-10-2040'});
+    data.push({firstName: 'John', lastName: 'Adams', DOB: '11-3-1940'});
+    data.push({firstName: 'Sam', lastName: 'Lucas', DOB: '4-24-1992'});
+    cons.ejs('./list_data.html',data, function(err, html){
+        if(err) {
+            console.error('Error templating with EJS');
+            throw err;
+        }
+        console.log('-------------- Generated html -----------');
+        console.log(html);
+        console.log('-----------------------------------------');
+        response.write(html);
+        response.end();
+    });
+    
+}
+
+function PasswordChanger(response, postData) {
+    var req = new sql.Request();
+    var params = querystring.parse(postData); 
+    var NewPassword = params['newPassword'];
+    var username = params["username"];
+    bcrypt.hash(NewPassword, 10, function(err, hash) {
+        if (err) {
+            console.log(err);
+        } else {
+            let cquery = "UPDATE Login SET HashedPassword = @hashedPassword, TemporaryPassword = 0 WHERE username = @username"
+            req.input('hashedPassword', sql.NVarChar, hash);
+            req.input('username', sql.NVarChar, username);
+            req.query(cquery).then(function(recordset) {
+                console.log("Password Changed");
+                response.writeHead(302, { "Location": "/login" });
+                response.end();
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
+    });
+
 }
 
 function login(response, postData) {
@@ -52,7 +116,6 @@ function login(response, postData) {
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(data);
     response.end();
-
 }
 
 function createUser(response, postData) {
@@ -66,23 +129,16 @@ function createUser(response, postData) {
 
 function generateUsername() {
     let username = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 9; i++) {
       username += Math.floor(Math.random() * 10);
     }
     return username;
-  }
+}
 
 function addLogin(response, postData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function() {
         var req = new sql.Request();
-        
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        var querystring = require('querystring');
         var params = querystring.parse(postData); 
         var Username = params['Username'];
         var FName = params['FName'];
@@ -104,6 +160,10 @@ function addLogin(response, postData) {
         var adminp = 0;
         if(adminPermission !== undefined) {
             adminp = 1;
+        }
+        if( mode === 'guest') {
+            Username = 'G' + generateUsername();
+            console.log("UserName: " + Username);
         }
         let firstChar = Username.charAt(0);
 
@@ -135,8 +195,10 @@ function addLogin(response, postData) {
             break;
           case 'F':
             if(mode === 'admin') {
-                req.query("SELECT Faculty_ID FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
+                req.query("SELECT Faculty_ID, FirstN, LastN FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
                     if (recordset.recordsets[0].length > 0) {
+                        req.input('fname', sql.NVarChar, FName);
+                        req.input('lname', sql.NVarChar, LName);
                         console.log("Faculty found: " + Username);
                         queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
                         callback();
@@ -180,7 +242,7 @@ function addLogin(response, postData) {
                     query = req.query("INSERT INTO Admin (Admin_ID, FirstN, MiddleN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
                     req.query(query).then(function(recordset) {
                         console.log("New admin user entry inserted into database.");
-                        
+
                     }).catch(function(err) {
                         Console.error("Insert into admin failed");
                         console.log(err);
@@ -189,11 +251,11 @@ function addLogin(response, postData) {
             }
 
             function insertLogin() {
-            let squery = "INSERT INTO Login (Username, HashedPassword,";
+            let squery = "INSERT INTO Login (Username, HashedPassword, TemporaryPassword,";
             switch(firstChar) {
-                case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, @Username)"; break;
-                case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, @Username)"; break;
-                case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, @Username)"; break;
+                case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
             }
             if(mode !== 'admin') {
                 bcrypt.hash(tempPassword, 10, function(err, hash) {
@@ -208,7 +270,18 @@ function addLogin(response, postData) {
                         }
                         req.input('hashedPassword', sql.NVarChar, hash);
                         req.query(squery).then(function(recordset) {
-                                console.log("New " + mode + " login entry inserted into database.");
+                            console.log("New " + mode + " login entry inserted into database.");
+                            if(mode === 'guest') {
+                                cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: Username}, function(err, html){
+                                    if(err) {
+                                        console.error('Error templating with EJS');
+                                        throw err;
+                                    }
+                                    response.end();
+                                });
+                                                            
+                            }
+
                         }).catch(function(err) {
                             console.log(err);
                         });
@@ -378,10 +451,19 @@ function StudentEntry(response){
 
 function GuestEntry(response){
     console.log("Request handler 'GuestEntry' was called.");
-    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/GuestEntry.html');
-    response.writeHead(200, { "Content-Type": "text/html" });
-    response.write(edata);
-    response.end();
+    cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: ''}, function(err, html){
+        if(err) {
+            console.error('Error templating with EJS');
+            throw err;
+        }
+        response.write(html);
+        response.end();
+    });
+
+    // var edata = fs.readFileSync('AdminUI/AdminUI-Entry/GuestEntry.html');
+    // response.writeHead(200, { "Content-Type": "text/html" });
+    // response.write(edata);
+    // response.end();
 }
 
 function FacultyEntry(response){
@@ -405,6 +487,7 @@ function AdminEntry(response){
 
 exports.login = login;
 exports.loginverify = loginverify;
+exports.PasswordChanger = PasswordChanger;
 
 exports.search = search;
 exports.adminUI = adminUI;
@@ -432,3 +515,6 @@ exports.FacultyEdit = FacultyEdit;
 
 exports.createUser = createUser;
 exports.addLogin = addLogin;
+
+//Remove below exports
+exports.ListData = ListData
