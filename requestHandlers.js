@@ -746,6 +746,50 @@ function DeleteBook(response, postData) {
         )
         })};
 
+function UpdateBook(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+        var bookISBN = data.ISBN;
+        var bookName = data.Book_Name;   
+        var bookDollarValue = data.Dollar_Value;
+        var Number_of_Copies = data.Number_of_Copies;
+        var bookAuthor = data.Author;
+        var bookGenre = data.Genre;
+        var bookLanguage = data.Language;
+        var bookPublisher = data.Publisher_Name;
+
+        
+
+        console.log("Book ISBN: " + bookISBN);
+        console.log("Book Name: " + bookName);
+        console.log("Book Dollar Value: " + bookDollarValue);
+        console.log("Number of Copies: " + Number_of_Copies);
+        console.log("Book Author: " + bookAuthor);
+        console.log("Book Genre: " + bookGenre);
+        console.log("Book Language: " + bookLanguage);
+        console.log("Book Publisher: " + bookPublisher);
+
+
+        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "' WHERE ISBN = '" + bookISBN + "';";
+        var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
+
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Book Modified");
+            response.end();}
+        )});
+
+
+
+    })}
 
 
 /*function searchresults(response, postData) {
@@ -785,6 +829,7 @@ exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
+exports.UpdateBook = UpdateBook;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;
