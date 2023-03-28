@@ -1,13 +1,16 @@
 var fs = require('fs');
 var sql = require('mssql');
 var config = require('./db_connect');
+var querystring = require('querystring');
+var bcrypt = require('bcryptjs'); 
 
-var bcrypt = require('bcryptjs'); //new
+var cons = require('consolidate');
+
+
 const { Console } = require('console');
 const { callbackify } = require('util');
 
 function loginverify(response, postData) {
-    var querystring = require('querystring');
     var params = querystring.parse(postData); 
     var username = params['Username'];
     var password = params['Password']; 
@@ -18,19 +21,33 @@ function loginverify(response, postData) {
         var req = new sql.Request();
         req.input('username', sql.NVarChar, username);
         req.input('password', sql.NVarChar, password);
-        req.query("SELECT HashedPassword FROM Login WHERE Username=@username").then(function(recordset) {
+        req.query("SELECT HashedPassword, TemporaryPassword FROM Login WHERE Username=@username").then(function(recordset) {
             if (recordset.recordsets[0].length > 0) {
-                // Username and password are correct, show a success message
-                //response.writeHead(200, { "Content-Type": "text/html" });
-                //response.write("<p>Login successful</p>");
-                var hash = recordset.recordsets[0][0].HashedPassword; // new
-
-                bcrypt.compare(password, hash, function(err, result) { //new
+                var hash = recordset.recordsets[0][0].HashedPassword; 
+                var temp = recordset.recordsets[0][0].TemporaryPassword;
+                bcrypt.compare(password, hash, function(err, result) { 
                     if (result) {
                         // Passwords match, show a success message
                         console.log("success");
-                        response.writeHead(302, { "Location": "/search" });
-                        response.end();
+                        //sessionData.setLogginId(username)
+                        console.log("Temp =" + temp);
+                        if(temp) {
+                            cons.ejs('./changePassword.html',{username: username, oldpassword: password}, function(err, html){
+                                if(err) {
+                                    console.error('Error templating with EJS');
+                                    throw err;
+                                }
+                                response.write(html);
+                                response.end();
+                                //return;
+                            });
+
+                            //response.writeHead(302, {"Location": "/changePassword"})
+                        } else {
+                            response.writeHead(302, { "Location": "/search" });
+                            response.end();
+                        }
+                        console.log("response ended");
                     } else {
                         // Passwords do not match, show an error message
                         console.log("Failed");
@@ -55,6 +72,50 @@ function loginverify(response, postData) {
     }).catch(function(err) {
         console.log(err);
     });
+
+}
+
+function ListData(response, postData) {
+    data = [];
+    data.push({firstName: 'Lia', lastName: 'casey', DOB: '10-10-2040'});
+    data.push({firstName: 'John', lastName: 'Adams', DOB: '11-3-1940'});
+    data.push({firstName: 'Sam', lastName: 'Lucas', DOB: '4-24-1992'});
+    cons.ejs('./list_data.html',data, function(err, html){
+        if(err) {
+            console.error('Error templating with EJS');
+            throw err;
+        }
+        console.log('-------------- Generated html -----------');
+        console.log(html);
+        console.log('-----------------------------------------');
+        response.write(html);
+        response.end();
+    });
+    
+}
+
+function PasswordChanger(response, postData) {
+    var req = new sql.Request();
+    var params = querystring.parse(postData); 
+    var NewPassword = params['newPassword'];
+    var username = params["username"];
+    bcrypt.hash(NewPassword, 10, function(err, hash) {
+        if (err) {
+            console.log(err);
+        } else {
+            let cquery = "UPDATE Login SET HashedPassword = @hashedPassword, TemporaryPassword = 0 WHERE username = @username"
+            req.input('hashedPassword', sql.NVarChar, hash);
+            req.input('username', sql.NVarChar, username);
+            req.query(cquery).then(function(recordset) {
+                console.log("Password Changed");
+                response.writeHead(302, { "Location": "/login" });
+                response.end();
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
+    });
+
 }
 
 function login(response, postData) {
@@ -63,7 +124,6 @@ function login(response, postData) {
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(data);
     response.end();
-
 }
 
 function createUser(response, postData) {
@@ -106,8 +166,24 @@ function addItem(response, postData){
         req.input('Genre', sql.NVarChar, Genre);
         req.input('Availability', sql.Bit, Availability);
         req.input('Status', sql.NVarChar, Status);
-
-
+        function generateMediaID(){
+            const timestamp = new Date().getTime();
+            const randomNumber = Math.floor(Math.random() * 100000000)
+            const id = `${timestamp}${randomNumber}`;
+            const truncatedID = id.slice(-8);
+            return truncatedID.toString();
+        }
+        function generateObjectID(){
+            const timestamp = new Date().getTime();
+            const randomNumber = Math.floor(Math.random() * 1000000)
+            const id = `${timestamp}${randomNumber}`;
+            const truncatedID = id.slice(-6);
+            return truncatedID.toString();
+        }
+        var MID = generateMediaID();
+        var OID = generateObjectID();
+        req.input('MID', sql.NVarChar, MID);
+        req.input('OID', sql.NVarChar, OID);
         var failed = false;
         console.log("mode: " + mode);
         var queryStr = ""; 
@@ -129,7 +205,7 @@ function addItem(response, postData){
             });
               break;
             case 'Media':
-              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@MID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Media entry inserted into database.");
             }).catch(function(err) {
@@ -137,7 +213,7 @@ function addItem(response, postData){
             });
               break;
             case 'Object':
-              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@OID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
               req.query(queryStr).then(function(recordset) {
                 console.log("Object entry inserted into database.");
             }).catch(function(err) {
@@ -153,18 +229,20 @@ function addItem(response, postData){
         });
     
 }
+
+function generateUsername() {
+    let username = '';
+    for (let i = 0; i < 9; i++) {
+      username += Math.floor(Math.random() * 10);
+    }
+    return username;
+}
+
 function addLogin(response, postData) {
     var conn = new sql.ConnectionPool(config);
     
     sql.connect(config).then(function() {
         var req = new sql.Request();
-        
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        var querystring = require('querystring');
         var params = querystring.parse(postData); 
         var Username = params['Username'];
         var FName = params['FName'];
@@ -180,7 +258,10 @@ function addLogin(response, postData) {
         if(adminPermission !== undefined) {
             adminp = 1;
         }
-        //console.log("admin permission: " + adminPermission);
+        if( mode === 'guest') {
+            Username = 'G' + generateUsername();
+            console.log("UserName: " + Username);
+        }
         let firstChar = Username.charAt(0);
 
         // if (adminPermission !== undefined) {
@@ -211,8 +292,10 @@ function addLogin(response, postData) {
             break;
           case 'F':
             if(mode === 'admin') {
-                req.query("SELECT Faculty_ID FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
+                req.query("SELECT Faculty_ID, FirstN, LastN FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
                     if (recordset.recordsets[0].length > 0) {
+                        req.input('fname', sql.NVarChar, FName);
+                        req.input('lname', sql.NVarChar, LName);
                         console.log("Faculty found: " + Username);
                         queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
                         callback();
@@ -257,7 +340,7 @@ function addLogin(response, postData) {
                     query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
                     req.query(query).then(function(recordset) {
                         console.log("New admin user entry inserted into database.");
-                        
+
                     }).catch(function(err) {
                         Console.error("Insert into admin failed");
                         console.log(err);
@@ -266,11 +349,11 @@ function addLogin(response, postData) {
             }
 
             function insertLogin() {
-            let squery = "INSERT INTO Login (Username, HashedPassword,";
+            let squery = "INSERT INTO Login (Username, HashedPassword, TemporaryPassword,";
             switch(firstChar) {
-                case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, @Username)"; break;
-                case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, @Username)"; break;
-                case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, @Username)"; break;
+                case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
             }
             if(mode !== 'admin') {
                 bcrypt.hash(tempPassword, 10, function(err, hash) {
@@ -290,7 +373,18 @@ function addLogin(response, postData) {
         //                req.query("INSERT INTO Login (Username, HashedPassword, StudentID, Faculty_ID, GuestID) VALUES (@username, @hashedPassword, @studentId, @facultyId, @guestId)").then(function(recordset) {
                         console.log("Query: " + squery);
                         req.query(squery).then(function(recordset) {
-                                console.log("New " + mode + " login entry inserted into database.");
+                            console.log("New " + mode + " login entry inserted into database.");
+                            if(mode === 'guest') {
+                                cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: Username}, function(err, html){
+                                    if(err) {
+                                        console.error('Error templating with EJS');
+                                        throw err;
+                                    }
+                                    response.end();
+                                });
+                                                            
+                            }
+
                         }).catch(function(err) {
                             console.log(err);
                         });
@@ -453,10 +547,19 @@ function StudentEntry(response){
 
 function GuestEntry(response){
     console.log("Request handler 'GuestEntry' was called.");
-    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/GuestEntry.html');
-    response.writeHead(200, { "Content-Type": "text/html" });
-    response.write(edata);
-    response.end();
+    cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: ''}, function(err, html){
+        if(err) {
+            console.error('Error templating with EJS');
+            throw err;
+        }
+        response.write(html);
+        response.end();
+    });
+
+    // var edata = fs.readFileSync('AdminUI/AdminUI-Entry/GuestEntry.html');
+    // response.writeHead(200, { "Content-Type": "text/html" });
+    // response.write(edata);
+    // response.end();
 }
 
 function FacultyEntry(response){
@@ -643,6 +746,50 @@ function DeleteBook(response, postData) {
         )
         })};
 
+function UpdateBook(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+        var bookISBN = data.ISBN;
+        var bookName = data.Book_Name;   
+        var bookDollarValue = data.Dollar_Value;
+        var Number_of_Copies = data.Number_of_Copies;
+        var bookAuthor = data.Author;
+        var bookGenre = data.Genre;
+        var bookLanguage = data.Language;
+        var bookPublisher = data.Publisher_Name;
+
+        
+
+        console.log("Book ISBN: " + bookISBN);
+        console.log("Book Name: " + bookName);
+        console.log("Book Dollar Value: " + bookDollarValue);
+        console.log("Number of Copies: " + Number_of_Copies);
+        console.log("Book Author: " + bookAuthor);
+        console.log("Book Genre: " + bookGenre);
+        console.log("Book Language: " + bookLanguage);
+        console.log("Book Publisher: " + bookPublisher);
+
+
+        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "' WHERE ISBN = '" + bookISBN + "';";
+        var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
+
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Book Modified");
+            response.end();}
+        )});
+
+
+
+    })}
 
 
 /*function searchresults(response, postData) {
@@ -660,6 +807,7 @@ function DeleteBook(response, postData) {
 
 exports.login = login;
 exports.loginverify = loginverify;
+exports.PasswordChanger = PasswordChanger;
 
 exports.search = search;
 exports.adminUI = adminUI;
@@ -681,6 +829,7 @@ exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
+exports.UpdateBook = UpdateBook;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;
