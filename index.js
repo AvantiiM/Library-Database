@@ -30,4 +30,5 @@ handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bo
 handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
+handle["/profile"] = requestHandlers.profile; //http://localhost:3000/profile
 server.start(router.route, handle);
