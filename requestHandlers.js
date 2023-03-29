@@ -14,6 +14,7 @@ function loginverify(response, postData) {
     var params = querystring.parse(postData); 
     var username = params['Username'];
     var password = params['Password']; 
+    var adminlogin = params['adminLogin'];
 //    var connect = fs.readFileSync('db_connect.js');
 
     var conn = new sql.ConnectionPool(config);
@@ -44,7 +45,11 @@ function loginverify(response, postData) {
 
                             //response.writeHead(302, {"Location": "/changePassword"})
                         } else {
-                            response.writeHead(302, { "Location": "/search" });
+                            if(adminlogin) {
+                                response.writeHead(302, { "Location": "/adminUI" });
+                            } else {
+                                response.writeHead(302, { "Location": "/search" });
+                            }
                             response.end();
                         }
                         console.log("response ended");
