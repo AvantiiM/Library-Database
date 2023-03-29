@@ -8,7 +8,7 @@ handle["/login"] = requestHandlers.login; //http://localhost:3000/login
 handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/PasswordChanger"] = requestHandlers.PasswordChanger; //http://localhost:3000/PasswordChanger
 
-handle["/search"] = requestHandlers.search; //http://localhost:3000/search
+//handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
 handle["/addLogin"] = requestHandlers.addLogin; //not an actual page
 handle["/adminUI"] = requestHandlers.adminUI; //http://localhost:3000/adminUI
