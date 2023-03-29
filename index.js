@@ -8,7 +8,7 @@ handle["/login"] = requestHandlers.login; //http://localhost:3000/login
 handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/PasswordChanger"] = requestHandlers.PasswordChanger; //http://localhost:3000/PasswordChanger
 
-//handle["/search"] = requestHandlers.search; //http://localhost:3000/search
+handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
 handle["/addLogin"] = requestHandlers.addLogin; //not an actual page
 handle["/adminUI"] = requestHandlers.adminUI; //http://localhost:3000/adminUI
@@ -37,4 +37,6 @@ handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/Admi
 
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
+handle["/profile"] = requestHandlers.profile; //http://localhost:3000/profile
+handle["/UpdateBook"] = requestHandlers.UpdateBook; //http://localhost:3000/BookUpdate
 server.start(router.route, handle);

@@ -31,33 +31,20 @@
 	</div>
 
 
-
 	<div class="tabcontent" id="datareports">
 		<h2>Data Reports Content Goes Here</h2>
 		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
 	</div>
 	<div class="tabcontent" id="datamodification">
 		<h2>Data Modification Content Goes Here</h2>
-		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+		<p>Please Select A table you would like to edit</p>
 		<div>
-			<select class="Drop-down" id="TableSelectionEdit" onchange="SelectOptionEdit()">
-				<option value="">Please select a table</option>
-				<option value="Transactions">Transactions</option>
-				<option value="Books">Books</option>
-				<option value="Electronics">Electronics</option>
-				<option value="Objects">Objects</option>
-				<option value="Media">Media</option>
-				<option value="Student">Student</option>
-				<option value="Faculty">Faculty</option>
-				<option value="Guest">Guest</option>
-				</select>
-				<div id="Editcontent"></div>
-				</div>
+			<button class="button" onclick="window.location.href='http://localhost:3000/BookEdit'">Book</button>
+
+			
+			</div>
 				
 	</div>
-
-
-
 
 
 	<script>
@@ -75,7 +62,6 @@
 			event.currentTarget.classList.add("active");
 			
 		}
-
 
 
 		function selectOption() {
@@ -149,28 +135,7 @@
     		default:
      		 contentDiv.innerHTML = "";
   }
-}	
-
-		function checkUserStuname (form) {
-			if(form.Username.value.charAt(0) !== 'S' || form.Username.value.length !== 10) {
-				alert("Username must start with 'S' and contain 9 numbers to create a new student.");
-				return false;
-			} else {
-				form.submit();
-			}
-
-		}
-
-		function checkUserFacname (form) {
-			if(form.Username.value.charAt(0) !== 'F' || form.Username.value.length !== 10) {
-				alert("Username must start with 'F' and contain 9 numbers to create a new faculty.");
-				return false;
-			} else {
-				form.submit();
-			}
-
-		}
-
+}
 		function SelectOptionEdit(){
 			var selectedOption = document.getElementById("TableSelectionEdit").value;
  			 var contentDiv = document.getElementById("Editcontent");
@@ -231,17 +196,8 @@
     		default:
      		 contentDiv.innerHTML = "";
   }
-
-
 }
-
-
-
-
-
 	</script>
-
-	
 </body>
 </html>
 
