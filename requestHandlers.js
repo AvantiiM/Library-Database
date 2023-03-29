@@ -658,7 +658,8 @@ try{
         // if the array is empty let the user know else build the query
         // this is the ultimate SELECT * query builder
         switch(counter){
-            case 0: console.log("No attributes entered, please enter at least one attribute to search for.");
+            case 0: console.log("No attributes entered, returning all books");
+            query = "SELECT * FROM dbo.Book;";
             break;
             case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
             query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + ";";
