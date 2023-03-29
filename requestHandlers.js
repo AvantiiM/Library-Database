@@ -75,25 +75,6 @@ function loginverify(response, postData) {
 
 }
 
-function ListData(response, postData) {
-    data = [];
-    data.push({firstName: 'Lia', lastName: 'casey', DOB: '10-10-2040'});
-    data.push({firstName: 'John', lastName: 'Adams', DOB: '11-3-1940'});
-    data.push({firstName: 'Sam', lastName: 'Lucas', DOB: '4-24-1992'});
-    cons.ejs('./list_data.html',data, function(err, html){
-        if(err) {
-            console.error('Error templating with EJS');
-            throw err;
-        }
-        console.log('-------------- Generated html -----------');
-        console.log(html);
-        console.log('-----------------------------------------');
-        response.write(html);
-        response.end();
-    });
-    
-}
-
 function PasswordChanger(response, postData) {
     var req = new sql.Request();
     var params = querystring.parse(postData); 
@@ -294,10 +275,12 @@ function addLogin(response, postData) {
             if(mode === 'admin') {
                 req.query("SELECT Faculty_ID, FirstN, LastN FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
                     if (recordset.recordsets[0].length > 0) {
-                        req.input('fname', sql.NVarChar, FName);
-                        req.input('lname', sql.NVarChar, LName);
+                        var FadminN = recordset.recordsets[0][0].FirstN; 
+                        var LadminN = recordset.recordsets[0][0].LastN;
+                        req.input('FadminN', sql.NVarChar, FadminN);
+                        req.input('LadminN', sql.NVarChar, LadminN);
                         console.log("Faculty found: " + Username);
-                        queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
+                        queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @email, 'F111122223', 'F111122223', getdate(), getdate())";
                         callback();
                     } else {
                         failed = true;
@@ -570,6 +553,14 @@ function FacultyEntry(response){
     response.end();
 }
 
+function AdminEntry(response){
+    console.log("Request handler 'AdminEntry' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/AdminEntry.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
 function SearchBooks(response, postData){
 
     sql.connect(config).then(function () {
@@ -819,6 +810,7 @@ exports.TransactionEntry = TransactionEntry;
 exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
 exports.FacultyEntry = FacultyEntry;
+exports.AdminEntry = AdminEntry;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
