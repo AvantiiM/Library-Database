@@ -40,7 +40,7 @@
 		<p>Please Select A table you would like to edit</p>
 		<div>
 			<button class="button" onclick="window.location.href='http://localhost:3000/BookEdit'">Book</button>
-
+			<button class="button" onclick="window.location.href='http://localhost:3000/ElectronicsEdit'">Electronics</button>
 			
 			</div>
 				
@@ -136,67 +136,7 @@
      		 contentDiv.innerHTML = "";
   }
 }
-		function SelectOptionEdit(){
-			var selectedOption = document.getElementById("TableSelectionEdit").value;
- 			 var contentDiv = document.getElementById("Editcontent");
-
-
-			  switch (selectedOption) {
-			 case "transactions":
-			contentDiv.innerHTML = "<h1>Option 2 Content</h1><p>This is the content for Transactions.</p>";
-   			 case "Books":
-				fetch("http://localhost:3000/BookEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Electronics":
-			fetch("http://localhost:3000/ElectronicsEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Objects":
-			fetch("http://localhost:3000/ObjectEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Media":
-			fetch("http://localhost:3000/MediaEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Student":
-			fetch("http://localhost:3000/StudentEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Faculty":
-			fetch("http://localhost:3000/FacultyEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Guest":
-			fetch("http://localhost:3000/GuestEdit")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-    		default:
-     		 contentDiv.innerHTML = "";
-  }
-}
+		
 	</script>
 </body>
 </html>
