@@ -166,8 +166,6 @@ function addItem(response, postData){
             const truncatedID = id.slice(-6);
             return truncatedID.toString();
         }
-        var MID = generateMediaID();
-        var OID = generateObjectID();
         req.input('MID', sql.NVarChar, MID);
         req.input('OID', sql.NVarChar, OID);
         var failed = false;
@@ -191,20 +189,44 @@ function addItem(response, postData){
             });
               break;
             case 'Media':
-              queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@MID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
-              req.query(queryStr).then(function(recordset) {
-                console.log("Media entry inserted into database.");
-            }).catch(function(err) {
-                console.log(err);
-            });
+                temp = true;
+                while(temp){
+                    var MID = generateMediaID();
+                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@MID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+                    req.query(queryStr).then(function(recordset) {
+                    console.log("Media entry inserted into database.");
+                    temp = false;
+                    }).catch(function(err) {
+                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'.")){
+                            console.log("Media ID already exists. Generating new ID...")
+                            temp = true;
+                        }
+                        else{
+                            temp = false;
+                            console.log(err);
+                        }
+                    });
+        }
               break;
             case 'Object':
-              queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@OID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
-              req.query(queryStr).then(function(recordset) {
-                console.log("Object entry inserted into database.");
-            }).catch(function(err) {
-                console.log(err);
-            });
+                temp = true;
+                while(temp){
+                    var OID = generateObjectID();
+                    queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@OID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+                    req.query(queryStr).then(function(recordset) {
+                        console.log("Object entry inserted into database.");
+                        temp = false;
+                    }).catch(function(err) {
+                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'.")){
+                            console.log("Object ID already exists. Generating new ID...")
+                            temp = true;
+                        }
+                        else{
+                            temp = false;
+                            console.log(err);
+                        }
+                    });
+                }
               break;
               
           }   
