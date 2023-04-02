@@ -166,7 +166,7 @@ function addItem(response, postData){
             const truncatedID = id.slice(-6);
             return truncatedID.toString();
         }
-        var MID = generateObjectID();
+        var MID = generateMediaID();
         var OID = generateObjectID();
         var failed = false;
         console.log("mode: " + mode);
@@ -179,6 +179,8 @@ function addItem(response, postData){
             }).catch(function(err) {
                 console.log(err);
             });
+            response.writeHead(302, { "Location": "/adminUI" });
+            response.end();
               break;
             case 'Book':
               queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
@@ -187,6 +189,8 @@ function addItem(response, postData){
             }).catch(function(err) {
                 console.log(err);
             });
+            response.writeHead(302, { "Location": "/adminUI" });
+            response.end();
               break;
             case 'Media':
                 function insertMediaQuery(req, tempMID){
@@ -198,7 +202,7 @@ function addItem(response, postData){
                     }).catch(function(err) {
                         if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'")){
                             console.log("Media ID already exists. Generating new ID...")  
-                            var newMID = generateObjectID();
+                            var newMID = generateMediaID();
                             return insertMediaQuery(req, newMID);               
                         }
                         else{
@@ -209,6 +213,8 @@ function addItem(response, postData){
                     return;
                 }
                 insertMediaQuery(req, MID);
+                response.writeHead(302, { "Location": "/adminUI" });
+                response.end();
               break;
             case 'Object':
                     function insertObjectQuery(req, tempOID){
@@ -216,17 +222,14 @@ function addItem(response, postData){
                         queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
                         req.query(queryStr).then(function(recordset) {
                             console.log("Object entry inserted into database.");
-                           // temp = false;
                            return;
                         }).catch(function(err) {
                             if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'")){
                                 console.log("Object ID already exists. Generating new ID...")
-                             //   temp = true;  
                                 var newOID = generateObjectID();
                                 return insertObjectQuery(req, newOID);               
                             }
                             else{
-                             //   temp = false;
                                 console.log(err);
                                 return;
                             }
@@ -234,6 +237,8 @@ function addItem(response, postData){
                         return;
                     }
                     insertObjectQuery(req, OID);
+                    response.writeHead(302, { "Location": "/adminUI" });
+                    response.end();
               break;
               
           }   
