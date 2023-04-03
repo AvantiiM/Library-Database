@@ -5,11 +5,11 @@
 </head>
 <body>
 	<div class="tabs">
-		<div class="tab active" onclick="openTab('datamanagement')">Data Entry</div>
+		<div class="tab active" onclick="openTab('datareports')">Data Reports</div>
+		<div class="tab" onclick="openTab('datamanagement')">Data Entry</div>
 		<div class="tab" onclick="openTab('datamodification')">Data Modification</div>
-		<div class="tab" onclick="openTab('datareports')">Data Reports</div>
 	</div>
-	<div class="tabcontent active" id="datamanagement">
+	<div class="tabcontent" id="datamanagement">
 		<h2>Data Management Content Goes Here</h2>
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mauris sed libero pharetra finibus in eget sapien. Donec tincidunt, nibh a eleifend fringilla, purus dolor facilisis est, eget dignissim eros mi eu urna.</p>
 
@@ -31,17 +31,26 @@
 	</div>
 
 
-	<div class="tabcontent" id="datareports">
+	<div class="tabcontent active" id="datareports">
 		<h2>Data Reports Content Goes Here</h2>
 		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
 	</div>
 	<div class="tabcontent" id="datamodification">
-		<h2>Data Modification Content Goes Here</h2>
+		<h2>Data Modification</h2>
 		<p>Please Select A table you would like to edit</p>
-		<div>
-			<button class="button" onclick="window.location.href='http://localhost:3000/BookEdit'">Book</button>
-			<button class="button" onclick="window.location.href='http://localhost:3000/ElectronicsEdit'">Electronics</button>
-			
+		<div class="EditButtons">
+			<button class="button" onclick="window.location.href='BookEdit'">Book</button>
+			<button class="button" onclick="window.location.href='ElectronicsEdit'">Electronics</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='ObjectEdit'">Object</button>
+			<button class="button" onclick="window.location.href='MediaEdit'">Media</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='StudentEdit'">Student</button>
+			<button class="button" onclick="window.location.href='GuestEdit'">Guest</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='FacultyEdit'">Faculty</button>
+			<button class="button" onclick="window.location.href='TransactionEdit'">Transactions</button>
+
 			</div>
 				
 	</div>
@@ -70,63 +79,63 @@
 
  			 switch (selectedOption) {
 			 case "Transactions":
-			 	fetch("http://localhost:3000/TransactionEntry")
+			 	fetch("TransactionEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
 			break;
    			 case "Books":
-				fetch("http://localhost:3000/BookEntry")
+				fetch("BookEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
      		 break;
     		case "Electronics":
-				fetch("http://localhost:3000/ElectronicsEntry")
+				fetch("ElectronicsEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
      		 break;
     		case "Objects":
-				fetch("http://localhost:3000/ObjectEntry")
+				fetch("ObjectEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
       		break;
 			case "Media":
-				fetch("http://localhost:3000/MediaEntry")
+				fetch("MediaEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
       		break;
 			case "Student":
-			fetch("http://localhost:3000/StudentEntry")
+			fetch("StudentEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
       		break;
 			case "Guest":
-			fetch("http://localhost:3000/GuestEntry")
+			fetch("GuestEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
       		break;
 			case "Faculty":
-			fetch("http://localhost:3000/FacultyEntry")
+			fetch("FacultyEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;
                 });
       		break;
 			case "Admin":
-			fetch("http://localhost:3000/AdminEntry")
+			fetch("AdminEntry")
                 .then(response => response.text())
                 .then(html => {
                     contentDiv.innerHTML = html;

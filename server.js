@@ -77,7 +77,9 @@ function start(route, handle) {
             contentType = "text/css";
           } else if (pathname.endsWith(".js")) {
             contentType = "text/javascript";
-          } else {
+          } else if (pathname.endsWith(".png")) {
+            contentType = 'image/png';
+          }else {
             contentType = "text/plain";
           }
           response.writeHead(200, {"Content-Type": contentType});

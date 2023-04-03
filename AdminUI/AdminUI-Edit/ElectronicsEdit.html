@@ -161,7 +161,7 @@
 
 			
 
-  		xhr.open('POST', 'http://localhost:3000/SearchElectronics');
+  		xhr.open('POST', 'SearchElectronics');
   		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.send(new URLSearchParams(formData).toString());
 
@@ -288,13 +288,13 @@
 								}
 
 						const xhr = new XMLHttpRequest();
-						xhr.open("POST", "http://localhost:3000/UpdateElectronics");
+						xhr.open("POST", "UpdateElectronics");
 						xhr.setRequestHeader("Content-Type", "application/json");
 						xhr.send(new URLSearchParams(data).toString());
 						xhr.onload = function () {
 							// update the table values
 							if (xhr.status === 200) {
-							alert("Electronic updated successfully");
+							alert("Electronic updated successfully please refresh the page to see the changes");
 							for (let i = 0; i < cells.length; i++) {
 								// const cell = cells[i];
 								// const columnName = cell.getAttribute("data-column-name");
@@ -325,12 +325,12 @@
 							const deleteSerialNo = deleteButton.getAttribute("data-SerialNo");
 							const data = { deleteElectronicSerialNo: deleteSerialNo };
 							console.log(data);
-							xhr.open("DELETE", `http://localhost:3000/DeleteElectronics`);
+							xhr.open("DELETE", `DeleteElectronics`);
 							xhr.setRequestHeader("Content-Type", "application/json");
 							xhr.send(new URLSearchParams(data).toString());
 							xhr.onload = function() {
 								if (xhr.status === 200) {
-									alert("Electronic deleted successfully");
+									alert("Electronic deleted successfully please refresh the page to see the changes");
 								} else {
 									console.log("Error deleting book");
 								}

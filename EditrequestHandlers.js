@@ -4,6 +4,12 @@ var config = require('./db_connect');
 var querystring = require('querystring');
 
 
+
+
+
+// Electronics ####################################################################################################################
+
+
 function SearchElectronics(response, postData){
 
     sql.connect(config).then(function () {
@@ -200,6 +206,196 @@ function UpdateElectronics(response, postData){
     })}
 
 
+// Objects ####################################################################################################################
+
+
+
+
+function SearchObjects(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var ObjectName = params['ObjectName'];
+        var ObjectID = params['ObjectID'];
+        var dollarvalue = params['dollarValue'];
+        var numOfCopies = params['numOfCopies'];
+        var Created_BY = params['createdBy'];
+        var Created_date = params['createdDate'];
+        var Updated_BY = params['updatedBy'];
+        var Updated_date = params['lastUpdated'];
+
+
+
+        // string query to hold the SQL query
+        var query = null;
+        // counter for the # of attributes
+        var counter = 0;
+        // array to hold the attributes
+        let StringArray = [];
+
+        // if the attribute is not empty, add it to the array
+
+        if(ObjectName != undefined && ObjectName != ""){
+            var Electronicstring = "Object_Name = '" + ObjectName + "'";
+            StringArray.push(Electronicstring);
+            counter++;
+        }
+        if(dollarvalue != undefined && dollarvalue != ""){
+            vardollarstring = "Dollar_Value = " + dollarvalue;
+            StringArray.push(vardollarstring);
+            counter++;
+        }
+        if(ObjectID != undefined && ObjectID != ""){
+            var ObjectIDstring = "Object_ID = " + ObjectID;
+            StringArray.push(ObjectIDstring);
+            counter++;
+        }
+        if(numOfCopies != undefined && numOfCopies != ""){
+            varnumOfCopiesstring = "Number_Of_Copies = " + numOfCopies;
+            StringArray.push(varnumOfCopiesstring);
+            counter++;
+        }
+        if(Created_BY != undefined && Created_BY != ""){
+            varcreatedbystring = "Created_By = '" + Created_BY + "'";
+            StringArray.push(varcreatedbystring);
+            counter++;
+        }
+        if(Created_date != undefined && Created_date != ""){
+            varcreateddatestring = "Created_Date = '" + Created_date + "'";
+            StringArray.push(varcreateddatestring);
+            counter++;
+        }
+        if(Updated_BY != undefined && Updated_BY  != ""){
+            varupdatedbystring = "Updated_By = '" + Updated_BY + "'";
+            StringArray.push(varupdatedbystring);
+            counter++;
+        }
+        if(Updated_date != undefined && Updated_date != ""){
+            varupdateddatestring = "Updated_Date = '" + Updated_date + "'";
+            StringArray.push(varupdateddatestring);
+            counter++;
+        }
+        // if the array is empty let the user know else build the query
+        // this is the ultimate SELECT * query builder
+        switch(counter){
+            case 0: console.log("No attributes entered, returning all Objects");
+            query = "SELECT * FROM dbo.Object;";
+            break;
+            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + ";";
+            break;
+            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+            break;
+            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+            break;
+            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+            break;
+            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+            break;
+            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+            break;
+            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+            break;
+            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+            query = "SELECT * FROM dbo.Object WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+            break;
+
+        }
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+    response.write("Error");
+}})};
+
+
+
+function DeleteObjects(response, postData) {
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+        var ObjectsDelete = data.deleteObjectID;
+        var query = "DELETE FROM dbo.Object WHERE Object_ID = '" + ObjectsDelete + "';";
+        console.log(query);
+        req.query(query).then(function(recordset) {
+            console.log("a tuple in the Object table will be deleted from the database.");
+            response.write("Object deleted");
+            response.end();}
+        )
+        })};
+
+function UpdateObjects(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+
+        var ObjectIDstring = data.Object_ID;
+        var Object_Name = data.Object_Name;   
+        var ObjectDollar_Value = data.Dollar_Value;
+        var Object_num_of_items = data.Num_of_Copies;
+        
+      
+        
+
+        console.log("Serial_No: " + ObjectIDstring );
+        console.log("Object_Name: " + Object_Name);
+        console.log("Dollar_Value: " + ObjectDollar_Value);
+        console.log("Number of items: " + Object_num_of_items);
+
+      
+
+
+
+        var query = "UPDATE dbo.Object SET Object_Name = '" + Object_Name + "', Dollar_Value = '" + ObjectDollar_Value  + "', Num_Of_Copies = '" + Object_num_of_items  + "' WHERE Object_ID = '" + ObjectIDstring + "';";
+        var secondquery = "UPDATE dbo.Object SET Object_ID = '" + ObjectIDstring  + "' WHERE Object_Name = '" + Object_Name + "' AND Dollar_Value = '" + ObjectDollar_Value + "' AND Num_Of_Copies = '" + Object_num_of_items + "';";
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Object Modified");
+            response.end();}
+        )});
+
+
+
+    })}
 
 
 
@@ -209,13 +405,10 @@ function UpdateElectronics(response, postData){
 
 
 
-
-
-
-
-
-
-
+// Exports ####################################################################################################################
 exports.SearchElectronics = SearchElectronics;
 exports.DeleteElectronics = DeleteElectronics;
 exports.UpdateElectronics = UpdateElectronics;
+exports.SearchObjects = SearchObjects;
+exports.DeleteObjects = DeleteObjects;
+exports.UpdateObjects = UpdateObjects;

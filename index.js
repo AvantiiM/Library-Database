@@ -44,4 +44,10 @@ handle["/UpdateBook"] = requestHandlers.UpdateBook; //http://localhost:3000/Book
 handle["/SearchElectronics"] = EditrequestHandlers.SearchElectronics; //http://localhost:3000/ElectronicsUpdate
 handle["/UpdateElectronics"] = EditrequestHandlers.UpdateElectronics; //http://localhost:3000/ElectronicsUpdate
 handle["/DeleteElectronics"] = EditrequestHandlers.DeleteElectronics; //http://localhost:3000/DeleteElectronics
+
+handle["/SearchObjects"] = EditrequestHandlers.SearchObjects; //http://localhost:3000/SearchObjects
+handle["/UpdateObjects"] = EditrequestHandlers.UpdateObjects; //http://localhost:3000/UpdateObjects
+handle["/DeleteObjects"] = EditrequestHandlers.DeleteObjects; //http://localhost:3000/DeleteObjects
+
+
 server.start(router.route, handle);

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Book Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'SearchObjects');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("ObjectBody");	
+
+
+				responseData.forEach(Object => {
+					console.log(Object);
+					const row = table.insertRow();
+					const ObjectID = row.insertCell();
+					ObjectID.innerText = Object.Object_ID;
+					const ObjectName = row.insertCell();
+					ObjectName.innerText = Object.Object_Name;
+					const dollarValue = row.insertCell();
+					dollarValue.innerText = Object.Dollar_Value;
+					const numOfCopies = row.insertCell();
+					numOfCopies.innerText = Object.Num_of_Copies;
+					const createdBy = row.insertCell();
+					createdBy.innerText = Object.Created_BY;
+					const createdDate = row.insertCell();
+					createdDate.innerText = Object.Created_date;
+					const updatedBy = row.insertCell();
+					updatedBy.innerText = Object.Updated_BY;
+					const lastUpdated = row.insertCell();
+					lastUpdated.innerText = Object.Last_Updated;
+
+
+
+					// Create the cell for the edit and delete buttons
+					const actionsCell = row.insertCell();
+
+					// Create the edit button
+					const editButton = document.createElement("button");
+					editButton.innerText = "Edit";
+					editButton.className = "edit-btn"
+					editButton.addEventListener("click", () => {
+
+					// Handle the edit button click event
+						const row = editButton.parentNode.parentNode;
+						const cells = row.querySelectorAll("td");
+						const columnNames = ["Object_ID", "Object_Name", "Dollar_Value", "Num_of_Copies"];
+						let inputId = [];
+						let inputfield = [];
+						for (let i = 0; i < (cells.length - 5); i++) {
+							const cell = cells[i];
+							const value = cell.innerText;
+							const columnName = columnNames[i];
+							inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+							inputfield[i] = document.createElement("input");
+							inputfield[i].setAttribute("id", inputId[i]);
+							inputfield[i].setAttribute("type", "text");
+							inputfield[i].setAttribute("value", value);
+							cell.innerHTML = inputfield[i].getAttribute("value");
+							cell.appendChild(inputfield[i]);
+						}
+												
+						
+									const EditInputtwo = []
+									for (let i = 0; i < (cells.length - 5); i++) {
+									EditInputtwo[i] = document.querySelector(`#${inputId[i]}`);
+									EditInputtwo[i].addEventListener("change", (event) => {
+										const newValue = event.target.value;
+										console.log(newValue);
+										EditInputtwo[i].setAttribute("value", newValue);
+										
+									});}
+
+
+
+							// Change the edit button to a save button
+							editButton.innerText = "Save";
+							editButton.className = "save-btn";
+
+							// Handle the save button click event
+							editButton.removeEventListener("click", arguments.callee);
+							editButton.addEventListener("click", () => {
+								;
+								const data = {};
+								// Get the values from the input fields
+								for (let i = 0; i < cells.length - 5; i++) {
+
+									const columnName = columnNames[i];
+
+
+									
+
+
+
+									// inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+
+
+									// let cellsforinput = row.querySelector(`#${inputId[i]}`);
+									//const cell = cellsforinput;
+									//console.log(cell.innerText);
+									// const value = cellsforinput.innerText;
+									// console.log(value);
+									// inputfield[i].setAttribute("value", value);
+									
+
+								
+								let updatedinputfield = inputfield[i].getAttribute("value")
+								console.log(updatedinputfield);
+								data[columnName] = updatedinputfield;
+								//console.log(data[columnName])
+								}
+
+						const xhr = new XMLHttpRequest();
+						xhr.open("POST", "UpdateObjects");
+						xhr.setRequestHeader("Content-Type", "application/json");
+						xhr.send(new URLSearchParams(data).toString());
+						xhr.onload = function () {
+							// update the table values
+							if (xhr.status === 200) {
+							alert("Object updated successfully please refresh the page to see the changes");
+							for (let i = 0; i < cells.length; i++) {
+								// const cell = cells[i];
+								// const columnName = cell.getAttribute("data-column-name");
+								// const value = data[columnName];
+								// cell.innerText = value;
+							}
+							editButton.innerText = "Saved";
+							editButton.className = "edit-btn";
+							}
+						};
+						});
+
+
+
+					});
+					actionsCell.appendChild(editButton);
+
+					// Create the delete button
+					const deleteButton = document.createElement("button");
+					deleteButton.innerText = "Delete";
+					deleteButton.className = "delete-btn";
+					deleteButton.setAttribute("data-Object_ID", Object.Object_ID);
+					deleteButton.addEventListener("click", () => {
+						// prompting the user for confirmation and send a DELETE request to the server
+						const confirmation = confirm("Are you sure you want to delete this Object?");
+						if(confirmation){
+						// Handle the delete button click event
+							const deleteObject = deleteButton.getAttribute("data-Object_ID");
+							const data = { deleteObjectID: deleteObject  };
+							console.log(data);
+							xhr.open("DELETE", `DeleteObjects`);
+							xhr.setRequestHeader("Content-Type", "application/json");
+							xhr.send(new URLSearchParams(data).toString());
+							xhr.onload = function() {
+								if (xhr.status === 200) {
+									alert("Object deleted successfully please refresh the page to see the changes");
+								} else {
+									console.log("Error deleting Object");
+								}
+							};
+							
+						
+						
+						}
+						
+
+					});
+					actionsCell.appendChild(deleteButton);
+
+
+
+
+
+
+					table.appendChild(row);
+					});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
+</head>
+<body>
+	
+
+	<h1>Objects Search</h1>
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+	<!-- <form action="/SearchBooks" method="post"> -->
+		<div class="form-group">
+			<label for="ObjectName">Object Name:</label>
+			<input type="text" id="ObjectNameInput" name="ObjectName" placeholder="Enter Object name...">
+		</div>
+		<div class="form-group">
+			<label for="dollarValue">Dollar Value:</label>
+			<input type="text" id="dollarValue" name="dollarValue" placeholder="Enter dollar value...">
+		</div>
+		<div class="form-group">
+			<label for="numOfCopies">Number of items:</label>
+			<input type="text" id="numOfCopies" name="numOfCopies" placeholder="Enter number of items...">
+		</div>
+		<div class="form-group">
+			<label for="ObjectID">Object ID:</label>
+			<input type="text" id="ObjectID" name="ObjectID" placeholder="Enter Object id...">
+		</div>
+		<div class="form-group">
+			<label for="createdBy">Created By:</label>
+			<input type="text" id="createdBy" name="createdBy" placeholder="Enter created by...">
+		</div>
+		<div class="form-group">
+			<label for="createdDate">Created Date:</label>
+			<input type="text" id="createdDate" name="createdDate" placeholder="Enter created date...">
+		</div>
+		<div class="form-group">
+			<label for="updatedBy">Updated By:</label>
+			<input type="text" id="updatedBy" name="updatedBy" placeholder="Enter updated by...">
+		</div>
+		<div class="form-group">
+			<label for="lastUpdated">Last Updated:</label>
+			<input type="text" id="lastUpdated" name="lastUpdated" placeholder="Enter last updated...">
+		</div>
+		<input type="submit" value="Search">
+	</form>
+	<table id="ObjectTable">
+		<thead>
+			<tr>
+				<th>Object ID</th>
+				<th>Object Name</th>
+				<th>Dollar Value</th>
+				<th>Number of Copies</th>
+				<th>Created By</th>
+				<th>Created Date</th>
+				<th>Updated By</th>
+				<th>Last Updated</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody id="ObjectBody">
+		</tbody>
+	</table>
+
+
+</body>
+</html>
