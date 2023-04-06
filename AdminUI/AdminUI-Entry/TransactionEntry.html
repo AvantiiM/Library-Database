@@ -7,7 +7,6 @@
                 border-collapse: collapse;
                 border: 2px solid #75443c;
                 width: 50%;
-    
             }
     
             th, td {
@@ -32,7 +31,6 @@
                 color: black;
                 border: 1px #ecc8af;
             }
-
             .oldReservation {
                 display: none;
             }
@@ -52,190 +50,331 @@
         <br><br><br><br>
 
         <div class="newTransaction">
-            <form action="/addItem" method="post">
-                <input type="submit" value="Submit"><br><br>
+            <input hidden name = "searchBy" value = "Transaction"></input>
+            <form action="/insertTransaction" method="post" form="transactionEntryForm">
+                <input type="submit" value="Submit" form="transactionEntryForm"><br><br>
                 <label for="BID">Borrower ID:</label><br>            
                 <input type="text" id="BID" name="BID" placeholder="Enter Borrower's ID..."><br><br>
-
-                <!-- This is the table for borrowing a book -->
-                <button type="button" onclick="addItem()">Add Book</button>
-                <button type="button" onclick="deleteItem()">Remove Book</button>
-                <input hidden name = "searchBy" value = "Transaction"></input>
                 <div style="overflow-x: auto;">
-                    <label for="cellOne">ISBN: </label>
-                    <input type='text' id='cellOne' />
-                    <label for="cellTwo">Title: </label>
-                    <input type='text' id='cellTwo' />
-                    <table id="myTable">
+                    <table id="itemTable">
                         <thead>
                             <tr>
-                                <th>ISBN</th>
-                                <th>Title</th>
-                                <!-- <th>Creation Date</th>
-                                <th>Pick Up Date</th>
-                                <th>Expiration Date</th> -->
+                                <th>Item ID</th>
+                                <th>Item Type</th>
+                                <th>Item Name</th>
+                                <th>Dollar Value</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                                <!-- <td><input type="date" name="Creation Date"></td>
-                                <td><input type="date" name="PickDate"></td>
-                                <td><input type="date" name="Expiration Date"></td> -->
+                        <tbody id="itemTableBody">
                         </tbody>
                     </table>
                 </div>
-                <br><br>
-
-                <!-- This is the table for borrowing an electronic -->
-                <button type="button" onclick="addItem()">Add Device</button>
-                <button type="button" onclick="deleteItem()">Remove Device</button>
-                <input hidden name = "searchBy" value = "Transaction"></input>
-                <div style="overflow-x: auto;">
-                    <label for="cellOne">Serial No: </label>
-                    <input type='text' id='cellOne' />
-                    <label for="cellTwo">Name: </label>
-                    <input type='text' id='cellTwo' />
-                    <table id="myTable">
-                        <thead>
-                            <tr>
-                                <th>Serial No</th>
-                                <th>Name</th>
-                                <!-- <th>Creation Date</th>
-                                <th>Pick Up Date</th>
-                                <th>Expiration Date</th> -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <!-- <td><input type="date" name="Creation Date"></td>
-                                <td><input type="date" name="PickDate"></td>
-                                <td><input type="date" name="Expiration Date"></td> -->
-                        </tbody>
-                    </table>
-                </div>
-                <br><br>
-
-                <!-- This is the table for borrowing Media -->
-                <button type="button" onclick="addItem()">Add Media</button>
-                <button type="button" onclick="deleteItem()">Remove Media</button>
-                <input hidden name = "searchBy" value = "Transaction"></input>
-                <div style="overflow-x: auto;">
-                    <label for="cellOne">Media ID: </label>
-                    <input type='text' id='cellOne' />
-                    <label for="cellTwo">Title: </label>
-                    <input type='text' id='cellTwo' />
-                    <table id="myTable">
-                        <thead>
-                            <tr>
-                                <th>Media ID</th>
-                                <th>Title</th>
-                                <!-- <th>Creation Date</th>
-                                <th>Pick Up Date</th>
-                                <th>Expiration Date</th> -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <!-- <td><input type="date" name="Creation Date"></td>
-                                <td><input type="date" name="PickDate"></td>
-                                <td><input type="date" name="Expiration Date"></td> -->
-                        </tbody>
-                    </table>
-                </div>
-                <br><br>
-
-                <!-- This is the table for borrowing an object -->
-                <button type="button" onclick="addItem()">Add Object</button>
-                <button type="button" onclick="deleteItem()">Remove Object</button>
-                <input hidden name = "searchBy" value = "Transaction"></input>
-                <div style="overflow-x: auto;">
-                    <label for="cellOne">Object ID: </label>
-                    <input type='text' id='cellOne' />
-                    <label for="cellTwo">Description: </label>
-                    <input type='text' id='cellTwo' />
-                    <table id="myTable">
-                        <thead>
-                            <tr>
-                                <th>Object ID</th>
-                                <th>Description</th>
-                                <!-- <th>Creation Date</th>
-                                <th>Pick Up Date</th>
-                                <th>Expiration Date</th> -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <!-- <td><input type="date" name="Creation Date"></td>
-                                <td><input type="date" name="PickDate"></td>
-                                <td><input type="date" name="Expiration Date"></td> -->
-                        </tbody>
-                    </table>
-                </div>
-
             </form>
+            <br><br>
+
+            <!-- This is the table for borrowing a book -->
+            <div style="overflow-x: auto;">
+                <form onsubmit="ModificationManager(event)" method="post" id="bookSearchForm">
+                    <label for="isbn">ISBN:</label>
+                    <input type="text" id="isbn" name="isbn" placeholder="Enter ISBN...">
+                    <label for="bookName">Book Name:</label>
+                    <input type="text" id="bookNameInput" name="bookName" placeholder="Enter book name...">
+                    <input type="submit" value="Search" form="bookSearchForm">
+                </form>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="BookTable">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Book Name</th>
+                            <th>Dollar Value</th>
+                            <th>Number of Copies</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Language</th>
+                            <th>Publisher Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="BookTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <br><br>
+
+            <!-- This is the table for borrowing an electronic -->
+            <form onsubmit="eSearchManager(event)" method="post" id="electronicSearchForm">
+                        <label for="ElectronicName">Electronic Name:</label>
+                        <input type="text" id="bookNameInput" name="bookName" placeholder="Enter book name...">
+                        <label for="dollarValue">Dollar Value:</label>
+                        <input type="text" id="dollarValue" name="dollarValue" placeholder="Enter dollar value...">
+                        <label for="Availability">Availability:</label>
+                        <input type="text" id="numOfCopies" name="numOfCopies" placeholder="Enter number of copies...">
+                        <label for="itemStatus">Item Status:</label>
+                        <input type="text" id="author" name="author" placeholder="Enter author...">
+                        <label for="SerialNumber">Serial No:</label>
+                        <input type="text" id="isbn" name="isbn" placeholder="Enter ISBN...">
+                    <input type="submit" value="Search" form="electronicSearchForm">
+            </form>
+            <div style="overflow-x: auto;">
+                <table id="ElectronicsTable">
+                    <thead>
+                        <tr>
+                            <th>SerialNumber</th>
+                            <th>Electronic Name</th>
+                            <th>Dollar Value</th>
+                            <th>availability</th>
+                            <th>Item Status</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Updated By</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ElectronicsBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- This is the table for borrowing Media -->
+
+            <!-- This is the table for borrowing an object -->
+
+            
         </div>
 
         <div class="oldReservation">
-            <form action="/addItem" method="post">
-                <input type="submit" value="Submit"><br><br>
+            <!-- <form action="/addItem" method="post" form="searchReservations">
+                <input type="submit" value="Submit" form="searchReservations"><br><br>
                 <label for="BID">Borrower ID:</label><br>            
                 <input type="text" id="BID" name="BID" placeholder="Enter Reserver's ID..."><br><br>
-            </form>
+            </form> -->
         </div>
 
         <script>
-        function addItem() {
-        var table = document.getElementById("myTable");
-        var row = table.insertRow(1);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        cell1.innerHTML = document.getElementById('cellOne').value;
-        cell2.innerHTML = document.getElementById('cellTwo').value;
-        }
+            // Hide all elements that create a transaction from scratch...
+            // ...reveal all elements that create a transaction from a reservation!
+            function pullReservation() {
+                var x = document.getElementsByClassName("newTransaction");
+                var y = document.getElementsByClassName("oldReservation");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                for (var i = 0; i < y.length; i++) {
+                    y[i].style.display = "block";
+                }
+            }
 
-        function deleteItem() {
-        var table = document.getElementById("myTable");
-        var row = table.deleteRow(1);
-        }
-
-        function pullReservation() {
-            var x = document.getElementsByClassName("newTransaction");
-            var y = document.getElementsByClassName("oldReservation");
-            for (var i = 0; i < x.length; i++) {
-                x[i].style.display = "none";
+            // Vice versa
+            function createTransaction() {
+                var x = document.getElementsByClassName("newTransaction");
+                var y = document.getElementsByClassName("oldReservation");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "block";
+                }
+                for (var i = 0; i < y.length; i++) {
+                    y[i].style.display = "none";
+                }
             }
-            for (var i = 0; i < y.length; i++) {
-                y[i].style.display = "block";
-            }
-        }
-
-        function createTransaction() {
-            var x = document.getElementsByClassName("newTransaction");
-            var y = document.getElementsByClassName("oldReservation");
-            for (var i = 0; i < x.length; i++) {
-                x[i].style.display = "block";
-            }
-            for (var i = 0; i < y.length; i++) {
-                y[i].style.display = "none";
-            }
-        }
         </script>
+
+        <!-- This function adds an item from its respective table into the table for transactions -->
+        <script type="text/javascript">
+            function addToTransaction(item_ID, item_Type, item_Name, dollar_Value) {
+                const table = document.getElementById("itemTableBody");
+                const row = table.insertRow();
+                const itemID = row.insertCell();
+                itemID.innerText = item_ID.innerText;
+                const itemType = row.insertCell();
+                itemType.innerText = item_Type;
+                const itemName = row.insertCell();
+                itemName.innerText = item_Name.innerText;
+                const dollarValue = row.insertCell();
+                dollarValue.innerText = dollar_Value.innerText;
+
+                const actionsCell = row.insertCell();
+                const removeButton = document.createElement("button");
+                removeButton.innerText = "Remove";
+                removeButton.className = "Remove-btn"
+                removeButton.addEventListener("click", () => {
+                    const row = removeButton.parentNode.parentNode;
+                    document.getElementById("itemTableBody").deleteRow(row);
+                });
+                actionsCell.appendChild(removeButton);
+                table.appendChild(row);
+            }
+        </script>
+
+        <!-- Kian's book search script slightly modified -->
+        <script type="text/javascript">
+            function ModificationManager(event) {
+                event.preventDefault(); // prevent the default form submission behavior
+    
+                const form = document.getElementById('bookSearchForm');
+                const formData = new FormData(form);
+                
+                const xhr = new XMLHttpRequest();
+    
+                xhr.open('POST', 'http://localhost:3000/SearchBooks');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(new URLSearchParams(formData).toString());
+    
+                xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Form submission successful!');
+                    let responseData = [];
+                    responseData = JSON.parse(xhr.responseText);
+                    console.log(responseData);
+    
+                    const table = document.getElementById("BookTableBody");	
+                    
+                    responseData.forEach(book => {
+                        console.log(book);
+                        const row = table.insertRow();
+                        const isbn = row.insertCell();
+                        isbn.innerText = book.ISBN;
+                        const bookName = row.insertCell();
+                        bookName.innerText = book.Book_Name;
+                        const dollarValue = row.insertCell();
+                        dollarValue.innerText = book.Dollar_Value;
+                        const numOfCopies = row.insertCell();
+                        numOfCopies.innerText = book.Num_of_Copies;
+                        const author = row.insertCell();
+                        author.innerText = book.Author;
+                        const genre = row.insertCell();
+                        genre.innerText = book.Genre;
+                        const language = row.insertCell();
+                        language.innerText = book.Language;
+                        const publisherName = row.insertCell();
+                        publisherName.innerText = book.Publisher_Name;
+
+                        const actionsCell = row.insertCell();
+    
+                        const addButton = document.createElement("button");
+                        addButton.innerText = "Add";
+                        addButton.className = "Add-btn"
+                        addButton.addEventListener("click", () => {
+                            const row = addButton.parentNode.parentNode;
+                            const cells = row.querySelectorAll("td");
+                            addToTransaction(cells[0], "Book", cells[1], cells[2]);
+                        });
+                        actionsCell.appendChild(addButton);
+                        table.appendChild(row);
+                        }); 
+                } else {
+                    console.error('Form submission failed.');
+                }
+                };
+            }
+        </script>
+
+        <script type="text/javascript">
+            function eSearchManager(event) {
+                event.preventDefault(); // prevent the default form submission behavior
+
+                const form = document.getElementById('electronicSearchForm');
+                const formData = new FormData(form);
+                const xhr = new XMLHttpRequest();
+
+                xhr.open('POST', 'SearchElectronics');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(new URLSearchParams(formData).toString());
+
+                xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Form submission successful!');
+                    let responseData = [];
+                    responseData = JSON.parse(xhr.responseText);
+                    console.log(responseData);
+                    const table = document.getElementById("ElectronicsBody");	
+                    
+                    responseData.forEach(Electonics => {
+                        console.log(Electonics);
+                        const row = table.insertRow();
+                        const SerialNumber = row.insertCell();
+                        SerialNumber.innerText = Electonics.Serial_No;
+                        const ElectonicName = row.insertCell();
+                        ElectonicName.innerText = Electonics.Electronics_Name;
+                        const dollarValue = row.insertCell();
+                        dollarValue.innerText = Electonics.Dollar_Value;
+                        const Availability = row.insertCell();
+                        Availability.innerText = Electonics.Available;
+                        const ItemStatus = row.insertCell();
+                        ItemStatus.innerText = Electonics.Item_Status;
+                        const createdBy = row.insertCell();
+                        createdBy.innerText = Electonics.Created_By;
+                        const createdDate = row.insertCell();
+                        createdDate.innerText = Electonics.Created_Date;
+                        const updatedBy = row.insertCell();
+                        updatedBy.innerText = Electonics.Last_Updated_By;
+                        const lastUpdated = row.insertCell();
+                        lastUpdated.innerText = Electonics.Last_Updated;
+
+
+
+                        // Create the cell for the edit and delete buttons
+                        const actionsCell = row.insertCell();
+
+                        // Create the edit button
+                        const addButton = document.createElement("button");
+                                addButton.innerText = "Add";
+                                addButton.className = "Add-btn"
+                                addButton.addEventListener("click", () => {
+                                    const row = addButton.parentNode.parentNode;
+                                    const cells = row.querySelectorAll("td");
+                                    addToTransaction(cells[0], "Electronic", cells[1], cells[2]);
+                                });
+                                actionsCell.appendChild(addButton);
+                                table.appendChild(row);
+                                }); 
+                        } else {
+                            console.error('Form submission failed.');
+                        }
+                    };
+                }
+            </script>
+
+
+        
     </body>
 </html>
 
-<!-- 
-function insertTransaction(response, postdata) {
-	sql.connect(config).then(function() {
-        var req = new sql.Request();
+<script>
+// function insertTransaction(response, postdata) {
+//      sql.connect(config).then(function() {
+//      var req = new sql.Request();
 
-	var querystring = require('querystring');
-	var params = querystring.parse(postData);
-	var recieptNum = params['Reciept_Num'];
-	var itemID = param['Item_ID'];
-	var userID = param['User_ID'];
+// 	    var querystring = require('querystring');
+// 	    var params = querystring.parse(postData);
+// 	    var recieptNum = params['Reciept_Num'];
+//      var itemID = param['Item_ID'];
+// 	    var userID = param['User_ID'];
 
-	req.input('recieptNum', sql.NVarChar, recieptNum);
-	req.input('itemID', sql.NVarChar, itemID);
-	req.input('userID', sql.NVarChar, userID);
+//      const returnDate = new Date();
+//      const DAYSOFWEEK = 7;
 
-  // var sql = "INSERT INTO Transactions (Reciept_Num, Creation_Date, Creation_Time, Return_Due_Date) VALUES ('Company Inc', 'Highway 37')";
-  // con.query("INSERT INTO Transactions ()")
-	})
-}
--->
+//      var userChar = userID.charAt(0);
+
+//      // Assign date item must be returned
+//      switch (userChar)
+//      case 'G':
+            // var sql = "INSERT INTO Transactions (Reciept_Num, GuestID, itemID, Creation_Date, Return_Due_Date) VALUES ('@recieptNum', '@itemID', '@userID', getDate(), @returnDate)";
+//          break;
+//      case 'S':
+            // var sql = "INSERT INTO Transactions (Reciept_Num, StudentID, itemID, Creation_Date, Return_Due_Date) VALUES ('@recieptNum', '@itemID', '@userID', getDate(), @returnDate)";
+//          break;
+//      case 'F':
+            // var sql = "INSERT INTO Transactions (Reciept_Num, Faculty_ID, itemID, Creation_Date, Return_Due_Date) VALUES ('@recieptNum', '@itemID', '@userID', getDate(), @returnDate)";
+//          break;
+
+// 	    req.input('recieptNum', sql.NVarChar, recieptNum);
+// 	    req.input('itemID', sql.NVarChar, itemID);
+// 	    req.input('userID', sql.NVarChar, userID);
+
+//   // con.query("INSERT INTO Transactions ()")
+// 	})
+// }
+</script>
