@@ -180,7 +180,29 @@
 
 				const table = document.getElementById("BookTableBody");	
 				
+
+
+
+
 				responseData.forEach(book => {
+					const Checkisbn = book.ISBN;
+					// Check if a row with the same ISBN already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = book.Book_Name;
+						cells[2].innerText = book.Dollar_Value;
+						cells[3].innerText = book.Num_of_Copies;
+						cells[4].innerText = book.Author;
+						cells[5].innerText = book.Genre;
+						cells[6].innerText = book.Language;
+						cells[7].innerText = book.Publisher_Name;
+						cells[8].innerText = book.Created_BY;
+						cells[9].innerText = book.Created_date;
+						cells[10].innerText = book.Updated_BY;
+						cells[11].innerText = book.Last_Updated;
+					} else {
 					console.log(book);
 					const row = table.insertRow();
 					const isbn = row.insertCell();
@@ -207,7 +229,7 @@
 					updatedBy.innerText = book.Updated_BY;
 					const lastUpdated = row.insertCell();
 					lastUpdated.innerText = book.Last_Updated;
-
+					
 
 
 					// Create the cell for the edit and delete buttons
@@ -308,7 +330,7 @@
 						};
 						});
 
-
+					
 
 					});
 					actionsCell.appendChild(editButton);
@@ -351,7 +373,7 @@
 
 
 					table.appendChild(row);
-					});
+					}});
 
 
 				

@@ -75,7 +75,7 @@ p{
 }
 
 .tabcontent {
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.163), rgba(255, 255, 255, 0.3));
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.163), rgba(255, 255, 255, 0.3));
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     border-radius: 15px;
     font-family: 'Open Sans', sans-serif;
@@ -123,3 +123,111 @@ text-align: center;
 
 
 }
+.donutchartholder{
+    border: 1px solid white;
+    display: block;
+    height: 400px;
+    width: 40%;
+    background-color: white;
+    border-radius: 25px !important;
+    position: relative;
+    margin-left: 2%;
+
+}
+.donutchart{
+    position: relative;
+    top : 15%;
+    margin-top: 0px;
+    height: 300px;
+    width: 80%;
+    margin-right: auto;
+    background-color: none;
+
+}
+.regchartholder{
+    display: block;
+    height: 400px;
+    width: 55%;
+    border-radius: 25px;
+    background-color: white;
+    flex: 1;
+    margin-left: 0;
+    position: relative;
+    bottom: 400px;
+    left: 45%;
+    
+}
+.regchart{
+
+    position: inherit;
+    top : 15%;
+    margin-top: 0px;
+    height: 300px;
+    width: 90%;
+    margin-right: 30%;
+    background-color: none;
+
+}
+
+ .availabilitychartholder{
+
+    display: inline-block;
+    height: 250px;
+    width: 65%;
+    border-radius: 25px;
+    background-color: white;
+    flex: 1;
+    margin-left: 0; 
+    position: relative;
+    bottom: 380px; 
+    margin-left: 2%;
+    margin-top: 0px;
+
+}
+
+
+.availabilitychart{
+
+    position: relative;
+    top : 5%;
+    height: 80%;
+    width: 80%;
+    margin-right: auto;
+    margin-left: 2%;
+    margin-bottom: 3%;
+    background-color: none; 
+
+
+}
+.ReportButtonHolder{
+
+    display: block;
+    height: 250px;
+    width: 30%;
+    border-radius: 25px;
+    background-color: white;
+    flex: 1;
+    margin-left: 0; 
+    position: relative;
+    margin-left: 2%;
+    margin-top: 0px;
+    left : 67%;
+    bottom: 630px;
+
+}
+.reportbutton{
+
+    margin: 20px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 100;
+    width: 40%;
+    height: 60px;
+    border-radius: 10px;
+    border: 2px solid #8D7B68;
+    text-align: center;
+    background-color: #8D7B68;
+    color: white;
+    position: inherit;
+    left: 25%;
+}
+
