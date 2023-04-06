@@ -48,7 +48,7 @@ function loginverify(response, postData) {
                             if(adminlogin) {
                                 response.writeHead(302, { "Location": "/adminUI" });
                             } else {
-                                response.writeHead(302, { "Location": "/search" });
+                                response.writeHead(302, { "Location": "/memberUI" });
                             }
                             response.end();
                         }

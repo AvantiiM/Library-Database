@@ -2,12 +2,16 @@ var server = require("./server");
 var router = require("./router");
 var requestHandlers = require("./requestHandlers");
 var EditrequestHandlers = require("./EditrequestHandlers");
+var mUI_requestHandlers = require("./mUI_requestHandlers");
 
 var handle = {};
 handle["/"] = requestHandlers.login; //http://localhost:3000/login
 handle["/login"] = requestHandlers.login; //http://localhost:3000/login
 handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/PasswordChanger"] = requestHandlers.PasswordChanger; //http://localhost:3000/PasswordChanger
+handle["/memberUI"] = mUI_requestHandlers.memberUI; //http://localhost:3000/memberUI
+handle["/bookSearch"] = mUI_requestHandlers.bookSearch; //http://localhost:3000/bookSearch
+handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost:3000/librarySearch
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser

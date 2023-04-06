@@ -33,10 +33,19 @@ function start(route, handle) {
     console.log("Request for " + pathname + " received.");
 
     if(pathname === "/favicon.ico") {
-      let frstream = fs.readFileSync("./favicon.ico");
+      let frstream = fs.readFileSync("./libDB.ico");
       console.log("--------- Serving favicon.ico");
       response.statusCode = "200";
       response.setHeader("Content-Type", "image/jpeg");
+      //frstream.pipe(response);
+      response.end(frstream);
+      return;          
+    }
+    if(pathname === "/LibDB_WOBG.png") {
+      let frstream = fs.readFileSync("./LibDB_WOBG.png");
+      console.log("--------- Serving LibDB_WOBG.png");
+      response.statusCode = "200";
+      response.setHeader("Content-Type", "image/png");
       //frstream.pipe(response);
       response.end(frstream);
       return;          
