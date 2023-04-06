@@ -1,0 +1,101 @@
+<head>
+    <title>Book Search</title>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@29.2.0/styles/ag-grid.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@29.2.0/styles/ag-theme-balham.css" />
+    <style>
+        
+        #data-table {
+            height: 500px;
+            width: 100%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1><center>Book Search</center></h1>
+    <form action="/librarySearch" method="post">
+        <input hidden name='searchBy' value='book'></input>
+
+        <label for="Title"> Title: </label>
+        <input type="text" id="booktitle" name="Title"><br></br></input>
+
+        <label for="Author"> Author: </label>
+        <input type="text" id="author" name="Author"><br></br></input>
+
+        <label for="Genre"> Genre: </label>
+        <select id="genre" name="Genre">
+            <option value="adventure">Adventure</option>
+            <option value="action">Action</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="drama">Drama</option>
+            <option value="romance">Romance</option>
+            <option value="scifi">SciFi</option>
+            <option value="thriller">Thriller</option>
+            <option value="horror">Horror</option>
+            <option value="comedy">Comedy</option>
+            <option value="mystery">Mystery</option>
+            <option value="supernatural">Supernatural</option>
+        </select><br></br>
+
+        <label for="Language"> Language: </label>
+        <select id="language" name="Language">
+            <option value="english">English</option>
+            <option value="french">French</option>
+            <option value="spanish">Spanish</option>
+        </select><br></br>
+
+        <label for="ISBN"> ISBN: </label>
+        <input type="text" id="isbn" name="ISBN"><br></br></input>
+
+        <input type="submit" value="Search" />
+
+    </form>
+
+
+    <div id="data-table" class="ag-theme-balham">
+    </div>
+    <script type="text/javascript" charset="utf-8">
+
+        const columnDefs = [
+            { field: 'Title' },
+            { field: 'Author' },
+            { field: 'Genre' },
+            { field: 'Language' },
+            { field: 'Borrow/Hold' }
+        ];
+
+        const gridOptions = {
+
+            defaultColDef: {
+                sortable: true,
+                filter: 'agTextColumnFilter',
+                resizable: true,
+                pagination: true
+            },
+
+            pagination: true,
+
+            columnDefs: columnDefs,
+            onGridReady: (event) => { renderDataInTheTable(event.api) }
+        };
+        
+
+        const eGridDiv = document.getElementById('data-table');
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        function renderDataInTheTable(api) {
+            fetch('/librarySearch')
+                .then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    api.setRowData(data);
+                    api.sizeColumnsToFit();
+                })
+        }
+    </script>
+</body>
