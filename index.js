@@ -37,6 +37,10 @@ handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/
 handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bookSearch
 handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
 
+handle["/AdminReportMain"] = requestHandlers.AdminReportMain; //http://localhost:3000/AdminReportMain
+handle["/AdminReportBook"] = requestHandlers.AdminReportBook; //http://localhost:3000/AdminReportBook
+handle["/AdminReportBookSearch"] = requestHandlers.AdminReportBookSearch; //http://localhost:3000/AdminReportBookSearch
+
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
 handle["/profile"] = requestHandlers.profile; //http://localhost:3000/profile

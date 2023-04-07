@@ -600,6 +600,31 @@ function AdminEntry(response){
     response.end();
 }
 
+function AdminReportMain(response){
+    console.log("Request handler 'AdminReportMain' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportMain.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBook(response){
+    console.log("Request handler 'AdminReportBook' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBook.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBookSearch(response){
+    console.log("Request handler 'AdminReportBookSearch' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBookSearch.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+
 function SearchBooks(response, postData){
 
     sql.connect(config).then(function () {
@@ -851,6 +876,9 @@ exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
 exports.FacultyEntry = FacultyEntry;
 exports.AdminEntry = AdminEntry;
+exports.AdminReportMain = AdminReportMain;
+exports.AdminReportBook = AdminReportBook;
+exports.AdminReportBookSearch = AdminReportBookSearch;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
