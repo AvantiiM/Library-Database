@@ -181,11 +181,20 @@ function addItem(response, postData){
                 response.write(fdata + "<script> alert('Electronic entry inserted into database.'); </script>");
                 response.end();
             }).catch(function(err) {
-                console.log(err);
-                var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
-                response.writeHead(200, { "Content-Type": "text/html" });
-                response.write(fdata + "<script> alert('Electronic entry failed inserted into database.'); </script>");
-                response.end();
+                if (err.message.includes("Violation of PRIMARY KEY constraint 'Primary_KEY_FOR_ELECTRONICS'. Cannot insert duplicate key in object 'dbo.Electronics'")){
+                    console.log("Electronic with serial num already exists in database."); 
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Error: Electronic with Serial Num already exists'); </script>");
+                    response.end();              
+                }
+                else{
+                    console.log(err);
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Electronic entry failed to insert into database.'); </script>");
+                    response.end();
+                }
             });
               break;
             case 'Book':
@@ -197,11 +206,20 @@ function addItem(response, postData){
                 response.write(fdata + "<script> alert('Book entry inserted into database.'); </script>");
                 response.end();
             }).catch(function(err) {
-                console.log(err);
-                var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
-                response.writeHead(200, { "Content-Type": "text/html" });
-                response.write(edata + "<script> alert('Book entry failed to insert into database.'); </script>");
-                response.end();
+                if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Book'. Cannot insert duplicate key in object 'dbo.Book'")){
+                    console.log("Book with that ISBN already exists in database."); 
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Error: Book with ISBN already exists'); </script>");
+                    response.end();              
+                }
+                else{
+                    console.log(err);
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Book entry failed to insert into database.'); </script>");
+                    response.end();
+                }
             });
 
               break;
