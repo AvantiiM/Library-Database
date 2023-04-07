@@ -2,6 +2,7 @@ var server = require("./server");
 var router = require("./router");
 var requestHandlers = require("./requestHandlers");
 var EditrequestHandlers = require("./EditrequestHandlers");
+var requestHandlersReport = require("./requestHandlersReport");
 
 var handle = {};
 handle["/"] = requestHandlers.login; //http://localhost:3000/login
@@ -49,5 +50,11 @@ handle["/SearchObjects"] = EditrequestHandlers.SearchObjects; //http://localhost
 handle["/UpdateObjects"] = EditrequestHandlers.UpdateObjects; //http://localhost:3000/UpdateObjects
 handle["/DeleteObjects"] = EditrequestHandlers.DeleteObjects; //http://localhost:3000/DeleteObjects
 
+handle["/SearchMedia"] = EditrequestHandlers.SearchMedia; //http://localhost:3000/SearchMedia
+handle["/UpdateMedia"] = EditrequestHandlers.UpdateMedia; //http://localhost:3000/UpdateMedia
+handle["/DeleteMedia"] = EditrequestHandlers.DeleteMedia; //http://localhost:3000/DeleteMedia
 
+handle["/UserReportSum"] = requestHandlersReport.UserReportSum; //http://localhost:3000/UserReportSum
 server.start(router.route, handle);
+
+

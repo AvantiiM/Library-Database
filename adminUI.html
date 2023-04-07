@@ -10,23 +10,28 @@
 		<div class="tab" onclick="openTab('datamodification')">Data Modification</div>
 	</div>
 	<div class="tabcontent" id="datamanagement">
-		<h2>Data Management Content Goes Here</h2>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mauris sed libero pharetra finibus in eget sapien. Donec tincidunt, nibh a eleifend fringilla, purus dolor facilisis est, eget dignissim eros mi eu urna.</p>
+		<h2>Data Entry</h2>
+		<p>Please Select a table to enter data to</p>
 
-		<div>
-			<select class="Drop-down" id="TableSelection" onchange="selectOption()">
-				<option value="">Please select a table</option>
-				<option value="Transactions">Transactions</option>
-				<option value="Books">Books</option>
-				<option value="Electronics">Electronics</option>
-				<option value="Objects">Objects</option>
-				<option value="Media">Media</option>
-				<option value="Student">Student</option>
-				<option value="Guest">Guest</option>
-				<option value="Faculty">Faculty</option>
-				<option value="Admin">Admin</option>
-			</select>
-			<div id="content"></div>
+		<div class="EntryButtons" style="text-align: center;">
+			<button class="button" onclick="window.location.href='BookEntry'">Book</button>
+			<button class="button" onclick="window.location.href='ElectronicsEntry'">Electronics</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='ObjectEntry'">Object</button>
+			<button class="button" onclick="window.location.href='MediaEntry'">Media</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='TransactionEntry'">Transactions</button>
+			<button class="button" onclick="window.location.href='ReservationsEntry'">Reservations</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='StudentEntry'">Student</button>
+			<button class="button" onclick="window.location.href='GuestEntry'">Guest</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='FacultyEntry'">Faculty</button>
+			<button class="button" onclick="window.location.href='AdminEntry'">Admin</button>
+
+
+
+
 		</div>
 	</div>
 
@@ -96,78 +101,6 @@
 		}
 
 
-		function selectOption() {
- 			 var selectedOption = document.getElementById("TableSelection").value;
- 			 var contentDiv = document.getElementById("content");
-
- 			 switch (selectedOption) {
-			 case "Transactions":
-			 	fetch("TransactionEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-			break;
-   			 case "Books":
-				fetch("BookEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Electronics":
-				fetch("ElectronicsEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Objects":
-				fetch("ObjectEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Media":
-				fetch("MediaEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Student":
-			fetch("StudentEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Guest":
-			fetch("GuestEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Faculty":
-			fetch("FacultyEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Admin":
-			fetch("AdminEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-    		default:
-     		 contentDiv.innerHTML = "";
-  }
-}
 		
 	</script>
 
@@ -176,23 +109,37 @@
 	google.charts.load("current", {packages:["corechart"]});
 	google.charts.setOnLoadCallback(drawChart);
 	function drawChart() {
-		var data = google.visualization.arrayToDataTable([
-		['Member', 'number'],
-		['Faculty',     11],
-		['Guests',      10],
-		['Students',  24],
-		]);
+    // call to the function to get the results of the query
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'UserReportSum');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        console.log('Chart request submission successful!');
+        let responseData = JSON.parse(xhr.responseText);
+        console.log(responseData.faculty);
 
-		var options = {
-		title: 'Users',
-		pieHole: 0.35,
-		colors: ['#B8621B', '#E3CCAE', '#262A56']
-		};
-		
-		var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-		chart.draw(data, options);
-		
-	}
+        //#######################  donut CHART  ############################
+        var data = google.visualization.arrayToDataTable([
+          ['Member', 'number'],
+          ['Faculty',     responseData.faculty],
+          ['Guests',      responseData.guests],
+          ['Students',  responseData.students],
+        ]);
+
+        var options = {
+          title: 'Users',
+          pieHole: 0.35,
+          colors: ['#B8621B', '#E3CCAE', '#262A56']
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    };
+
+    xhr.send();
+  }
 	</script>
 
 	<script type="text/javascript">

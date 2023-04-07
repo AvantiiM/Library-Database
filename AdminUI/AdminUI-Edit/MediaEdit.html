@@ -1,37 +1,488 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
+	<title>Book Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'SearchMedia');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("MediaTableBody");	
+				
+                // <th>Media ID</th>
+				// <th>Media Name</th>
+				// <th>Dollar Value</th>
+				// <th>Number of Copies available</th>
+				// <th>Author</th>
+				// <th>Media Type</th>
+                // <th>Total number of copies</th>
+				// <th>Publisher Name</th>
+				// <th>Created By</th>
+				// <th>Created Date</th>
+				// <th>Updated By</th>
+				// <th>Last Updated</th>
+				// <th>Actions</th>
+
+
+
+				responseData.forEach(Media => {
+					const Checkisbn = Media.ISBN;
+					// Check if a row with the same ISBN already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = Media.Media_Name;
+						cells[2].innerText = Media.Dollar_Value;
+						cells[3].innerText = Media.Num_of_Copies;
+						cells[4].innerText = Media.Author;
+						cells[5].innerText = Media.Media_Type;
+						cells[6].innerText = Media.Total_Num_of_Copies;
+						cells[7].innerText = Media.Publisher_Name;
+						cells[8].innerText = Media.Created_BY;
+						cells[9].innerText = Media.Created_date;
+						cells[10].innerText = Media.Updated_BY;
+						cells[11].innerText = Media.Last_Updated;
+					} else {
+					console.log(Media);
+					const row = table.insertRow();
+					const MediaID = row.insertCell();
+					MediaID.innerText = Media.Media_ID;
+					const MediaName = row.insertCell();
+					MediaName.innerText = Media.Media_Name;
+					const dollarValue = row.insertCell();
+					dollarValue.innerText = Media.Dollar_Value;
+					const numOfCopies = row.insertCell();
+					numOfCopies.innerText = Media.Num_of_Copies;
+					const author = row.insertCell();
+					author.innerText = Media.Author;
+					const MediaType = row.insertCell();
+					MediaType.innerText = Media.Media_Type;
+					const TotalNum = row.insertCell();
+					TotalNum.innerText = Media.Total_Num_of_Copies;
+					const publisherName = row.insertCell();
+					publisherName.innerText = Media.Publisher_Name;
+					const createdBy = row.insertCell();
+					createdBy.innerText = Media.Created_BY;
+					const createdDate = row.insertCell();
+					createdDate.innerText = Media.Created_date;
+					const updatedBy = row.insertCell();
+					updatedBy.innerText = Media.Updated_BY;
+					const lastUpdated = row.insertCell();
+					lastUpdated.innerText = Media.Last_Updated;
+					
+
+
+					// Create the cell for the edit and delete buttons
+					const actionsCell = row.insertCell();
+
+					// Create the edit button
+					const editButton = document.createElement("button");
+					editButton.innerText = "Edit";
+					editButton.className = "edit-btn"
+					editButton.addEventListener("click", () => {
+
+					// Handle the edit button click event
+						const row = editButton.parentNode.parentNode;
+						const cells = row.querySelectorAll("td");
+						const columnNames = ["Media_ID","Media_Name","Dollar_Value","Num_of_Copies","Author","Media_Type","Total_Num_of_Copies","Publisher_Name"];
+						let inputId = [];
+						let inputfield = [];
+						for (let i = 0; i < (cells.length - 5); i++) {
+							const cell = cells[i];
+							const value = cell.innerText;
+							const columnName = columnNames[i];
+							inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+							inputfield[i] = document.createElement("input");
+							inputfield[i].setAttribute("id", inputId[i]);
+							inputfield[i].setAttribute("type", "text");
+							inputfield[i].setAttribute("value", value);
+							cell.innerHTML = inputfield[i].getAttribute("value");
+							cell.appendChild(inputfield[i]);
+						}
+												
+						
+									const EditInputtwo = []
+									for (let i = 0; i < (cells.length - 5); i++) {
+									EditInputtwo[i] = document.querySelector(`#${inputId[i]}`);
+									EditInputtwo[i].addEventListener("change", (event) => {
+										const newValue = event.target.value;
+										console.log(newValue);
+										EditInputtwo[i].setAttribute("value", newValue);
+										
+									});}
+
+
+
+							// Change the edit button to a save button
+							editButton.innerText = "Save";
+							editButton.className = "save-btn";
+
+							// Handle the save button click event
+							editButton.removeEventListener("click", arguments.callee);
+							editButton.addEventListener("click", () => {
+								;
+								const data = {};
+								// Get the values from the input fields
+								for (let i = 0; i < cells.length - 5; i++) {
+
+									const columnName = columnNames[i];
+
+
+									
+
+
+
+									// inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+
+
+									// let cellsforinput = row.querySelector(`#${inputId[i]}`);
+									//const cell = cellsforinput;
+									//console.log(cell.innerText);
+									// const value = cellsforinput.innerText;
+									// console.log(value);
+									// inputfield[i].setAttribute("value", value);
+									
+
+								
+								let updatedinputfield = inputfield[i].getAttribute("value")
+								console.log(updatedinputfield);
+								data[columnName] = updatedinputfield;
+								//console.log(data[columnName])
+								}
+
+						const xhr = new XMLHttpRequest();
+						xhr.open("POST", "UpdateMedia");
+						xhr.setRequestHeader("Content-Type", "application/json");
+						xhr.send(new URLSearchParams(data).toString());
+						xhr.onload = function () {
+							// update the table values
+							if (xhr.status === 200) {
+							alert("Media updated successfully please refresh the page to see the changes");
+							for (let i = 0; i < cells.length; i++) {
+								// const cell = cells[i];
+								// const columnName = cell.getAttribute("data-column-name");
+								// const value = data[columnName];
+								// cell.innerText = value;
+							}
+							editButton.innerText = "Saved";
+							editButton.className = "edit-btn";
+							}
+						};
+						});
+
+					
+
+					});
+					actionsCell.appendChild(editButton);
+
+					// Create the delete button
+					const deleteButton = document.createElement("button");
+					deleteButton.innerText = "Delete";
+					deleteButton.className = "delete-btn";
+					deleteButton.setAttribute("data-Media", Media.Media_ID);
+					deleteButton.addEventListener("click", () => {
+						// prompting the user for confirmation and send a DELETE request to the server
+						const confirmation = confirm("Are you sure you want to delete this book?");
+						if(confirmation){
+						// Handle the delete button click event
+							const deleteMedia = deleteButton.getAttribute("data-Media");
+							const data = { deleteMediaID: deleteMedia };
+							console.log(data);
+							xhr.open("DELETE", `DeleteMedia`);
+							xhr.setRequestHeader("Content-Type", "application/json");
+							xhr.send(new URLSearchParams(data).toString());
+							xhr.onload = function() {
+								if (xhr.status === 200) {
+									alert("Book deleted successfully please refresh the page to see the changes");
+								} else {
+									console.log("Error deleting book");
+								}
+							};
+							
+						
+						
+						}
+						
+
+					});
+					actionsCell.appendChild(deleteButton);
+
+
+
+
+
+
+					table.appendChild(row);
+					}});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
 </head>
 <body>
-    <br></br>
-</form>
-<form action="/searchMedia" method="post">
-    <input hidden name='searchBy' value='media'></input>
+	
 
-    <label for="mediaName"> Name: </label>
-    <input type="text" id="medianame" name="MediaName"></input>
+	<h1>Media Search</h1>
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+	<!-- <form action="/SearchBooks" method="post"> -->
+		<div class="form-group">
+			<label for="MediaName">Media Name:</label>
+			<input type="text" id="MediaNameInput" name="MediaNameInput" placeholder="Enter Media name...">
+		</div>
+		<div class="form-group">
+			<label for="dollarValue">Dollar Value:</label>
+			<input type="text" id="dollarValue" name="dollarValue" placeholder="Enter dollar value...">
+		</div>
+		<div class="form-group">
+			<label for="numOfCopies">Number of Copies:</label>
+			<input type="text" id="numOfCopies" name="numOfCopies" placeholder="Enter number of copies...">
+		</div>
+		<div class="form-group">
+			<label for="author">Author:</label>
+			<input type="text" id="author" name="author" placeholder="Enter author...">
+		</div>
+		<div class="form-group">
+			<label for="mediaType">Media Type:</label>
+			<input type="text" id="MediaType" name="MediaType" placeholder="Enter media Type...">
+		</div>
+		<div class="form-group">
+			<label for="MediaID">Media ID:</label>
+			<input type="text" id="MediaID" name="MediaID" placeholder="Enter Media ID...">
+		</div>
+		<div class="form-group">
+			<label for="TotalNumOfCopies">Total Number of Copies:</label>
+			<input type="text" id="TotalNumOfCopies" name="TotalNumOfCopies" placeholder="Enter Total Number Of Copies..">
+		</div>
+		<div class="form-group">
+			<label for="publisherName">Publisher Name:</label>
+			<input type="text" id="publisherName" name="publisherName" placeholder="Enter publisher name...">
+		</div>
+		<div class="form-group">
+			<label for="createdBy">Created By:</label>
+			<input type="text" id="createdBy" name="createdBy" placeholder="Enter created by...">
+		</div>
+		<div class="form-group">
+			<label for="createdDate">Created Date:</label>
+			<input type="text" id="createdDate" name="createdDate" placeholder="Enter created date...">
+		</div>
+		<div class="form-group">
+			<label for="updatedBy">Updated By:</label>
+			<input type="text" id="updatedBy" name="updatedBy" placeholder="Enter updated by...">
+		</div>
+		<div class="form-group">
+			<label for="lastUpdated">Last Updated:</label>
+			<input type="text" id="lastUpdated" name="lastUpdated" placeholder="Enter last updated...">
+		</div>
+		<input type="submit" value="Search">
+	</form>
+	<table id="mediaTable">
+		<thead>
+			<tr>
+				<th>Media ID</th>
+				<th>Media Name</th>
+				<th>Dollar Value</th>
+				<th>Number of Copies available</th>
+				<th>Author</th>
+				<th>Media Type</th>
+                <th>Total number of copies</th>
+				<th>Publisher Name</th>
+				<th>Created By</th>
+				<th>Created Date</th>
+				<th>Updated By</th>
+				<th>Last Updated</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody id="MediaTableBody">
+		</tbody>
+	</table>
 
-    <label for="Author"> Author: </label>
-    <input type="text" id="author" name="Author"></input>
 
-    <label for="MediaType"> Type of Media: </label>
-    <select id="mediatype" name="mediaType">
-        <option value="Any">Any</option>
-        <option value="dvd">DVD</option>
-        <option value="cd">CD</option>
-        <option value="newspaper">Newspaper</option>
-        <option value="magazine">Magazine</option>
-    </select><br></br>
-
-    <input type="submit" value="Search" />
-</form>
 </body>
 </html>
-
-
-
 
 
 
