@@ -176,21 +176,21 @@ function addItem(response, postData){
               queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Electronic entry inserted into database.");
-                var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
+                var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
                 response.writeHead(200, { "Content-Type": "text/html" });
                 response.write(fdata + "<script> alert('Electronic entry inserted into database.'); </script>");
                 response.end();
             }).catch(function(err) {
                 if (err.message.includes("Violation of PRIMARY KEY constraint 'Primary_KEY_FOR_ELECTRONICS'. Cannot insert duplicate key in object 'dbo.Electronics'")){
                     console.log("Electronic with serial num already exists in database."); 
-                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
                     response.writeHead(200, { "Content-Type": "text/html" });
                     response.write(edata + "<script> alert('Error: Electronic with Serial Num already exists'); </script>");
                     response.end();              
                 }
                 else{
                     console.log(err);
-                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicEntry.html');
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
                     response.writeHead(200, { "Content-Type": "text/html" });
                     response.write(edata + "<script> alert('Electronic entry failed to insert into database.'); </script>");
                     response.end();
@@ -211,7 +211,7 @@ function addItem(response, postData){
                     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
                     response.writeHead(200, { "Content-Type": "text/html" });
                     response.write(edata + "<script> alert('Error: Book with ISBN already exists'); </script>");
-                    response.end();              
+                    response.end();             
                 }
                 else{
                     console.log(err);
