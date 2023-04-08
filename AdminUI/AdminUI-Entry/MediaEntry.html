@@ -3,15 +3,24 @@
     <head>
         <title>Media Entry</title>
         <style>
-           table {
+           body{
+			background-image: url("/public/test11.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			}
+			table {
                 border-collapse: collapse;
                 border: 2px solid #75443c;
                 width: 50%;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				margin:auto;
     
             }
     
             th, td {
                 text-align: center;
+				margin:auto;
                 padding-top: 4px;
                 padding-bottom: 4px;
                 border-bottom: 2px solid #75443c;
@@ -31,14 +40,58 @@
                 background-color: #ecc8af;
                 color: black;
                 border: 1px #ecc8af;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				text-align: center;
             }
+			input[type="submit"]{
+				background-color: #ce796b;
+				color: white;
+				border: 2px solid #75443c;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				cursor: pointer;
+				margin:auto;
+				font-size: 22px;
+			}
+			h1{
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+			}
+			fieldset{
+				border: none;
+			}
+			legend{
+				font-size: 1.2em;
+				font-weight: bold;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				font-size: 50px;
+			}
+			form{
+				text-align: center;
+			}
+			td[type = "head"]{
+				text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ce796b;
+				color: white;
+			}
+			input::placeholder {
+			text-align: center;
+			}
         </style>
     </head>
     <body>
-        <h1>Media Entry Form</h1>
         <form action="/addItem" method="post">
             <input hidden name = "searchBy" value = "Media"></input>
-            <div style="overflow-x: auto;">
+            <!--<div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
@@ -70,7 +123,50 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div>-->
+            <br></br>
+            <fieldset>
+                <legend><b>Media Entry</b></legend>
+                <br></br>
+                <table>
+                    <tr>
+                        <td type = "head">Name of Media</td>
+                        <td><input type = "text" name = "itemName" placeholder="Enter Media Name"></input></td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Dollar Value</td>
+                        <td><input type = "number" name = "DValue" placeholder="Enter Dollar Value"></input></td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Media Type</td>
+                        <td>
+                            <select name="MType">
+                                <option value="CD">CD</option>
+                                <option value="DVD">DVD</option>
+                                <option value="Magazine">Magazine</option>
+                                <option value="Newspaper">Newspaper</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Author</td>
+                        <td><input type = "text" name = "Author" placeholder="Enter Author"></input></td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Publisher</td>
+                        <td><input type = "text" name = "Publisher" placeholder="Enter Publisher"></input></td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Publishing Date</td>
+                        <td><input type = "date" name = "PDate"></input></td>
+                    </tr>
+                    <tr>
+                        <td type = "head"># of Copies</td>
+                        <td><input type = "number" name = "NCopies" placeholder="Enter # of Copies"></input></td>
+                    </tr>
+                </table>
+            </fieldset>
+            <br></br>
             <input type="submit" value="Submit">
         </form>
     </body>

@@ -3,15 +3,24 @@
 	<head>
 		<title>Book Entry</title>
 		<style>
+			body{
+			background-image: url("/public/test11.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			}
 			table {
                 border-collapse: collapse;
                 border: 2px solid #75443c;
                 width: 50%;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				margin:auto;
     
             }
     
             th, td {
                 text-align: center;
+				margin:auto;
                 padding-top: 4px;
                 padding-bottom: 4px;
                 border-bottom: 2px solid #75443c;
@@ -31,15 +40,59 @@
                 background-color: #ecc8af;
                 color: black;
                 border: 1px #ecc8af;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				text-align: center;
             }
+			input[type="submit"]{
+				background-color: #ce796b;
+				color: white;
+				border: 2px solid #75443c;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				cursor: pointer;
+				margin:auto;
+				font-size: 22px;
+			}
+			h1{
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+			}
+			fieldset{
+				border: none;
+			}
+			legend{
+				font-size: 1.2em;
+				font-weight: bold;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				font-size: 50px;
+			}
+			form{
+				text-align: center;
+			}
+			td[type = "head"]{
+				text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ce796b;
+				color: white;
+			}
+			input::placeholder {
+			text-align: center;
+			}
 		</style>
 	</head>
 	<body>
 
-		<h1>Book Entry Form</h1>
 		<form action="/addItem" method="post">
 			<input hidden name = "searchBy" value = "Book"></input>
-			<div style="overflow-x: auto;">
+		<!--	<div style="overflow-x: auto;">
 				<table>
 					<thead>
 						<tr>
@@ -88,7 +141,71 @@
 						</tr>
 					</tbody>
 				</table>
-			</div>
+			</div> -->
+			<br></br>
+			<fieldset>
+				<legend><b>Book Entry</b></legend>
+				<br></br>
+				<table>
+					<tr>
+						<td type = "head">ISBN</td>
+						<td><input type="text" name="itemID" placeholder="Enter ISBN"></td>
+					</tr>
+					<tr>
+						<td type = "head">Language</td>
+						<td>
+							<select name="Language">
+							<option value="English">English</option>
+							<option value="Spanish">Spanish</option>
+							<option value="French">French</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td type = "head">Author</td>
+						<td><input type="text" name="Author" placeholder="Enter Author"></td>
+					</tr>
+					<tr>
+						<td type = "head">Publisher</td>
+						<td><input type="text" name="Publisher" placeholder="Enter Publisher"></td>
+					</tr>
+					<tr>
+						<td type = "head">Book Title</td>
+						<td><input type="text" name="itemName" placeholder="Enter Publisher"></td>
+					</tr>
+					<tr>
+						<td type = "head">Dollar Value</td>
+						<td><input type="number" name="DValue" placeholder="Enter Dollar Value"></td>
+					</tr>
+					<tr>
+						<td type = "head"># of Copies</td>
+						<td><input type="number" name="NCopies" placeholder="Enter Num of Copies"></td>
+					</tr>
+					<tr>
+						<td type = "head">Genre</td>
+						<td>
+							<select name="Genre">
+							<option value="Adventure">Adventure</option>
+							<option value="Action">Action</option>
+							<option value="Fantasy">Fantasy</option>
+							<option value="Drama">Drama</option>
+							<option value="Romance">Romance</option>
+							<option value="Sci-Fi">Sci-Fi</option>
+							<option value="Thriller">Thriller</option>
+							<option value="Horror">Horror</option>
+							<option value="Comedy">Comedy</option>
+							<option value="Mystery">Mystery</option>
+							<option value="Supernatural">Supernatural</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td type = "head">Published Date</td>
+						<td><input type="date" name="PDate"></td>
+					</tr>
+				</table>
+			</fieldset>
+			<br></br>
 			<input type="submit" value="Submit">
 		</form>
 	</body>
