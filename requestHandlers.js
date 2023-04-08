@@ -601,6 +601,13 @@ function TransactionsEdit(response){
     response.end();
 
 }
+function ReservationsEdit(response){
+    console.log("Request handler 'ReservationsEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ReservationsEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+}
 
 function StudentEntry(response){
     console.log("Request handler 'StudentEntry' was called.");
@@ -930,6 +937,7 @@ exports.FacultyEdit = FacultyEdit;
 exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
+exports.ReservationsEdit = ReservationsEdit;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
