@@ -56,15 +56,38 @@
                 margin-top: 20px;
             }
         </style>
+
+<!-- <script type="text/javascript">
+		
+    function ModificationManager(event) {
+        event.preventDefault(); // prevent the default form submission behavior
+
+
+        // get form from data
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+        
+// 1. Call the node fn
+
+
+        // create a new XMLHttpRequest objec
+        const xhr = new XMLHttpRequest();
+
+        
+
+        xhr.open('POST', 'SearchBooks');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(new URLSearchParams(formData).toString()); -->
+
+
   </head>
 
 <body>    
     <form action="/profile" method="post">
-        <label for= "fullname"> Fullname: </label>
-        <label for= "email"> Email: </label>
-        <label for="id"> ID: </label>
-        <label for="major"> Major: </label>
+        <label for= "fullname"> Fullname: <%= userSess.getUserName() %> <%= user.lastname %> </label> 
+        <label for= "email"> Email: <%= user.email %> </label> 
+        <label for="id"> ID: <%= user.username %> </label> 
+        <label for="major"> Major: <% user.major %> </label> 
     </form>
-    
 </body>
 </html>
