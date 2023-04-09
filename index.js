@@ -78,5 +78,7 @@ handle["/UpdateGuests"] = EditrequestHandlers.UpdateGuests; //http://localhost:3
 
 
 handle["/UserReportSum"] = requestHandlersReport.UserReportSum; //http://localhost:3000/UserReportSum
+handle["/TransactionReportSum"] = requestHandlersReport.TransactionReportSum; //http://localhost:3000/TransactionReportSum
+handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost:3000/MaxReportSum
 server.start(router.route, handle);
 

@@ -106,7 +106,7 @@
 
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
-	google.charts.load("current", {packages:["corechart"]});
+// 	google.charts.load("current", {packages:["corechart"]});
 // 	google.charts.setOnLoadCallback(drawChart);
 // 	function drawChart() {
 //     //call to the function to get the results of the query
@@ -144,35 +144,54 @@
 	</script>
 
 	<script type="text/javascript">
-		google.charts.load('current', {'packages':['corechart']});
-		google.charts.setOnLoadCallback(drawVisualization);
+// 		google.charts.load('current', {'packages':['corechart']});
+// 		google.charts.setOnLoadCallback(drawVisualization);
 
-		function drawVisualization() {
-		// Some raw data (not necessarily accurate)
-		var data = google.visualization.arrayToDataTable([
-			['Month', 'Books', 'Electronics', 'Objects', 'Media', 'Average'],
-			['2004/05',  165,      938,         522,        998,      614.6],
-			['2005/06',  1268,      1120,        599,        135,       682],
-			['2006/07',  157,      1167,        587,        807,        623],
-			['2007/08',  139,      1110,        615,        968,        609.4],
-			['2008/09',  136,      691,         629,        1026,       569.6]
-		]);
+// 		function drawVisualization() {
+// 		// Some raw data (not necessarily accurate)
+// 		const xhr1 = new XMLHttpRequest();
+// 		xhr1.open('POST', 'TransactionReportSum');
+// 		xhr1.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+//  		xhr1.onload = function() {
+//      	if (xhr1.status === 200) {
+//         console.log('Chart request submission successful!');
+//         let responseDataTransaction = JSON.parse(xhr1.responseText);
+//         console.log(responseDataTransaction);
 
 
-		//
+// 			var aprilaverage = (responseDataTransaction.april.books + responseDataTransaction.april.electronics + responseDataTransaction.april.objects + responseDataTransaction.april.media)/4;
+// 			var marchaverage = (responseDataTransaction.march.books + responseDataTransaction.march.electronics + responseDataTransaction.march.objects + responseDataTransaction.march.media)/4;
+// 			var februaryaverage = (responseDataTransaction.feb.books + responseDataTransaction.feb.electronics + responseDataTransaction.feb.objects + responseDataTransaction.feb.media)/4;
 
-		var options = {
-			title : 'overview of items borrowed in the past months',
-			vAxis: {title: 'Items'},
-			hAxis: {title: 'Month'},
-			seriesType: 'bars',
-			series: {4: {type: 'line'}},
-			colors: ['#DF7857', '#19A7CE', '#FFA559', '#675D50', '#000000']
-		};
 
-		var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-		chart.draw(data, options);
-		}
+
+// 		var data = google.visualization.arrayToDataTable([
+// 			['Month', 'Books', 'Electronics', 'Objects', 'Media', 'Average'],
+// 			['2023/04',  responseDataTransaction.april.books,      responseDataTransaction.april.electronics,         responseDataTransaction.april.objects,        responseDataTransaction.april.media,      aprilaverage],
+// 			['2023/03',  responseDataTransaction.march.books,      responseDataTransaction.march.electronics,        responseDataTransaction.march.objects,        responseDataTransaction.march.media,       marchaverage],
+// 			['2023/02',  responseDataTransaction.feb.books,      responseDataTransaction.feb.electronics,        responseDataTransaction.feb.objects,       responseDataTransaction.feb.media,       februaryaverage]
+// 		]);
+
+
+// 		//
+
+// 		var options = {
+// 			title : 'overview of items borrowed in the past months',
+// 			vAxis: {title: 'Items'},
+// 			hAxis: {title: 'Month'},
+// 			seriesType: 'bars',
+// 			series: {4: {type: 'line'}},
+// 			colors: ['#DF7857', '#19A7CE', '#FFA559', '#675D50', '#000000']
+// 		};
+
+// 		var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+// 		chart.draw(data, options);
+		
+// 	}}
+// 	xhr1.send();
+// }
+	
 	</script>
 
 
@@ -182,27 +201,43 @@
 		google.charts.load('current', {'packages':['bar']});
 		google.charts.setOnLoadCallback(drawChart);
 
-		function drawChart() {
-		var data = google.visualization.arrayToDataTable([
-			['Items', 'on Hand', 'Max'],
-			['Books', 10, 50],
-			['Electronics', 10, 50],
-			['Objects', 20, 50],
-			['Media', 40, 50]
-		]);
+	// 	function drawChart() {
 
-		var options = {
-			chart: {
-			title: 'Items on Hand',
-			},
-			bars: 'horizontal', // Required for Material Bar Charts.
-			colors: ['#678983', '#65647C']
-		};
+	// 		const xhr2 = new XMLHttpRequest();
+	// 	xhr2.open('POST', 'MaxReportSum');
+	// 	xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-		var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+ 	// 	xhr2.onload = function() {
+    //  	if (xhr2.status === 200) {
+    //     console.log('Chart request submission successful!');
+    //     let responseDataMax= JSON.parse(xhr2.responseText);
+    //     console.log(responseDataMax);
 
-		chart.draw(data, google.charts.Bar.convertOptions(options));
-		}
+
+
+	// 	var data = google.visualization.arrayToDataTable([
+	// 		['Items', 'on Hand', 'Max'],
+	// 		['Books', responseDataMax.Book_copies, responseDataMax.total_Book_copies],
+	// 		['Electronics', responseDataMax.Electronic_count, responseDataMax.total_Electronic_copies],
+	// 		['Objects', responseDataMax.Object_copies, responseDataMax.total_Object_copies],
+	// 		['Media', responseDataMax.Media_copies, responseDataMax.total_Media_copies]
+	// 	]);
+
+	// 	var options = {
+	// 		chart: {
+	// 		title: 'Items on Hand',
+	// 		},
+	// 		bars: 'horizontal', // Required for Material Bar Charts.
+	// 		colors: ['#678983', '#65647C']
+	// 	};
+
+	// 	var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+
+	// 	chart.draw(data, google.charts.Bar.convertOptions(options));
+	// 	}
+	// 	}
+	// 	xhr2.send();
+	// }
 	</script>
 
 
