@@ -67,6 +67,15 @@ handle["/SearchReservations"] = EditrequestHandlers.SearchReservations; //http:/
 handle["/UpdateReservations"] = EditrequestHandlers.UpdateReservations; //http://localhost:3000/UpdateReservations
 handle["/DeleteReservations"] = EditrequestHandlers.DeleteReservations; //http://localhost:3000/DeleteReservations
 
+handle["/SearchFaculty"] = EditrequestHandlers.SearchFaculty; //http://localhost:3000/SearchFaculty
+handle["/UpdateFaculty"] = EditrequestHandlers.UpdateFaculty; //http://localhost:3000/UpdateFaculty
+
+handle["/SearchStudent"] = EditrequestHandlers.SearchStudent; //http://localhost:3000/SearchStudent
+handle["/UpdateStudent"] = EditrequestHandlers.UpdateStudent; //http://localhost:3000/UpdateStudent
+
+handle["/SearchGuests"] = EditrequestHandlers.SearchGuests; //http://localhost:3000/SearchGuest
+handle["/UpdateGuests"] = EditrequestHandlers.UpdateGuests; //http://localhost:3000/UpdateGuest
+
 
 handle["/UserReportSum"] = requestHandlersReport.UserReportSum; //http://localhost:3000/UserReportSum
 server.start(router.route, handle);

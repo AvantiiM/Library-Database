@@ -1158,15 +1158,735 @@ function UpdateReservations(response, postData){
     })}
 
 
+// Faculty ####################################################################################################################
+
+
+
+function SearchFaculty(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var FacultyID = params["FacultyID"];
+        var FName = params["FName"];
+        var MName = params["MName"];
+        var LName = params["LName"];
+        var Race = params["Race"];
+        var Phone = params["Phone"];
+        var Email = params["Email"];
+        var Birthdate = params["BirthDay"];
+        var Department = params["Department"];
+        var AdminPermission = params["AdminPermission"];
+        var Balance = params["Balance"];
+        var Suspended = params["Suspended"];
+        var Created_BY = params['createdBy'];
+        var Created_date = params['createdDate'];
+        var Updated_BY = params['updatedBy'];
+        var Updated_date = params['lastUpdated'];
+
+
+        // string query to hold the SQL query
+        var query = null;
+        // counter for the # of attributes
+        var counter = 0;
+        // array to hold the attributes
+        let StringArray = [];
+
+        // if the attribute is not empty, add it to the array
+
+        if(FacultyID != undefined && FacultyID != ""){
+            var bookstring = "Faculty_ID = '" + FacultyID + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(FName != undefined && FName != ""){
+            var bookstring = "FName = '" + FName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(MName != undefined && MName != ""){
+            var bookstring = "MName = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(LName != undefined && LName != ""){
+            var bookstring = "LName = '" + LName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Race != undefined && Race != ""){
+            var bookstring = "Race = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Phone != undefined && Phone != ""){
+            var bookstring = "Phone = '" + Phone + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Email != undefined && Email != ""){
+            var bookstring = "Email = '" + Email + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Birthdate != undefined && Birthdate != ""){
+            var bookstring = "Birthdate = '" + Birthdate + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Department != undefined && Department != ""){
+            var bookstring = "Department = '" + Department + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(AdminPermission != undefined && AdminPermission != ""){
+            var bookstring = "Admin_Permission = '" + AdminPermission + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Balance != undefined && Balance != ""){
+            var bookstring = "Balance = '" + Balance + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Suspended != undefined && Suspended != ""){
+            var bookstring = "Suspended = '" + Suspended + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_BY != undefined && Created_BY != ""){
+            var bookstring = "Created_BY = '" + Created_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_date != undefined && Created_date != ""){
+            var bookstring = "Created_date = '" + Created_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_BY != undefined && Updated_BY != ""){
+            var bookstring = "Updated_BY = '" + Updated_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_date != undefined && Updated_date != ""){
+            var bookstring = "Last_Updated = '" + Updated_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        // if the array is empty let the user know else build the query
+        // this is the ultimate SELECT * query builder
+        switch(counter){
+            case 0: console.log("No attributes entered, returning all books");
+            query = "SELECT * FROM dbo.Faculty;";
+            break;
+            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + ";";
+            break;
+            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+            break;
+            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+            break;
+            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+            break;
+            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+            break;
+            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+            break;
+            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+            break;
+            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+            break;
+            case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
+            break;
+            case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
+            break;
+            case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
+            break;
+            case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
+            break;
+            case 13: console.log("13 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + ";";
+            break;
+            case 14: console.log("14 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + ";";
+            break;
+            case 15: console.log("15 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14] + ";";
+            break;
+            case 16: console.log("16 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14] + " AND " + StringArray[15]);
+            query = "SELECT * FROM dbo.Faculty WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14] + " AND " + StringArray[15] + ";";
+            break;
+        }
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+    response.write("Error");
+}})};
+
+function UpdateFaculty(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+        var facultyID = data.Faculty_ID;
+        var FirstN = data.FirstN;
+        var MiddleN = data.MiddleN;
+        var LastN = data.LastN;
+        var R = data.Race;
+        var PhoneN = data.PhoneN;
+        var Email = data.Email;
+        var Bday = data.Bday;
+        var Gender = data.Gender;
+        var Department = data.Department;
+        var Admin_Permission = data.Admin_Permission;
+        var Balance = data.Balance;
+        var SUSPENSION = data.SUSPENSION;
+
+        // const columnNames = ["Faculty_ID","FirstN", "MiddleN", "LastN", "Race", "PhoneN", "Email", "Bday", "Gender", "Department", "Admin_Permission", "Balance", "SUSPENSION"];
+
+        // var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "' WHERE ISBN = '" + bookISBN + "';";
+        // var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
+        var query = "UPDATE dbo.Faculty SET FirstN = '" + FirstN +"', MiddleN = '" + MiddleN + "', LastN = '" + LastN + "', Race = '" + R + "', PhoneN = '" + PhoneN + "', Email = '" + Email + "', Bday = '" + Bday +"', Gender = '" + Gender + "', Department = '" + Department + "', Admin_Permission = '" + Admin_Permission + "', Balance = " + Balance + ", SUSPENSION = '" + SUSPENSION + "' WHERE Faculty_ID = '" + facultyID + "';";
+        var secondquery = "UPDATE dbo.Faculty SET Faculty_ID = '" + facultyID + "' WHERE FirstN = '" + FirstN + "' AND MiddleN = '" + MiddleN + "' AND LastN = '" + LastN + "' AND Race = '" + R + "' AND PhoneN = '" + PhoneN + "' AND Email = '" + Email + "' AND Bday = '" + Bday +"' AND Gender = '" + Gender + "' AND Department = '" + Department + "' AND Admin_Permission = '" + Admin_Permission + "' AND Balance = '" + Balance + "' AND SUSPENSION = '" + SUSPENSION + "';";
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Faculty Modified");
+            response.end();}
+        )});
+
+
+
+    })}
+
+// Student ############################################################################################################################################################################
 
 
 
 
 
 
+function SearchStudent(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var StudentID = params["StudentID"];
+        var FName = params["FName"];
+        var MName = params["MName"];
+        var LName = params["LName"];
+        var Race = params["Race"];
+        var Phone = params["Phone"];
+        var Email = params["Email"];
+        var Birthdate = params["BirthDay"];
+        var Major = params["Major"];
+        var AdminPermission = params["AdminPermission"];
+        var Balance = params["Balance"];
+        var Suspended = params["Suspended"];
+        var Created_BY = params['createdBy'];
+        var Created_date = params['createdDate'];
+        var Updated_BY = params['updatedBy'];
+        var Updated_date = params['lastUpdated'];
+
+
+        // string query to hold the SQL query
+        var query = null;
+        // counter for the # of attributes
+        var counter = 0;
+        // array to hold the attributes
+        let StringArray = [];
+
+        // if the attribute is not empty, add it to the array
+
+        if(StudentID != undefined && StudentID != ""){
+            var bookstring = "StudentID = '" + StudentID + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(FName != undefined && FName != ""){
+            var bookstring = "FName = '" + FName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(MName != undefined && MName != ""){
+            var bookstring = "MName = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(LName != undefined && LName != ""){
+            var bookstring = "LName = '" + LName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Race != undefined && Race != ""){
+            var bookstring = "Race = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Phone != undefined && Phone != ""){
+            var bookstring = "Phone = '" + Phone + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Email != undefined && Email != ""){
+            var bookstring = "Email = '" + Email + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Birthdate != undefined && Birthdate != ""){
+            var bookstring = "Bday = '" + Birthdate + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Major != undefined && Major != ""){
+            var bookstring = "Major = '" + Major+ "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Balance != undefined && Balance != ""){
+            var bookstring = "Balance = '" + Balance + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Suspended != undefined && Suspended != ""){
+            var bookstring = "Suspended = '" + Suspended + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_BY != undefined && Created_BY != ""){
+            var bookstring = "Created_BY = '" + Created_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_date != undefined && Created_date != ""){
+            var bookstring = "Created_date = '" + Created_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_BY != undefined && Updated_BY != ""){
+            var bookstring = "Updated_BY = '" + Updated_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_date != undefined && Updated_date != ""){
+            var bookstring = "Last_Updated = '" + Updated_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        // if the array is empty let the user know else build the query
+        // this is the ultimate SELECT * query builder
+        switch(counter){
+            case 0: console.log("No attributes entered, returning all books");
+            query = "SELECT * FROM dbo.Students;";
+            break;
+            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + ";";
+            break;
+            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+            break;
+            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+            break;
+            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+            break;
+            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+            break;
+            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+            break;
+            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+            break;
+            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+            break;
+            case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
+            break;
+            case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
+            break;
+            case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
+            break;
+            case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
+            break;
+            case 13: console.log("13 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + ";";
+            break;
+            case 14: console.log("14 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + ";";
+            break;
+            case 15: console.log("15 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14]);
+            query = "SELECT * FROM dbo.Students WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14] + ";";
+            break;
+        }
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+    response.write("Error");
+}})};
+
+function UpdateStudent(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+        var StudentID = data.StudentID;
+        var FirstN = data.FirstN;
+        var MiddleN = data.MiddleN;
+        var LastN = data.LastN;
+        var R = data.Race;
+        var PhoneN = data.PhoneN;
+        var Email = data.Email;
+        var Bday = data.Bday;
+        var Gender = data.Gender;
+        var Major = data.Major;
+        var Balance = data.Balance;
+        var SUSPENSION = data.SUSPENSION;
+
+        console.log(StudentID);
+        console.log(FirstN);
+        console.log(MiddleN);
+        console.log(LastN);
+        console.log(R);
+        console.log(PhoneN);
+        console.log(Email);
+        console.log(Bday);
+        console.log(Gender);
+        console.log(Major);
+        console.log(Balance);
+        console.log(SUSPENSION);
 
 
 
+        // const columnNames = ["Faculty_ID","FirstN", "MiddleN", "LastN", "Race", "PhoneN", "Email", "Bday", "Gender", "Major", "Admin_Permission", "Balance", "SUSPENSION"];
+        var query = "UPDATE dbo.Students SET Students.FirstN = '" + FirstN +"', Students.MiddleN = '" + MiddleN + "', Students.LastN = '" + LastN + "', Race = '" + R + "', PhoneN = '" + PhoneN + "', Email = '" + Email + "', Bday = '" + Bday +"', Gender = '" + Gender + "', Major = '" + Major + "', Balance = " + Balance + ", SUSPENSION = '" + SUSPENSION + "' WHERE StudentID = '" + StudentID + "';";
+        var secondquery = "UPDATE dbo.Students SET StudentID = '" + StudentID + "' WHERE FirstN = '" + FirstN + "' AND MiddleN = '" + MiddleN + "' AND LastN = '" + LastN + "' AND Race = '" + R + "' AND PhoneN = '" + PhoneN + "' AND Email = '" + Email + "' AND Bday = '" + Bday +"' AND Gender = '" + Gender + "' AND Major = '" + Major +  "' AND Balance = '" + Balance + "' AND SUSPENSION = '" + SUSPENSION + "';";
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Faculty Modified");
+            response.end();}
+        )});
+
+
+
+    })}
+
+
+// Guests #############################################################################################################################################################
+
+
+function SearchGuests(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var GuestID = params["GuestID"];
+        var FName = params["FName"];
+        var MName = params["MName"];
+        var LName = params["LName"];
+        var Race = params["Race"];
+        var Phone = params["Phone"];
+        var Email = params["Email"];
+        var Birthdate = params["BirthDay"];
+        var Balance = params["Balance"];
+        var Suspended = params["Suspended"];
+        var Created_BY = params['createdBy'];
+        var Created_date = params['createdDate'];
+        var Updated_BY = params['updatedBy'];
+        var Updated_date = params['lastUpdated'];
+
+
+        // string query to hold the SQL query
+        var query = null;
+        // counter for the # of attributes
+        var counter = 0;
+        // array to hold the attributes
+        let StringArray = [];
+
+        // if the attribute is not empty, add it to the array
+
+        if(GuestID  != undefined && GuestID  != ""){
+            var bookstring = "GuestID  = '" + GuestID  + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(FName != undefined && FName != ""){
+            var bookstring = "FName = '" + FName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(MName != undefined && MName != ""){
+            var bookstring = "MName = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(LName != undefined && LName != ""){
+            var bookstring = "LName = '" + LName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Race != undefined && Race != ""){
+            var bookstring = "Race = '" + MName + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Phone != undefined && Phone != ""){
+            var bookstring = "Phone = '" + Phone + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Email != undefined && Email != ""){
+            var bookstring = "Email = '" + Email + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Birthdate != undefined && Birthdate != ""){
+            var bookstring = "Bday = '" + Birthdate + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Balance != undefined && Balance != ""){
+            var bookstring = "Balance = '" + Balance + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Suspended != undefined && Suspended != ""){
+            var bookstring = "Suspended = '" + Suspended + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_BY != undefined && Created_BY != ""){
+            var bookstring = "Created_BY = '" + Created_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Created_date != undefined && Created_date != ""){
+            var bookstring = "Created_date = '" + Created_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_BY != undefined && Updated_BY != ""){
+            var bookstring = "Updated_BY = '" + Updated_BY + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        if(Updated_date != undefined && Updated_date != ""){
+            var bookstring = "Last_Updated = '" + Updated_date + "'";
+            StringArray.push(bookstring);
+            counter++;
+        }
+        // if the array is empty let the user know else build the query
+        // this is the ultimate SELECT * query builder
+        switch(counter){
+            case 0: console.log("No attributes entered, returning all books");
+            query = "SELECT * FROM dbo.Guest;";
+            break;
+            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + ";";
+            break;
+            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+            break;
+            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+            break;
+            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+            break;
+            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+            break;
+            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+            break;
+            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+            break;
+            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+            break;
+            case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
+            break;
+            case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
+            break;
+            case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
+            break;
+            case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
+            break;
+            case 13: console.log("13 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + ";";
+            break;
+            case 14: console.log("14 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + ";";
+            break;
+            case 15: console.log("15 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14]);
+            query = "SELECT * FROM dbo.Guest WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + " AND " + StringArray[12] + " AND " + StringArray[13] + " AND " + StringArray[14] + ";";
+            break;
+        }
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+    response.write("Error");
+}})};
+
+function UpdateGuests(response, postData){
+
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var data = querystring.parse(postData);
+
+        var GuestID = data.GuestID;
+        var FirstN = data.FirstN;
+        var MiddleN = data.MiddleN;
+        var LastN = data.LastN;
+        var R = data.Race;
+        var PhoneN = data.PhoneN;
+        var Email = data.Email;
+        var Bday = data.Bday;
+        var Gender = data.Gender;
+        var Balance = data.Balance;
+        var SUSPENSION = data.SUSPENSION;
+
+
+        if(data.Bday == "Not Provided"){
+
+            Bday = null;
+
+        }
+
+        console.log(GuestID );
+        console.log(FirstN);
+        console.log(MiddleN);
+        console.log(LastN);
+        console.log(R);
+        console.log(PhoneN);
+        console.log(Email);
+        console.log(Bday);
+        console.log(Gender);
+        console.log(Balance);
+        console.log(SUSPENSION);
+
+
+
+        // const columnNames = ["Faculty_ID","FirstN", "MiddleN", "LastN", "Race", "PhoneN", "Email", "Bday", "Gender", "Major", "Admin_Permission", "Balance", "SUSPENSION"];
+        var query = "UPDATE dbo.Guest SET Guest.FirstN = '" + FirstN +"', Guest.MiddleN = '" + MiddleN + "', Guest.LastN = '" + LastN + "', Race = '" + R + "', PhoneN = '" + PhoneN + "', Email = '" + Email + "', Bday = '" + Bday +"', Gender = '" + Gender + "', Balance = " + Balance + ", SUSPENSION = '" + SUSPENSION + "' WHERE GuestID = '" + GuestID + "';";
+        var secondquery = "UPDATE dbo.Guest SET GuestID = '" + GuestID + "' WHERE FirstN = '" + FirstN + "' AND MiddleN = '" + MiddleN + "' AND LastN = '" + LastN + "' AND Race = '" + R + "' AND PhoneN = '" + PhoneN + "' AND Email = '" + Email + "' AND Bday = '" + Bday +"' AND Gender = '" + Gender +  "' AND Balance = '" + Balance + "' AND SUSPENSION = '" + SUSPENSION + "';";
+
+        req.query(query).then(function(recordset) {
+            console.log("First query executed");
+            req.query(secondquery).then(function(recordset) {
+            response.write("Faculty Modified");
+            response.end();}
+        )});
+
+
+
+    })}
 
 
 
@@ -1189,3 +1909,9 @@ exports.UpdateTransactions = UpdateTransactions;
 exports.SearchReservations = SearchReservations;
 exports.DeleteReservations = DeleteReservations;
 exports.UpdateReservations = UpdateReservations;
+exports.SearchFaculty = SearchFaculty;
+exports.UpdateFaculty = UpdateFaculty;
+exports.SearchStudent = SearchStudent;
+exports.UpdateStudent = UpdateStudent;
+exports.SearchGuests = SearchGuests;
+exports.UpdateGuests = UpdateGuests;
