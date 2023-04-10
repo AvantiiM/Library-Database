@@ -1,170 +1,209 @@
 <!DOCTYPE html>
 <html lang="US">
-    <head>
-        <title>Guest Entry</title>
-        <style>
-            body{
-			background-image: url("/public/test11.jpg");
-			background-repeat: no-repeat;
-			background-size: cover;
-			}
-			table {
-                border-collapse: collapse;
-                border: 2px solid #75443c;
-                width: 50%;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				margin:auto;
-    
-            }
-    
-            th, td {
-                text-align: center;
-				margin:auto;
-                padding-top: 4px;
-                padding-bottom: 4px;
-                border-bottom: 2px solid #75443c;
-                border-right: 2px solid #75443c;
-                background-color: #ecc8af;
-            }
-    
-            th:first-child, td:first-child {
-                border-left: 1px solid white;
-            }
-    
-            th {
-                background-color: #ce796b;
-                color: white
-            }
-            select,input{
-                background-color: #ecc8af;
-                color: black;
-                border: 1px #ecc8af;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				border-radius: 20px;
-				text-align: center;
-            }
-			input[type="submit"]{
-				background-color: #ce796b;
-				color: white;
-				border: 2px solid #75443c;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				border-radius: 20px;
-				cursor: pointer;
-				margin:auto;
-				font-size: 22px;
-			}
-			h1{
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-			}
-			fieldset{
-				border: none;
-			}
-			legend{
-				font-size: 1.2em;
-				font-weight: bold;
-				color: white;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				font-size: 50px;
-			}
-			form{
-				text-align: center;
-			}
-			td[type = "head"]{
-				text-align: center;
-                padding-top: 4px;
-                padding-bottom: 4px;
-                border-bottom: 2px solid #75443c;
-                border-right: 2px solid #75443c;
-                background-color: #ce796b;
-				color: white;
-			}
-			input::placeholder {
-			text-align: center;
-			}
-        </style>
-        <script>
-            function generateUsername() {
-                let username = '';
-                for (let i = 0; i < 9; i++) {
-                    username += Math.floor(Math.random() * 10);
-                }
-                username = "G" + username;
-            }
-        </script>
-    </head>
 
-    <body>
-        <form action="/addLogin" method="post">
-            <input hidden name='searchBy' value='guest'></input>
+<head>
+    <title>Guest Entry</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
+    <style>
+        body {
+            background-image: url("/public/test11.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 2px solid #75443c;
+            width: 50%;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            margin: auto;
+
+        }
+
+        th,
+        td {
+            text-align: center;
+            margin: auto;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #75443c;
+            border-right: 2px solid #75443c;
+            background-color: #ecc8af;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid white;
+        }
+
+        th {
+            background-color: #ce796b;
+            color: white
+        }
+
+        select,
+        input {
+            background-color: #ecc8af;
+            color: black;
+            border: 1px #ecc8af;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            background-color: #ce796b;
+            color: white;
+            border: 2px solid #75443c;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: auto;
+            font-size: 22px;
+        }
+
+        h1 {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+        }
+
+        fieldset {
+            border: none;
+        }
+
+        legend {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            font-size: 50px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        td[type="head"] {
+            text-align: center;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #75443c;
+            border-right: 2px solid #75443c;
+            background-color: #ce796b;
+            color: white;
+        }
+
+        input::placeholder {
+            text-align: center;
+        }
+    </style>
+    <script>
+        function inserGuestUser(form) {
+            $.ajax({
+                type: 'POST',
+                data: {
+                    searchBy: 'guest',
+                    tempPassword: form.tempPassword.value,
+                    FName: form.FName.value,
+                    LName: form.LName.value,
+                    MName: form.MName.value,
+                    Race: form.Race.value,
+                    PhoneNum: form.PhoneNum.value,
+                    Email: form.Email.value,
+                    Gender: form.Gender.value,
+                    BirthDate: form.BirthDate.value
+                },
+                url: '/addLogin',
+                success: function (response) {
+                    console.log(response)
+                    document.getElementById("guestmsg").innerHTML = response;
+                    form.reset();
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    </script>
+
+</head>
+
+<body>
+    <form action="/addLogin" method="post">
+        <input hidden name='searchBy' value='guest'></input>
+        <br></br>
+        <fieldset>
+            <legend><b>Guest Entry</b></legend>
             <br></br>
-            <fieldset>
-                <legend><b>Guest Entry</b></legend>
-                <br></br>
-                <table>
-                    <tr>
-                        <td type = "head">Temporary Password</td>
-                        <td><input type="text" name="tempPassword" required placeholder="Enter Temp Password"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">First Name</td>
-                        <td><input type="text" name="FName" required placeholder="Enter First Name"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Last Name</td>
-                        <td><input type="text" name="LName" required placeholder="Enter Last Name"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Middle Name</td>
-                        <td><input type="text" name="MName" placeholder="Middle Name"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Race</td>
-                        <td>
-                            <select name="Race">
-                                <option value="None">Choose Not to Answer</option>
-                                <option value="White">White</option>
-                                <option value="Black">Black</option>
-                                <option value="Native American">American Indian</option>
-                                <option value="Asian">Asian</option>
-                                <option value="Native Hawaiian">Native Hawaiian</option>
-                                <option value="Other">Other</option>
-                              </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Phone Number</td>
-                        <td><input type="text" name="PhoneNum" placeholder="Enter Phone Number"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Email</td>
-                        <td><input type="text" name="Email" required placeholder="Enter Email"></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Gender</td>
-                        <td>
-                            <select name="Gender">
-                                <option value="None">Choose Not to Answer</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Non-Binary">Non-Binary</option>
-                                <option value="Other">Other</option>
-                              </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Birth Date</td>
-                        <td><input type="date" name="BirthDate" placeholder="Enter Birth Date"></td>
-                    </tr>
-                </table>
-            </fieldset>
-            <br></br>
-            <input type="submit" value="Create New Guest">
-        </form>
-     <!--   <h2><%= uname %></h2>-->
-    </body>
+            <table>
+                <tr>
+                    <td type="head">Temporary Password</td>
+                    <td><input type="text" name="tempPassword" required placeholder="Enter Temp Password"></td>
+                </tr>
+                <tr>
+                    <td type="head">First Name</td>
+                    <td><input type="text" name="FName" required placeholder="Enter First Name"></td>
+                </tr>
+                <tr>
+                    <td type="head">Last Name</td>
+                    <td><input type="text" name="LName" required placeholder="Enter Last Name"></td>
+                </tr>
+                <tr>
+                    <td type="head">Middle Name</td>
+                    <td><input type="text" name="MName" placeholder="Middle Name"></td>
+                </tr>
+                <tr>
+                    <td type="head">Race</td>
+                    <td>
+                        <select name="Race">
+                            <option value="None">Choose Not to Answer</option>
+                            <option value="White">White</option>
+                            <option value="Black">Black</option>
+                            <option value="Native American">American Indian</option>
+                            <option value="Asian">Asian</option>
+                            <option value="Native Hawaiian">Native Hawaiian</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td type="head">Phone Number</td>
+                    <td><input type="text" name="PhoneNum" placeholder="Enter Phone Number"></td>
+                </tr>
+                <tr>
+                    <td type="head">Email</td>
+                    <td><input type="text" name="Email" required placeholder="Enter Email"></td>
+                </tr>
+                <tr>
+                    <td type="head">Gender</td>
+                    <td>
+                        <select name="Gender">
+                            <option value="None">Choose Not to Answer</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-Binary">Non-Binary</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td type="head">Birth Date</td>
+                    <td><input type="date" name="BirthDate" placeholder="Enter Birth Date"></td>
+                </tr>
+            </table>
+        </fieldset>
+        <br></br>
+        <input type="button" value="Create New Guest" onClick=" return inserGuestUser(this.form)">
+    </form>
+    <P>
+        <center>
+            <div id="guestmsg" style="background-color: lightblue;"></div>
+        </center>
+    </P>
+</body>
+
 </html>

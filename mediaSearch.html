@@ -1,0 +1,126 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script>
+        fetch("memberUI")
+            .then(response => {
+                return response.text()
+            })
+            .then(data => {
+                document.querySelector("header").innerHTML = data;
+            });    
+    </script>
+    <header></header>
+
+    <div style="margin-top: 100px; border-radius: 5px; padding: 15px 600px;">
+        <h1>
+            <center>Media Search</center>
+        </h1>
+        <div class="card card-body" style="display:flex; justify-content: center; ">
+            <input hidden id='searchBy' value='media'></input>
+
+            <b><label for="title-input"> Title: </label></b>
+            <input id="title-input" class="form-control" type="text" name="Title">
+
+            <b><label for="mediaid-input"> Media ID: </label></b>
+            <input id="mediaid-input" class="form-control" type="text" name="MediaID">
+
+            <b><label for="author-input"> Author: </label></b>
+            <input id="author-input" class="form-control" type="text" name="Author">
+
+            <b><label for="type-input"> Type: </label></b>
+            <input id="type-input" class="form-control" type="text" name="Type">
+
+            <b><label for="publisher-input"> Publisher: </label></b>
+            <input id="publisher-input" class="form-control" type="text" name="Publisher">
+
+            <button class="btn btn-primary" style="width: 100px;" id="search-button" type="button">Search</button>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr class="bg-info">
+                <th id="title-header" data-colname="Title" data-order="desc">Title &#9650</th>
+                <th id="mediaid-header" data-colname="MediaID" data-order="desc">Media ID &#9650</th>
+                <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
+                <th id="type-header" data-colname="Type" data-order="desc">Type &#9650</th>
+                <th id="publisher-header" data-colname="Publisher" data-order="desc">Publisher &#9650</th>
+                <th id="reserve-header" data-colname="Reserve" data-order="desc">Reserve &#9650</th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+        </tbody>
+        <script>
+            var myArray;
+
+            $("#search-button").click(function () {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        searchBy: $("#searchBy").val(),
+                        Title: $("#title-input").val(),
+                        MediaID: $("#mediaid-input").val(),
+                        Author: $("#author-input").val(),
+                        Type: $("#type-input").val(),
+                        Publisher: $("#publisher-input").val()
+                    },
+                    url: '/librarySearch',
+                    success: function (response) {
+                        console.log(response)
+                        myArray = response
+                        console.log(myArray)
+                        buildTable(response)
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+            function reserve(btn, mediaid) {
+                console.log("mediaid: " + mediaid)
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        MediaID: mediaid,
+                    },
+                    url: '/mediaReserve',
+                    success: function (response) {
+                        console.log(response)
+                        document.getElementById("mdiv" + mediaid).innerHTML = response;
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+
+            function buildTable(data) {
+                var tbody = $('#myTable');
+                tbody.empty();
+                $.each(data, function (index, row) {
+                    var tr = $('<tr>');
+                    tr.append('<td>' + row.Title + '</td>');
+                    tr.append('<td>' + row.MediaID + '</td>');
+                    tr.append('<td>' + row.Author + '</td>');
+                    tr.append('<td>' + row.Type + '</td>');
+                    tr.append('<td>' + row.Publisher + '</td>');
+                    tr.append(`<td><div id="mdiv${row.MediaID}"> <button class="btn btn-primary" onclick="reserve(this, ${row.MediaID})">Reserve</button></div></td>'`);
+                    tbody.append(tr);
+                });
+            }
+        </script>
+
+    </table>
+</body>
+
+</html>

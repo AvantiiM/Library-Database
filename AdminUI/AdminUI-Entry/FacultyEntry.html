@@ -1,194 +1,225 @@
 <!DOCTYPE html>
 <html lang="US">
-    <head>
-        <title>Faculty Entry</title>
-        <style>
-            body{
-			background-image: url("/public/test11.jpg");
-			background-repeat: no-repeat;
-			background-size: cover;
-			}
-			table {
-                border-collapse: collapse;
-                border: 2px solid #75443c;
-                width: 50%;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				margin:auto;
-    
-            }
-    
-            th, td {
-                text-align: center;
-				margin:auto;
-                padding-top: 4px;
-                padding-bottom: 4px;
-                border-bottom: 2px solid #75443c;
-                border-right: 2px solid #75443c;
-                background-color: #ecc8af;
-            }
-    
-            th:first-child, td:first-child {
-                border-left: 1px solid white;
-            }
-    
-            th {
-                background-color: #ce796b;
-                color: white
-            }
-            select,input{
-                background-color: #ecc8af;
-                color: black;
-                border: 1px #ecc8af;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				border-radius: 20px;
-				text-align: center;
-            }
-			input[type="submit"]{
-				background-color: #ce796b;
-				color: white;
-				border: 2px solid #75443c;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				border-radius: 20px;
-				cursor: pointer;
-				margin:auto;
-				font-size: 22px;
-			}
-			h1{
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-			}
-			fieldset{
-				border: none;
-			}
-			legend{
-				font-size: 1.2em;
-				font-weight: bold;
-				color: white;
-				font-family: 'Open Sans', sans-serif;
-				font-weight: 100;
-				font-size: 50px;
-			}
-			form{
-				text-align: center;
-			}
-			td[type = "head"]{
-				text-align: center;
-                padding-top: 4px;
-                padding-bottom: 4px;
-                border-bottom: 2px solid #75443c;
-                border-right: 2px solid #75443c;
-                background-color: #ce796b;
-				color: white;
-			}
-			input::placeholder {
-			text-align: center;
-			}
-        </style>
-    </head>
 
-    <body>
-        <form action="/addLogin" method="post">
-            <input hidden name='searchBy' value='faculty'></input>
+<head>
+    <title>Faculty Entry</title>
+    <style>
+        body {
+            background-image: url("/public/test11.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 2px solid #75443c;
+            width: 50%;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            margin: auto;
+
+        }
+
+        th,
+        td {
+            text-align: center;
+            margin: auto;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #75443c;
+            border-right: 2px solid #75443c;
+            background-color: #ecc8af;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: 1px solid white;
+        }
+
+        th {
+            background-color: #ce796b;
+            color: white
+        }
+
+        select,
+        input {
+            background-color: #ecc8af;
+            color: black;
+            border: 1px #ecc8af;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            background-color: #ce796b;
+            color: white;
+            border: 2px solid #75443c;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: auto;
+            font-size: 22px;
+        }
+
+        h1 {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+        }
+
+        fieldset {
+            border: none;
+        }
+
+        legend {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 100;
+            font-size: 50px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        td[type="head"] {
+            text-align: center;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #75443c;
+            border-right: 2px solid #75443c;
+            background-color: #ce796b;
+            color: white;
+        }
+
+        input::placeholder {
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        function checkUN(chrs, form, msg) {
+            if (form.Username.value.charAt(0) !== chrs) {
+                alert(msg);
+                return false;
+            } else if (form.Username.value.length != 10) {
+                alert("Username must contain 10 digits including an S/F");
+            } else {
+                form.submit();
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <form action="/addLogin" method="post">
+        <input hidden name='searchBy' value='faculty'></input>
+        <br></br>
+        <fieldset>
+            <legend><b>Faculty Entry</b></legend>
             <br></br>
-            <fieldset>
-                <legend><b>Faculty Entry</b></legend>
-                <br></br>
-                <table>
-                    <tr>
-                        <td type = "head">Faculty ID</td>
-                        <td><input type = "text" name = "Username" placeholder="Enter Faculty ID"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Temporary Password</td>
-                        <td><input type = "text" name = "tempPassword" placeholder="Enter Temp Password"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">First Name</td>
-                        <td><input type = "text" name = "FName" placeholder="Enter First Name"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Last Name</td>
-                        <td><input type = "text" name = "LName" placeholder="Enter Last Name"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Middle Name</td>
-                        <td><input type = "text" name = "MName" placeholder="Enter Middle Name"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Race</td>
-                        <td>
-                            <select name="Race">
-                                <option value="None">Choose Not to Answer</option>
-                                <option value="White">White</option>
-                                <option value="Black">Black</option>
-                                <option value="Native American">American Indian</option>
-                                <option value="Asian">Asian</option>
-                                <option value="Native Hawaiian">Native Hawaiian</option>
-                                <option value="Other">Other</option>
-                              </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Department</td>
-                        <td>
-                            <select name="Department" required>
-                                <option value="College of Architecture">College of Architecture and Design</option>
-                                <option value="College of Engineering">College of Engineering</option>
-                                <option value="College of Education">College of Education</option>
-                                <option value="College of Hospitality">College of Hospitality</option>
-                                <option value="College of Liberal Arts">College of Liberal Arts</option>
-                                <option value="College of Nursing">College of Nursing</option>
-                                <option value="College of Optometry">College of Optometry</option>
-                                <option value="College of Pharmacy">College of Pharmacy</option>
-                                <option value="College of Technology">College of Technology</option>
-                                <option value="Graduate College of Social Work">Graduate College of Social Work</option>
-                                <option value="Honors College">Honors College</option>
-                                <option value="College of Business">College of Business</option>
-                                <option value="Law Center">Law Center</option>
-                                <option value="Graduate School of Biomedical Sciences">Graduate School of Biomedical Sciences</option>
-                                <option value="School of Public Affairs">School of Publix Affairs</option>
-                                <option value="University Library">University Library</option>
-                                <option value="Financial Aid Office">Financial Aid Office</option>
-                                <option value="Office of the University Registrar">Office of the University Registrar</option>
-                                <option value="Student Business Services">Student Business Services</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Phone Number</td>
-                        <td><input type = "text" name = "PhoneNum" placeholder="Enter Phone #"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Email</td>
-                        <td><input type = "text" name = "Email" required placeholder="Enter Email"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Gender</td>
-                        <td>
-                            <select name="Gender">
-                                <option value="None">Choose Not to Answer</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Non-Binary">Non-Binary</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Birth Date</td>
-                        <td><input type = "date" name = "BirthDate"></input></td>
-                    </tr>
-                    <tr>
-                        <td type = "head">Admin Permission</td>
-                        <td><input type = "checkbox" name = "adminPermission"></input></td>
-                    </tr>
-                </table>
-            </fieldset>
-            <br></br>
-            <input type="submit" value="Create New Faculty" onClick = "return checkUserFacname(this.form)">
-        </form>
-    </body>
+            <table>
+                <tr>
+                    <td type="head">Faculty ID</td>
+                    <td><input type="text" name="Username" placeholder="Enter Faculty ID"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Temporary Password</td>
+                    <td><input type="text" name="tempPassword" placeholder="Enter Temp Password"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">First Name</td>
+                    <td><input type="text" name="FName" placeholder="Enter First Name"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Last Name</td>
+                    <td><input type="text" name="LName" placeholder="Enter Last Name"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Middle Name</td>
+                    <td><input type="text" name="MName" placeholder="Enter Middle Name"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Race</td>
+                    <td>
+                        <select name="Race">
+                            <option value="None">Choose Not to Answer</option>
+                            <option value="White">White</option>
+                            <option value="Black">Black</option>
+                            <option value="Native American">American Indian</option>
+                            <option value="Asian">Asian</option>
+                            <option value="Native Hawaiian">Native Hawaiian</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td type="head">Department</td>
+                    <td>
+                        <select name="Department" required>
+                            <option value="College of Architecture">College of Architecture and Design</option>
+                            <option value="College of Engineering">College of Engineering</option>
+                            <option value="College of Education">College of Education</option>
+                            <option value="College of Hospitality">College of Hospitality</option>
+                            <option value="College of Liberal Arts">College of Liberal Arts</option>
+                            <option value="College of Nursing">College of Nursing</option>
+                            <option value="College of Optometry">College of Optometry</option>
+                            <option value="College of Pharmacy">College of Pharmacy</option>
+                            <option value="College of Technology">College of Technology</option>
+                            <option value="Graduate College of Social Work">Graduate College of Social Work</option>
+                            <option value="Honors College">Honors College</option>
+                            <option value="College of Business">College of Business</option>
+                            <option value="Law Center">Law Center</option>
+                            <option value="Graduate School of Biomedical Sciences">Graduate School of Biomedical
+                                Sciences</option>
+                            <option value="School of Public Affairs">School of Publix Affairs</option>
+                            <option value="University Library">University Library</option>
+                            <option value="Financial Aid Office">Financial Aid Office</option>
+                            <option value="Office of the University Registrar">Office of the University Registrar
+                            </option>
+                            <option value="Student Business Services">Student Business Services</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td type="head">Phone Number</td>
+                    <td><input type="text" name="PhoneNum" placeholder="Enter Phone #"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Email</td>
+                    <td><input type="text" name="Email" required placeholder="Enter Email"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Gender</td>
+                    <td>
+                        <select name="Gender">
+                            <option value="None">Choose Not to Answer</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-Binary">Non-Binary</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td type="head">Birth Date</td>
+                    <td><input type="date" name="BirthDate"></input></td>
+                </tr>
+                <tr>
+                    <td type="head">Admin Permission</td>
+                    <td><input type="checkbox" name="adminPermission"></input></td>
+                </tr>
+            </table>
+        </fieldset>
+        <br></br>
+        <input type="submit" value="Create New Faculty"
+            onClick=" return checkUN('F',this.form,'Invalid username when creating an Faculty. \nMust begin with an F')">
+    </form>
+</body>
+
 </html>
