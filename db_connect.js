@@ -1,9 +1,9 @@
 const sql = require('mssql');
 const config = {
-    user: 'temp',
+    user: 'Universal',
     password: 'L1br@ryFun',
-    server: 'funserver.database.windows.net',
-    database: 'Library Database',
+    server: 'librarydatabase1.database.windows.net',
+    database: 'libray',
     port: 1433,
     options: {
         encrypt: true

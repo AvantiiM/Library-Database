@@ -3,15 +3,24 @@
     <head>
         <title>Object Entry</title>
         <style>
-            table {
+            body{
+			background-image: url("/public/test11.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			}
+			table {
                 border-collapse: collapse;
                 border: 2px solid #75443c;
                 width: 50%;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				margin:auto;
     
             }
     
             th, td {
                 text-align: center;
+				margin:auto;
                 padding-top: 4px;
                 padding-bottom: 4px;
                 border-bottom: 2px solid #75443c;
@@ -31,22 +40,65 @@
                 background-color: #ecc8af;
                 color: black;
                 border: 1px #ecc8af;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				text-align: center;
             }
+			input[type="submit"]{
+				background-color: #ce796b;
+				color: white;
+				border: 2px solid #75443c;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				cursor: pointer;
+				margin:auto;
+				font-size: 22px;
+			}
+			h1{
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+			}
+			fieldset{
+				border: none;
+			}
+			legend{
+				font-size: 1.2em;
+				font-weight: bold;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				font-size: 50px;
+			}
+			form{
+				text-align: center;
+			}
+			td[type = "head"]{
+				text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ce796b;
+				color: white;
+			}
+			input::placeholder {
+			text-align: center;
+			}
         </style>
     </head>
 
     <body>
-        <h1>Object Entry Form</h1>
         <form action="/addItem" method="post">
             <input hidden name = "searchBy" value = "Object"></input>
-            <div style="overflow-x: auto;">
+           <!-- <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
                             <th>Name of Object</th>
                             <th>Dollar Value</th>
                             <th># of Copies</th> 
-                            <!-- Commented out ^above^ to avoid possible duplicate data -->
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +109,26 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div>-->
+            <br></br>
+            <fieldset>
+                <legend><b>Object Entry</b></legend>
+                <br></br>
+                <table>
+                    <tr>
+                        <td type = "head">Name of Object</td>
+                        <td><input type="text" name="itemName" placeholder="Name of Object"></td>
+                    </tr>
+                    <tr>
+                        <td type = "head">Dollar Value</td>
+                        <td><input type="number" name="DValue" placeholder="Dollar Value"></td>
+                    </tr>
+                    <tr>
+                        <td type = "head"># of Copies</td>
+                        <td><input type="number" name="NCopies" placeholder="# of Copies"></td>
+                    </tr>
+                </table>
+            <br></br>
             <input type="submit" value="Submit">
         </form>
     </body>

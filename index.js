@@ -3,6 +3,7 @@ var router = require("./router");
 var requestHandlers = require("./requestHandlers");
 var EditrequestHandlers = require("./EditrequestHandlers");
 var mUI_requestHandlers = require("./mUI_requestHandlers");
+var requestHandlersReport = require("./requestHandlersReport");
 
 var handle = {};
 handle["/"] = requestHandlers.login; //http://localhost:3000/login
@@ -38,12 +39,17 @@ handle["/FacultyEdit"] = requestHandlers.FacultyEdit; //http://localhost:3000/Fa
 handle["/StudentEdit"] = requestHandlers.StudentEdit; //http://localhost:3000/StudentEdit
 handle["/GuestEdit"] = requestHandlers.GuestEdit; //http://localhost:3000/GuestEdit
 handle["/TransactionsEdit"] = requestHandlers.TransactionsEdit; //http://localhost:3000/TransactionsEdit
+handle["/ReservationsEdit"] = requestHandlers.ReservationsEdit; //http://localhost:3000/ReservationsEdit
 
 handle["/StudentEntry"] = requestHandlers.StudentEntry; //http://localhost:3000/StudentEntry
 handle["/GuestEntry"] = requestHandlers.GuestEntry; //http://localhost:3000/GuestEntry
 handle["/FacultyEntry"] = requestHandlers.FacultyEntry; //http://localhost:3000/FacultyEntry
 handle["/SearchBooks"] = requestHandlers.SearchBooks; //http://localhost:3000/bookSearch
 handle["/AdminEntry"] = requestHandlers.AdminEntry; //http://localhost:3000/AdminEntry
+
+handle["/AdminReportMain"] = requestHandlers.AdminReportMain; //http://localhost:3000/AdminReportMain
+handle["/AdminReportBook"] = requestHandlers.AdminReportBook; //http://localhost:3000/AdminReportBook
+handle["/AdminReportBookSearch"] = requestHandlers.AdminReportBookSearch; //http://localhost:3000/AdminReportBookSearch
 
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
@@ -58,5 +64,30 @@ handle["/SearchObjects"] = EditrequestHandlers.SearchObjects; //http://localhost
 handle["/UpdateObjects"] = EditrequestHandlers.UpdateObjects; //http://localhost:3000/UpdateObjects
 handle["/DeleteObjects"] = EditrequestHandlers.DeleteObjects; //http://localhost:3000/DeleteObjects
 
+handle["/SearchMedia"] = EditrequestHandlers.SearchMedia; //http://localhost:3000/SearchMedia
+handle["/UpdateMedia"] = EditrequestHandlers.UpdateMedia; //http://localhost:3000/UpdateMedia
+handle["/DeleteMedia"] = EditrequestHandlers.DeleteMedia; //http://localhost:3000/DeleteMedia
 
+handle["/SearchTransactions"] = EditrequestHandlers.SearchTransactions; //http://localhost:3000/SearchTransactions
+handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http://localhost:3000/UpdateTransactions
+handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
+
+handle["/SearchReservations"] = EditrequestHandlers.SearchReservations; //http://localhost:3000/SearchReservations
+handle["/UpdateReservations"] = EditrequestHandlers.UpdateReservations; //http://localhost:3000/UpdateReservations
+handle["/DeleteReservations"] = EditrequestHandlers.DeleteReservations; //http://localhost:3000/DeleteReservations
+
+handle["/SearchFaculty"] = EditrequestHandlers.SearchFaculty; //http://localhost:3000/SearchFaculty
+handle["/UpdateFaculty"] = EditrequestHandlers.UpdateFaculty; //http://localhost:3000/UpdateFaculty
+
+handle["/SearchStudent"] = EditrequestHandlers.SearchStudent; //http://localhost:3000/SearchStudent
+handle["/UpdateStudent"] = EditrequestHandlers.UpdateStudent; //http://localhost:3000/UpdateStudent
+
+handle["/SearchGuests"] = EditrequestHandlers.SearchGuests; //http://localhost:3000/SearchGuest
+handle["/UpdateGuests"] = EditrequestHandlers.UpdateGuests; //http://localhost:3000/UpdateGuest
+
+
+handle["/UserReportSum"] = requestHandlersReport.UserReportSum; //http://localhost:3000/UserReportSum
+handle["/TransactionReportSum"] = requestHandlersReport.TransactionReportSum; //http://localhost:3000/TransactionReportSum
+handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost:3000/MaxReportSum
 server.start(router.route, handle);
+

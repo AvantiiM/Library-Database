@@ -93,7 +93,7 @@ function start(route, handle) {
           response.write(data);
           response.end();
         }
-        return; //Added 4/9
+        //return; //Added 4/9
       });
     }
     else {
@@ -123,26 +123,10 @@ function start(route, handle) {
       // response.writeHead(302, {"Location": "/login"});
       // response.end();
       //return;
-    }
-    if (pathname === "/login" || pathname === "/") {
-      console.log("Routing to login page");
-      cons.ejs('login.html', { msg: "" }, function (err, html) {
-        if (err) {
-          console.error('Error templating with EJS');
-          throw err;
-        }
-        response.write(html);
-        response.end();
-        return;
-      });
-    } else {
-      // console.log("session id: " + userSess.getSessonId());
-      // console.log("session user: " + userSess.getUserName());
-      if (pathname === "/logout") {
-        if (usession && (usession.sessionId)) {
-          mapSession.delete(usession.sessionId);
-        }
-        cons.ejs('login.html', { msg: "Logout successful" }, function (err, html) {
+
+      if (pathname === "/login" || pathname === "/") {
+        console.log("Routing to login page");
+        cons.ejs('login.html', { msg: "" }, function (err, html) {
           if (err) {
             console.error('Error templating with EJS');
             throw err;
@@ -152,20 +136,36 @@ function start(route, handle) {
           return;
         });
       } else {
-        request.addListener("data", function (chunk) { //new
-          postData += chunk;
-        });
+        // console.log("session id: " + userSess.getSessonId());
+        // console.log("session user: " + userSess.getUserName());
+        if (pathname === "/logout") {
+          if (usession && (usession.sessionId)) {
+            mapSession.delete(usession.sessionId);
+          }
+          cons.ejs('login.html', { msg: "Logout successful" }, function (err, html) {
+            if (err) {
+              console.error('Error templating with EJS');
+              throw err;
+            }
+            response.write(html);
+            response.end();
+            return;
+          });
+        } else {
+          request.addListener("data", function (chunk) { //new
+            postData += chunk;
+          });
 
-        request.addListener("end", function () {
-          route(handle, pathname, response, postData, usession); //new
-          console.log("----session id: " + usession.sessionId);//sessionId
-          console.log("----session user: " + usession.logginId);
-          console.log("----session date: " + usession.loggedDT);
-          console.log("Request handling complete");
-        });
+          request.addListener("end", function () {
+            route(handle, pathname, response, postData, usession); //new
+            console.log("----session id: " + usession.sessionId);//sessionId
+            console.log("----session user: " + usession.logginId);
+            console.log("----session date: " + usession.loggedDT);
+            console.log("Request handling complete");
+          });
+        }
       }
     }
-
     // route(handle, pathname, response);
   }
 

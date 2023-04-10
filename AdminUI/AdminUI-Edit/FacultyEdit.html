@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Faculty Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'SearchFaculty');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("FacultyTableBody");	
+				
+
+
+
+
+				responseData.forEach(Faculty => {
+					const Checkisbn = Faculty.Faculty_ID;
+					// Check if a row with the same Faculty ID already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = Faculty.Faculty_ID;
+						cells[2].innerText = Faculty.FirstN;
+						cells[3].innerText = Faculty.MiddleN;
+						cells[4].innerText = Faculty.LastN;
+						cells[5].innerText = Faculty.Race;
+						cells[6].innerText = Faculty.PhoneN;
+						cells[7].innerText = Faculty.Email;
+						cells[8].innerText = Faculty.Bday;
+						cells[9].innerText = Faculty.Gender;
+						cells[10].innerText = Faculty.Department;
+						cells[11].innerText = Faculty.Admin_Permission;
+                        cells[12].innerText = Faculty.Balance;
+                        cells[13].innerText = Faculty.SUSPENSION;
+                        cells[14].innerText = Faculty.Created_By;
+                        cells[15].innerText = Faculty.Created_Date;
+                        cells[16].innerText = Faculty.Last_Updated_By;
+                        cells[17].innerText = Faculty.Last_Updated_Date;
+					} else {
+					console.log(Faculty);
+					const row = table.insertRow();
+					const FacultyID = row.insertCell();
+					FacultyID.innerText = Faculty.Faculty_ID;
+					const FacultyFName = row.insertCell();
+					FacultyFName.innerText = Faculty.FirstN;
+					const FacultyMName = row.insertCell();
+					FacultyMName.innerText = Faculty.MiddleN;
+					const FacultyLName = row.insertCell();
+					FacultyLName.innerText = Faculty.LastN;
+					const FacultyRace = row.insertCell();
+					FacultyRace.innerText = Faculty.Race;
+					const FacultyPhone = row.insertCell();
+					FacultyPhone.innerText = Faculty.PhoneN;
+					const FacultyEmail = row.insertCell();
+					FacultyEmail.innerText = Faculty.Email;
+					const FacultyBday = row.insertCell();
+					FacultyBday.innerText = Faculty.Bday;
+					let datePortion = null;
+					if(Faculty.Bday){datePortion = Faculty.Bday.slice(0, Faculty.Bday.indexOf("T"));}
+                    const FacultyGender = row.insertCell();
+                    FacultyGender.innerText = Faculty.Gender;
+                    const FacultyDept = row.insertCell();
+                    FacultyDept.innerText = Faculty.Department;
+                    const FacultyAdmin = row.insertCell();
+                    FacultyAdmin.innerText = Faculty.Admin_Permission;
+                    const FacultyBalance = row.insertCell();
+                    FacultyBalance.innerText = Faculty.Balance;
+                    const FacultySUSPENSION = row.insertCell();
+                    FacultySUSPENSION.innerText = Faculty.SUSPENSION;
+					const createdBy = row.insertCell();
+					createdBy.innerText = Faculty.Created_BY;
+					const createdDate = row.insertCell();
+					createdDate.innerText = Faculty.Created_date;
+					const updatedBy = row.insertCell();
+					updatedBy.innerText = Faculty.Updated_BY;
+					const lastUpdated = row.insertCell();
+					lastUpdated.innerText = Faculty.Last_Updated;
+					
+
+
+					// Create the cell for the edit and delete buttons
+					const actionsCell = row.insertCell();
+
+					// Create the edit button
+					const editButton = document.createElement("button");
+					editButton.innerText = "Edit";
+					editButton.className = "edit-btn"
+					editButton.addEventListener("click", () => {
+
+					// Handle the edit button click event
+						const row = editButton.parentNode.parentNode;
+						const cells = row.querySelectorAll("td");
+						const columnNames = ["Faculty_ID","FirstN", "MiddleN", "LastN", "Race", "PhoneN", "Email", "Bday", "Gender", "Department", "Admin_Permission", "Balance", "SUSPENSION"];
+						let inputId = [];
+						let inputfield = [];
+						for (let i = 0; i < (cells.length - 5); i++) {
+							const cell = cells[i];
+							const value = cell.innerText;
+							const columnName = columnNames[i];
+							inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+							inputfield[i] = document.createElement("input");
+							inputfield[i].setAttribute("id", inputId[i]);
+							inputfield[i].setAttribute("type", "text");
+							inputfield[i].setAttribute("value", value);
+							cell.innerHTML = inputfield[i].getAttribute("value");
+							cell.appendChild(inputfield[i]);
+						}
+												
+						
+									const EditInputtwo = []
+									for (let i = 0; i < (cells.length - 5); i++) {
+									EditInputtwo[i] = document.querySelector(`#${inputId[i]}`);
+									EditInputtwo[i].addEventListener("change", (event) => {
+										const newValue = event.target.value;
+										console.log(newValue);
+										EditInputtwo[i].setAttribute("value", newValue);
+										
+									});}
+
+
+
+							// Change the edit button to a save button
+							editButton.innerText = "Save";
+							editButton.className = "save-btn";
+
+							// Handle the save button click event
+							editButton.removeEventListener("click", arguments.callee);
+							editButton.addEventListener("click", () => {
+								;
+								const data = {};
+								// Get the values from the input fields
+								for (let i = 0; i < cells.length - 5; i++) {
+
+									const columnName = columnNames[i];
+
+
+									
+
+
+
+									// inputId[i] = `input_${columnName.replace(/ /g, '_')}`;
+
+
+									// let cellsforinput = row.querySelector(`#${inputId[i]}`);
+									//const cell = cellsforinput;
+									//console.log(cell.innerText);
+									// const value = cellsforinput.innerText;
+									// console.log(value);
+									// inputfield[i].setAttribute("value", value);
+									
+
+								
+								let updatedinputfield = inputfield[i].getAttribute("value")
+								console.log(updatedinputfield);
+								data[columnName] = updatedinputfield;
+								//console.log(data[columnName])
+								}
+
+						const xhr = new XMLHttpRequest();
+						xhr.open("POST", "UpdateFaculty");
+						xhr.setRequestHeader("Content-Type", "application/json");
+						xhr.send(new URLSearchParams(data).toString());
+						xhr.onload = function () {
+							// update the table values
+							if (xhr.status === 200) {
+							alert("Faculty updated successfully please refresh the page to see the changes");
+							for (let i = 0; i < cells.length; i++) {
+								// const cell = cells[i];
+								// const columnName = cell.getAttribute("data-column-name");
+								// const value = data[columnName];
+								// cell.innerText = value;
+							}
+							editButton.innerText = "Saved";
+							editButton.className = "edit-btn";
+							}
+						};
+						});
+
+					
+
+					});
+					actionsCell.appendChild(editButton);
+
+
+
+
+
+
+
+					table.appendChild(row);
+					}});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
+</head>
+<body>
+	
+
+	<h1>Faculty Search</h1>
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+	<!-- <form action="/SearchBooks" method="post"> -->
+		<div class="form-group">
+			<label for="FacultyID">Faculty ID:</label>
+			<input type="text" id="FacultyID" name="FacultyID" placeholder="Enter Faculty ID...">
+		</div>
+		<div class="form-group">
+			<label for="FName">First Name:</label>
+			<input type="text" id="FName" name="FName" placeholder="Enter dollar value...">
+		</div>
+        <div class="form-group">
+            <label for="MName">Middle Name:</label>
+            <input type="text" id="MName" name="MName" placeholder="Enter middle name...">
+        </div>
+		<div class="form-group">
+            <label for="LName">Last Name:</label>
+            <input type="text" id="LName" name="LName" placeholder="Enter last name...">
+        </div>
+        <div class="form-group">
+            <label for="Race">Race:</label>
+            <input type="text" id="Race" name="Race" placeholder="Enter Race...">
+        </div>
+        <div class="form-group">
+            <label for="Phone">Phone:</label>
+            <input type="text" id="Phone" name="Phone" placeholder="Enter Phone...">
+        </div>
+        <div class="form-group">
+            <label for="Email">Email:</label>
+            <input type="text" id="Email" name="Email" placeholder="Enter Email...">
+        </div>
+        <div class="form-group">
+            <label for="BirthDay">Birth Day:</label>
+            <input type="text" id="BirthDay" name="BirthDay" placeholder="Enter Birth Day...">
+        </div>
+        <div class="form-group">
+            <label for="Department">Department:</label>
+            <input type="text" id="Department" name="Department" placeholder="Enter Department...">
+        </div>
+        <div class="form-group">
+            <label for="AdminPermission">Admin Permission:</label>
+            <input type="text" id="AdminPermission" name="AdminPermission" placeholder="Enter Admin Permission...">
+        </div>
+        <div class="form-group">
+            <label for="Balance">Balance:</label>
+            <input type="text" id="Balance" name="Balance" placeholder="Enter Balance...">
+        </div>
+        <div class="form-group">
+            <label for="Suspended">Suspended:</label>
+            <input type="text" id="Suspended" name="Suspended" placeholder="Enter Balance...">
+        </div>
+		<div class="form-group">
+			<label for="createdBy">Created By:</label>
+			<input type="text" id="createdBy" name="createdBy" placeholder="Enter created by...">
+		</div>
+		<div class="form-group">
+			<label for="createdDate">Created Date:</label>
+			<input type="text" id="createdDate" name="createdDate" placeholder="Enter created date...">
+		</div>
+		<div class="form-group">
+			<label for="updatedBy">Updated By:</label>
+			<input type="text" id="updatedBy" name="updatedBy" placeholder="Enter updated by...">
+		</div>
+		<div class="form-group">
+			<label for="lastUpdated">Last Updated:</label>
+			<input type="text" id="lastUpdated" name="lastUpdated" placeholder="Enter last updated...">
+		</div>
+		<input type="submit" value="Search">
+	</form>
+	<table id="FacultyTable">
+		<thead>
+			<tr>
+				<th>Faculty ID</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Last Name</th>
+                <th>Race</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Birth Day</th>
+				<th>Gender</th>
+                <th>Department</th>
+                <th>Admin Permission</th>
+                <th>Balance</th>
+                <th>Suspended</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Last Updated</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody id="FacultyTableBody">
+		</tbody>
+	</table>
+
+
+</body>
+</html>

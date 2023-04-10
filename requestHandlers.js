@@ -54,8 +54,9 @@ function loginverify(response, postData, sessionData = null) {
                             if (adminlogin && (username.charAt(0) === 'F')) {
                                 req.query("SELECT Admin_ID FROM Admin WHERE Admin_ID=@username").then(function (recordset) {
                                     if (recordset.recordsets[0].length > 0) {
-                                        response.writeHead(302, { "Location": "/adminUI" });
-                                        response.end();
+                                        sendFile(response, "adminUI.html", sessionData.getSessonId());
+                                        // response.writeHead(302, { "Location": "/adminUI" });
+                                        // response.end();
                                     } else {
                                         sendFile(response, "memberUI.html", sessionData.getSessonId());
                                     }
@@ -243,81 +244,124 @@ function addItem(response, postData) {
         var queryStr = "";
         switch (mode) {
             case 'Electronic':
-                queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
-                req.query(queryStr).then(function (recordset) {
-                    console.log("Electronic entry inserted into database.");
-                }).catch(function (err) {
-                    console.log(err);
-                });
-                response.writeHead(302, { "Location": "/adminUI" });
+              queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
+              req.query(queryStr).then(function(recordset) {
+                console.log("Electronic entry inserted into database.");
+                var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
+                response.writeHead(200, { "Content-Type": "text/html" });
+                response.write(fdata + "<script> alert('Electronic entry inserted into database.'); </script>");
                 response.end();
-                break;
+            }).catch(function(err) {
+                if (err.message.includes("Violation of PRIMARY KEY constraint 'Primary_KEY_FOR_ELECTRONICS'. Cannot insert duplicate key in object 'dbo.Electronics'")){
+                    console.log("Electronic with serial num already exists in database."); 
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Error: Electronic with Serial Num already exists'); </script>");
+                    response.end();              
+                }
+                else{
+                    console.log(err);
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Electronic entry failed to insert into database.'); </script>");
+                    response.end();
+                }
+            });
+              break;
             case 'Book':
-                queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
-                req.query(queryStr).then(function (recordset) {
-                    console.log("Book entry inserted into database.");
-                }).catch(function (err) {
-                    console.log(err);
-                });
-                response.writeHead(302, { "Location": "/adminUI" });
+              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
+              req.query(queryStr).then(function(recordset) {
+                console.log("Book entry inserted into database.");
+                var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+                response.writeHead(200, { "Content-Type": "text/html" });
+                response.write(fdata + "<script> alert('Book entry inserted into database.'); </script>");
                 response.end();
-                break;
+            }).catch(function(err) {
+                if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Book'. Cannot insert duplicate key in object 'dbo.Book'")){
+                    console.log("Book with that ISBN already exists in database."); 
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Error: Book with ISBN already exists'); </script>");
+                    response.end();             
+                }
+                else{
+                    console.log(err);
+                    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
+                    response.writeHead(200, { "Content-Type": "text/html" });
+                    response.write(edata + "<script> alert('Book entry failed to insert into database.'); </script>");
+                    response.end();
+                }
+            });
+
+              break;
             case 'Media':
                 function insertMediaQuery(req, tempMID) {
                     req.input('tempMID', sql.NVarChar, tempMID);
                     queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
                     req.query(queryStr).then(function (recordset) {
                         console.log("Media entry inserted into database.");
-                        return;
-                    }).catch(function (err) {
-                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'")) {
-                            console.log("Media ID already exists. Generating new ID...")
+                        var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
+                        response.writeHead(200, { "Content-Type": "text/html" });
+                        response.write(edata + "<script> alert('Media entry to insert into database.'); </script>");
+                        response.end();
+                       return;
+                    }).catch(function(err) {
+                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'")){
+                            console.log("Media ID already exists. Generating new ID...")  
                             var newMID = generateMediaID();
                             return insertMediaQuery(req, newMID);
                         }
                         else {
                             console.log(err);
+                            var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
+                            response.writeHead(200, { "Content-Type": "text/html" });
+                            response.write(edata + "<script> alert('Media entry failed to insert into database.'); </script>");
+                            response.end();
                             return;
                         }
                     });
                     return;
                 }
                 insertMediaQuery(req, MID);
-                response.writeHead(302, { "Location": "/adminUI" });
-                response.end();
-                break;
+              break;
             case 'Object':
-                function insertObjectQuery(req, tempOID) {
-                    req.input('tempOID', sql.NVarChar, tempOID);
-                    queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
-                    req.query(queryStr).then(function (recordset) {
-                        console.log("Object entry inserted into database.");
+                    function insertObjectQuery(req, tempOID){
+                        req.input('tempOID', sql.NVarChar, tempOID);
+                        queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+                        req.query(queryStr).then(function(recordset) {
+                            console.log("Object entry inserted into database.");
+                            var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
+                            response.writeHead(200, { "Content-Type": "text/html" });
+                            response.write(edata + "<script> alert('Object entry inserted into database.'); </script>");
+                            response.end();
+                           return;
+                        }).catch(function(err) {
+                            if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'")){
+                                console.log("Object ID already exists. Generating new ID...")
+                                var newOID = generateObjectID();
+                                return insertObjectQuery(req, newOID);               
+                            }
+                            else{
+                                console.log(err);
+                                var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
+                                response.writeHead(200, { "Content-Type": "text/html" });
+                                response.write(edata + "<script> alert('Object entry failed to insert into database.'); </script>");
+                                response.end();
+                                return;
+                            }
+                        });
                         return;
-                    }).catch(function (err) {
-                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'")) {
-                            console.log("Object ID already exists. Generating new ID...")
-                            var newOID = generateObjectID();
-                            return insertObjectQuery(req, newOID);
-                        }
-                        else {
-                            console.log(err);
-                            return;
-                        }
-                    });
-                    return;
-                }
-                insertObjectQuery(req, OID);
-                response.writeHead(302, { "Location": "/adminUI" });
-                response.end();
-                break;
-
-        }
-
-    }).catch(function (err) {
-        console.error("Unable to get a DB connection");
-        console.log(err);
-    });
-
+                    }
+                    insertObjectQuery(req, OID);
+              break;
+              
+          }   
+          
+        }).catch(function(err) {
+            console.error("Unable to get a DB connection");
+            console.log(err);
+        });
+    
 }
 
 function generateUsername() {
@@ -620,6 +664,13 @@ function TransactionsEdit(response) {
     response.end();
 
 }
+function ReservationsEdit(response){
+    console.log("Request handler 'ReservationsEdit' was called.");
+    var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ReservationsEdit.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(fdata);
+    response.end();
+}
 
 function StudentEntry(response) {
     console.log("Request handler 'StudentEntry' was called.");
@@ -661,6 +712,56 @@ function AdminEntry(response) {
     response.write(edata);
     response.end();
 }
+
+function AdminReportMain(response){
+    console.log("Request handler 'AdminReportMain' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportMain.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBook(response){
+    console.log("Request handler 'AdminReportBook' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBook.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBookSearch(response){
+    console.log("Request handler 'AdminReportBookSearch' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBookSearch.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+
+function AdminReportMain(response){
+    console.log("Request handler 'AdminReportMain' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportMain.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBook(response){
+    console.log("Request handler 'AdminReportBook' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBook.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+function AdminReportBookSearch(response){
+    console.log("Request handler 'AdminReportBookSearch' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportBookSearch.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
 
 function SearchBooks(response, postData) {
 
@@ -906,6 +1007,9 @@ exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
 exports.FacultyEntry = FacultyEntry;
 exports.AdminEntry = AdminEntry;
+exports.AdminReportMain = AdminReportMain;
+exports.AdminReportBook = AdminReportBook;
+exports.AdminReportBookSearch = AdminReportBookSearch;
 exports.BookEdit = BookEdit;
 exports.ElectronicsEdit = ElectronicsEdit;
 exports.ObjectEdit = ObjectEdit;
@@ -914,6 +1018,7 @@ exports.FacultyEdit = FacultyEdit;
 exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
+exports.ReservationsEdit = ReservationsEdit;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
