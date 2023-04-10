@@ -75,8 +75,10 @@ function start(route, handle) {
       var filePath = path.join(__dirname, pathname);
       fs.readFile(filePath, function (err, data) {
         if (err) {
-          response.writeHead(404, { "Content-Type": "text/plain" });
-          response.write("404 Not Found\n");
+          // response.writeHead(404, {"Content-Type": "text/plain"});
+          // response.write("404 Not Found\n");
+          // response.end();
+          window.location('/404')
           response.end();
         } else {
           var contentType;
