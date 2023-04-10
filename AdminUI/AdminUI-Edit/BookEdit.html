@@ -132,7 +132,7 @@
 		color: white;
 		padding: 10px 20px;
 		position: relative;
-		left: 10px;
+		left: 0;
 		text-decoration: none;
 		display: inline-block;
 		font-size: 12px;
@@ -161,7 +161,7 @@
 
 			
 
-  		xhr.open('POST', 'http://localhost:3000/SearchBooks');
+  		xhr.open('POST', 'SearchBooks');
   		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.send(new URLSearchParams(formData).toString());
 
@@ -180,7 +180,29 @@
 
 				const table = document.getElementById("BookTableBody");	
 				
+
+
+
+
 				responseData.forEach(book => {
+					const Checkisbn = book.ISBN;
+					// Check if a row with the same ISBN already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = book.Book_Name;
+						cells[2].innerText = book.Dollar_Value;
+						cells[3].innerText = book.Num_of_Copies;
+						cells[4].innerText = book.Author;
+						cells[5].innerText = book.Genre;
+						cells[6].innerText = book.Language;
+						cells[7].innerText = book.Publisher_Name;
+						cells[8].innerText = book.Created_BY;
+						cells[9].innerText = book.Created_date;
+						cells[10].innerText = book.Updated_BY;
+						cells[11].innerText = book.Last_Updated;
+					} else {
 					console.log(book);
 					const row = table.insertRow();
 					const isbn = row.insertCell();
@@ -207,7 +229,7 @@
 					updatedBy.innerText = book.Updated_BY;
 					const lastUpdated = row.insertCell();
 					lastUpdated.innerText = book.Last_Updated;
-
+					
 
 
 					// Create the cell for the edit and delete buttons
@@ -289,13 +311,13 @@
 								}
 
 						const xhr = new XMLHttpRequest();
-						xhr.open("POST", "http://localhost:3000/UpdateBook");
+						xhr.open("POST", "UpdateBook");
 						xhr.setRequestHeader("Content-Type", "application/json");
 						xhr.send(new URLSearchParams(data).toString());
 						xhr.onload = function () {
 							// update the table values
 							if (xhr.status === 200) {
-							alert("Book updated successfully");
+							alert("Book updated successfully please refresh the page to see the changes");
 							for (let i = 0; i < cells.length; i++) {
 								// const cell = cells[i];
 								// const columnName = cell.getAttribute("data-column-name");
@@ -308,7 +330,7 @@
 						};
 						});
 
-
+					
 
 					});
 					actionsCell.appendChild(editButton);
@@ -326,12 +348,12 @@
 							const deleteisbn = deleteButton.getAttribute("data-isbn");
 							const data = { deletebookisbn: deleteisbn };
 							console.log(data);
-							xhr.open("DELETE", `http://localhost:3000/DeleteBook`);
+							xhr.open("DELETE", `DeleteBook`);
 							xhr.setRequestHeader("Content-Type", "application/json");
 							xhr.send(new URLSearchParams(data).toString());
 							xhr.onload = function() {
 								if (xhr.status === 200) {
-									alert("Book deleted successfully");
+									alert("Book deleted successfully please refresh the page to see the changes");
 								} else {
 									console.log("Error deleting book");
 								}
@@ -351,7 +373,7 @@
 
 
 					table.appendChild(row);
-					});
+					}});
 
 
 				

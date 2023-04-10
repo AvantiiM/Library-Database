@@ -2,39 +2,45 @@ var fs = require('fs');
 var sql = require('mssql');
 var config = require('./db_connect');
 var querystring = require('querystring');
-var bcrypt = require('bcryptjs'); 
+var bcrypt = require('bcryptjs');
 
 var cons = require('consolidate');
 
 
 const { Console } = require('console');
-const { callbackify } = require('util');
 
-function loginverify(response, postData) {
-    var params = querystring.parse(postData); 
+function loginverify(response, postData, sessionData = null) {
+    //function loginverify(response, postData) {
+    var params = querystring.parse(postData);
     var username = params['Username'];
-    var password = params['Password']; 
+    var password = params['Password'];
     var adminlogin = params['adminLogin'];
-//    var connect = fs.readFileSync('db_connect.js');
+    if (!sessionData) {
+        console.log("SessionData is null");
+    } else {
+        console.log("Session ID in login verify: " + sessionData.getSessonId());
+    }
+    //    var connect = fs.readFileSync('db_connect.js');
 
     var conn = new sql.ConnectionPool(config);
-    sql.connect(config).then(function() {
+    sql.connect(config).then(function () {
         var req = new sql.Request();
         req.input('username', sql.NVarChar, username);
         req.input('password', sql.NVarChar, password);
-        req.query("SELECT HashedPassword, TemporaryPassword FROM Login WHERE Username=@username").then(function(recordset) {
+        req.query("SELECT HashedPassword, TemporaryPassword FROM Login WHERE Username=@username").then(function (recordset) {
             if (recordset.recordsets[0].length > 0) {
-                var hash = recordset.recordsets[0][0].HashedPassword; 
+                var hash = recordset.recordsets[0][0].HashedPassword;
                 var temp = recordset.recordsets[0][0].TemporaryPassword;
-                bcrypt.compare(password, hash, function(err, result) { 
+                bcrypt.compare(password, hash, function (err, result) {
                     if (result) {
                         // Passwords match, show a success message
                         console.log("success");
-                        //sessionData.setLogginId(username)
+                        sessionData.logginId = username;
+                        sessionData.loggedDT = new Date().toLocaleString().replace(',', '');
                         console.log("Temp =" + temp);
-                        if(temp) {
-                            cons.ejs('./changePassword.html',{username: username, oldpassword: password}, function(err, html){
-                                if(err) {
+                        if (temp) {
+                            cons.ejs('./changePassword.html', { username: username, oldpassword: password }, function (err, html) {
+                                if (err) {
                                     console.error('Error templating with EJS');
                                     throw err;
                                 }
@@ -45,58 +51,89 @@ function loginverify(response, postData) {
 
                             //response.writeHead(302, {"Location": "/changePassword"})
                         } else {
-                            if(adminlogin) {
-                                response.writeHead(302, { "Location": "/adminUI" });
+                            if (adminlogin && (username.charAt(0) === 'F')) {
+                                req.query("SELECT Admin_ID FROM Admin WHERE Admin_ID=@username").then(function (recordset) {
+                                    if (recordset.recordsets[0].length > 0) {
+                                        response.writeHead(302, { "Location": "/adminUI" });
+                                        response.end();
+                                    } else {
+                                        sendFile(response, "memberUI.html", sessionData.getSessonId());
+                                    }
+                                    
+                                }).catch(function (err) {
+                                    console.log(err);
+                                    response.end();
+                                    return;
+                                });
+                                //response.writeHead(302, {'Cookie': 'sessionId=${sessionData.getSessonId()}' "Location": "/adminUI" });
                             } else {
-                                response.writeHead(302, { "Location": "/memberUI" });
+                                //response.writeHead(302, {"Location": "/memberUI" });
+                                sendFile(response, "memberUI.html", sessionData.getSessonId());
+
+                                // var hd = "{'Set-Cookie': 'sessionId=" + sessionData.getSessonId() + "', 'Location': '/memberUI' }";
+                                // response.writeHead(302, hd);
+                                //                                response.writeHead(302, `{'Set-Cookie': 'sessionId=${sessionData.getSessonId()}', "Location": "/memberUI" }`);
                             }
-                            response.end();
                         }
                         console.log("response ended");
                     } else {
                         // Passwords do not match, show an error message
                         console.log("Failed");
-                        response.writeHead(302, { "Location": "/login" });
-                        response.end();
+                        sendEJSFile(response, "login.html", "Username/Password did not match!!!");
+                        // response.writeHead(302, { "Location": "/login" });
+                        // response.end();
                     }
                 });
                 //response.writeHead(302, { "Location": "/search" });
                 //response.end();
             } else {
+                sendEJSFile(response, "login.html", "Username/Password did not match!!!");
                 // Username and password are incorrect, show an error message
                 //response.writeHead(200, { "Content-Type": "text/html" });
                 //response.write("<p>Login failed</p>");
-                response.writeHead(302, { "Location": "/login" });
-                response.end();
+                // response.writeHead(302, { "Location": "/login" });
+                // response.end();
             }
             //conn.close();
-        }).catch(function(err) {
+        }).catch(function (err) {
             console.log(err);
             //conn.close();
         });
-    }).catch(function(err) {
+    }).catch(function (err) {
         console.log(err);
     });
+
+}
+function sendEJSFile(response, filename, msgtxt) {
+    cons.ejs(filename, { msg: msgtxt }, function (err, html) {
+        if (err) {
+          console.error('Error templating with EJS');
+          throw err;
+        }
+        response.write(html);
+        response.end();
+        return;
+      });
 
 }
 
 function PasswordChanger(response, postData) {
     var req = new sql.Request();
-    var params = querystring.parse(postData); 
+    var params = querystring.parse(postData);
     var NewPassword = params['newPassword'];
     var username = params["username"];
-    bcrypt.hash(NewPassword, 10, function(err, hash) {
+    bcrypt.hash(NewPassword, 10, function (err, hash) {
         if (err) {
             console.log(err);
         } else {
             let cquery = "UPDATE Login SET HashedPassword = @hashedPassword, TemporaryPassword = 0 WHERE username = @username"
             req.input('hashedPassword', sql.NVarChar, hash);
             req.input('username', sql.NVarChar, username);
-            req.query(cquery).then(function(recordset) {
+            req.query(cquery).then(function (recordset) {
                 console.log("Password Changed");
                 response.writeHead(302, { "Location": "/login" });
                 response.end();
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.log(err);
             });
         }
@@ -120,13 +157,46 @@ function createUser(response, postData) {
     response.end();
 }
 
+function sendFile(response, pathname, sessionId = null) {
+    console.log("In ----------------: " + pathname + " sessionID: " + sessionId);
 
-function addItem(response, postData){
+    fs.readFile(pathname, function (err, data) {
+        if (err) {
+            response.writeHead(404, { "Content-Type": "text/plain" });
+            response.write("404 Not Found\n");
+            response.end();
+        } else {
+            var contentType;
+            if (pathname.endsWith(".css")) {
+                contentType = "text/css";
+            } else if (pathname.endsWith(".html")) {
+                contentType = "text/html";
+            } else if (pathname.endsWith(".js")) {
+                contentType = "text/javascript";
+            } else if (pathname.endsWith(".png")) {
+                contentType = 'image/png';
+            } else {
+                contentType = "text/plain";
+            }
+            if (sessionId) {
+                response.writeHead(200, { 'Set-Cookie': 'sessionId=' + sessionId, 'Content-Type': contentType, 'Content-Length': data.length });
+            } else {
+                //response.writeHead(200, { "Content-Type": contentType });
+            }
+            //console.log("DATA \n" + data);
+            response.write(data);
+            response.end();
+        }
+    });
+}
+
+
+function addItem(response, postData) {
     var conn = new sql.ConnectionPool(config);
-    sql.connect(config).then(function() {
+    sql.connect(config).then(function () {
         var req = new sql.Request();
         var querystring = require('querystring');
-        var params = querystring.parse(postData); 
+        var params = querystring.parse(postData);
         var mode = params['searchBy'];
         var itemID = params['itemID'];
         var itemName = params['itemName'];
@@ -152,115 +222,128 @@ function addItem(response, postData){
         req.input('Genre', sql.NVarChar, Genre);
         req.input('Availability', sql.Bit, Availability);
         req.input('Status', sql.NVarChar, Status);
-        function generateMediaID(){
+        function generateMediaID() {
             const timestamp = new Date().getTime();
             const randomNumber = Math.floor(Math.random() * 100000000)
             const id = `${timestamp}${randomNumber}`;
             const truncatedID = id.slice(-8);
             return truncatedID.toString();
         }
-        function generateObjectID(){
+        function generateObjectID() {
             const timestamp = new Date().getTime();
             const randomNumber = Math.floor(Math.random() * 1000000)
             const id = `${timestamp}${randomNumber}`;
             const truncatedID = id.slice(-6);
             return truncatedID.toString();
         }
-        var MID = generateObjectID();
+        var MID = generateMediaID();
         var OID = generateObjectID();
         var failed = false;
         console.log("mode: " + mode);
-        var queryStr = ""; 
+        var queryStr = "";
         switch (mode) {
             case 'Electronic':
-              queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
-              req.query(queryStr).then(function(recordset) {
-                console.log("Electronic entry inserted into database.");
-            }).catch(function(err) {
-                console.log(err);
-            });
-              break;
+                queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
+                req.query(queryStr).then(function (recordset) {
+                    console.log("Electronic entry inserted into database.");
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                response.writeHead(302, { "Location": "/adminUI" });
+                response.end();
+                break;
             case 'Book':
-              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
-              req.query(queryStr).then(function(recordset) {
-                console.log("Book entry inserted into database.");
-            }).catch(function(err) {
-                console.log(err);
-            });
-              break;
+                queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
+                req.query(queryStr).then(function (recordset) {
+                    console.log("Book entry inserted into database.");
+                }).catch(function (err) {
+                    console.log(err);
+                });
+                response.writeHead(302, { "Location": "/adminUI" });
+                response.end();
+                break;
             case 'Media':
-                temp = true;
-                while(temp){
-                    MID = generateMediaID();
-                    req.input('MID', sql.NVarChar, MID);
-                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@MID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
-                    req.query(queryStr).then(function(recordset) {
+                function insertMediaQuery(req, tempMID) {
+                    req.input('tempMID', sql.NVarChar, tempMID);
+                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+                    req.query(queryStr).then(function (recordset) {
                         console.log("Media entry inserted into database.");
-                        temp = false;
-                    }).catch(function(err) {
-                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'.")){
+                        return;
+                    }).catch(function (err) {
+                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Media'. Cannot insert duplicate key in object 'dbo.Media'")) {
                             console.log("Media ID already exists. Generating new ID...")
-                            temp = true;
+                            var newMID = generateMediaID();
+                            return insertMediaQuery(req, newMID);
                         }
-                        else{
-                            temp = false;
+                        else {
                             console.log(err);
+                            return;
                         }
                     });
-        }
-              break;
-            case 'Object':
-                var temp = true;
-                while(temp){
-                    OID = generateObjectID();
-                    req.input('OID', sql.NVarChar, OID);
-                    queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@OID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
-                    req.query(queryStr).then(function(recordset) {
-                        console.log("Object entry inserted into database.");
-                        temp = false;
-                        console.log(process.memoryUsage());
-                    }).catch(function(err) {
-                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'")){
-                            console.log("Object ID already exists. Generating new ID...")
-                            temp = true;                        
-                        }
-                        else{
-                            temp = false;
-                            console.log(err);
-                        }
-                        console.log(process.memoryUsage());
-
-                    });
+                    return;
                 }
-              break;
-              
-          }   
-          
-        }).catch(function(err) {
-            console.error("Unable to get a DB connection");
-            console.log(err);
-        });
-    
+                insertMediaQuery(req, MID);
+                response.writeHead(302, { "Location": "/adminUI" });
+                response.end();
+                break;
+            case 'Object':
+                function insertObjectQuery(req, tempOID) {
+                    req.input('tempOID', sql.NVarChar, tempOID);
+                    queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+                    req.query(queryStr).then(function (recordset) {
+                        console.log("Object entry inserted into database.");
+                        return;
+                    }).catch(function (err) {
+                        if (err.message.includes("Violation of PRIMARY KEY constraint 'PK_Object'. Cannot insert duplicate key in object 'dbo.Object'")) {
+                            console.log("Object ID already exists. Generating new ID...")
+                            var newOID = generateObjectID();
+                            return insertObjectQuery(req, newOID);
+                        }
+                        else {
+                            console.log(err);
+                            return;
+                        }
+                    });
+                    return;
+                }
+                insertObjectQuery(req, OID);
+                response.writeHead(302, { "Location": "/adminUI" });
+                response.end();
+                break;
+
+        }
+
+    }).catch(function (err) {
+        console.error("Unable to get a DB connection");
+        console.log(err);
+    });
+
 }
 
 function generateUsername() {
     let username = '';
     for (let i = 0; i < 9; i++) {
-      username += Math.floor(Math.random() * 10);
+        username += Math.floor(Math.random() * 10);
     }
     return username;
 }
 
 function addLogin(response, postData) {
     var conn = new sql.ConnectionPool(config);
-    
-    sql.connect(config).then(function() {
+
+    sql.connect(config).then(function () {
         var req = new sql.Request();
-        var params = querystring.parse(postData); 
+        var params = querystring.parse(postData);
         var Username = params['Username'];
         var FName = params['FName'];
+        var MName = params['MName'];
         var LName = params['LName'];
+        var Major = params['Major'];
         var Email = params['Email'];
+        var Race = params['Race'];
+        var Gender = params['Gender'];
+        var BirthDate = params['BirthDate'];
+        var PhoneNum = params['PhoneNum'];
         var Department = params['Department'];
         var tempPassword = params['tempPassword'];
 
@@ -268,163 +351,149 @@ function addLogin(response, postData) {
 
         var adminPermission = params['adminPermission']; // === 'on' ? 1 : 0;
         var adminp = 0;
-        if(adminPermission !== undefined) {
+        if (adminPermission !== undefined) {
             adminp = 1;
         }
-        if( mode === 'guest') {
+        if (mode === 'guest') {
             Username = 'G' + generateUsername();
             console.log("UserName: " + Username);
         }
         let firstChar = Username.charAt(0);
 
-        // if (adminPermission !== undefined) {
-        //   adminPermission = (adminPermission === 'on') ? 1 : 0;
-        // } else {
-        //   adminPermission = 0; // default to 0 if checkbox wasn't checked
-        // }
         req.input('adminpermission', sql.Bit, adminp);
 
         req.input('username', sql.NVarChar, Username);
         req.input('fname', sql.NVarChar, FName);
+        req.input('mname', sql.NVarChar, MName);
         req.input('lname', sql.NVarChar, LName);
         req.input('email', sql.NVarChar, Email);
         req.input('department', sql.NVarChar, Department);
+        req.input('major', sql.NVarChar, Major);
+        req.input('race', sql.NVarChar, Race);
+        req.input('gender', sql.NVarChar, Gender);
+        req.input('birthdate', sql.NVarChar, BirthDate);
+        req.input('phonenum', sql.NVarChar, PhoneNum);
         var failed = false;
         console.log("mode: " + mode);
         var queryStr = "";
         function callback() {
-            req.query(queryStr).then(function(recordset) {
+            req.query(queryStr).then(function (recordset) {
                 console.log("Admin entry inserted into database.");
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.log(err);
             });
         }
         switch (firstChar) {
-          case 'S':
-            queryStr = "INSERT INTO Students (StudentID, FirstN, LastN, Email, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
-            break;
-          case 'F':
-            if(mode === 'admin') {
-                req.query("SELECT Faculty_ID, FirstN, LastN FROM Faculty WHERE Faculty_ID=@username").then(function(recordset) {
-                    if (recordset.recordsets[0].length > 0) {
-                        var FadminN = recordset.recordsets[0][0].FirstN; 
-                        var LadminN = recordset.recordsets[0][0].LastN;
-                        req.input('FadminN', sql.NVarChar, FadminN);
-                        req.input('LadminN', sql.NVarChar, LadminN);
-                        console.log("Faculty found: " + Username);
-                        queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @email, 'F111122223', 'F111122223', getdate(), getdate())";
-                        callback();
-                    } else {
-                        failed = true;
+            case 'S':
+                queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Email, Gender, PhoneN, Bday, Major, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @email, @gender, @phonenum, @birthdate, @major, 'F111122223', 'F111122223', getdate(), getdate())";
+                break;
+            case 'F':
+                if (mode === 'admin') {
+                    req.query("SELECT Faculty_ID, FirstN, MiddleN, LastN FROM Faculty WHERE Faculty_ID=@username").then(function (recordset) {
+                        if (recordset.recordsets[0].length > 0) {
+                            var FadminN = recordset.recordsets[0][0].FirstN;
+                            var MadminN = recordset.recordsets[0][0].MiddleN;
+                            var LadminN = recordset.recordsets[0][0].LastN;
+                            req.input('FadminN', sql.NVarChar, FadminN);
+                            req.input('MadminN', sql.NVarChar, MadminN);
+                            req.input('LadminN', sql.NVarChar, LadminN);
+                            console.log("Faculty found: " + Username);
+                            queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, MiddleN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @MadminN, @email, 'F111122223', 'F111122223', getdate(), getdate())";
+                            callback();
+                        } else {
+                            failed = true;
+                            response.write("Faculty ID: " + Username + " is not valid");
+                            response.end();
+                            return;
+                        }
+
+                    }).catch(function (err) {
+                        console.log(err);
                         response.write("Faculty ID: " + Username + " is not valid");
                         response.end();
                         return;
-                    }
+                    });
 
-                }).catch(function(err) {
-                    console.log(err);
-                    response.write("Faculty ID: " + Username + " is not valid");
-                    response.end();
-                    return;
-                    //conn.close();
-                });
+                } else {
+                    queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
+                }
 
-            } else {
-                queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, LastN, Email, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
-            }
-            // has many other non-null attributes
-            break;
-          case 'G':
-            queryStr = "INSERT INTO Guest (GuestID, FirstN, LastN, Email, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())";
-            break;
-            
+                break;
+            case 'G':
+                queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, 'F111122223', 'F111122223', getdate(), getdate())";
+                break;
+
         }
 
 
-        if(!failed && mode!== "admin") {
+        if (!failed && mode !== "admin") {
 
-            req.query(queryStr).then(function(recordset) {
+            req.query(queryStr).then(function (recordset) {
                 insertAdmin();
                 insertLogin();
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.log(err);
             });
 
             function insertAdmin() {
-                if ( adminp === 1 && firstChar === 'F') {
+                if (adminp === 1 && firstChar === 'F') {
                     query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
-                    req.query(query).then(function(recordset) {
+                    req.query(query).then(function (recordset) {
                         console.log("New admin user entry inserted into database.");
 
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         Console.error("Insert into admin failed");
                         console.log(err);
                     });
-                }       
+                }
             }
 
             function insertLogin() {
-            let squery = "INSERT INTO Login (Username, HashedPassword, TemporaryPassword,";
-            switch(firstChar) {
-                case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
-                case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
-                case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
-            }
-            if(mode !== 'admin') {
-                bcrypt.hash(tempPassword, 10, function(err, hash) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        let m =0;
-                        for(i=0;i<9999;i++) {
-                            for(j=0;j<999;j++) {
-                                m +=1;
-                            }
-                        }
-                        // const req2 = new sql.Request();
-                        // req2.input('username', sql.NVarChar, Username);
-                        // req2.input('password', sql.NVarChar, tempPassword);
-                        req.input('hashedPassword', sql.NVarChar, hash);
-        //                req.query("INSERT INTO Login (Username, HashedPassword, StudentID, Faculty_ID, GuestID) VALUES (@username, @hashedPassword, @studentId, @facultyId, @guestId)").then(function(recordset) {
-                        console.log("Query: " + squery);
-                        req.query(squery).then(function(recordset) {
-                            console.log("New " + mode + " login entry inserted into database.");
-                            if(mode === 'guest') {
-                                cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: Username}, function(err, html){
-                                    if(err) {
-                                        console.error('Error templating with EJS');
-                                        throw err;
-                                    }
-                                    response.end();
-                                });
-                                                            
+                let squery = "INSERT INTO Login (Username, HashedPassword, TemporaryPassword,";
+                switch (firstChar) {
+                    case 'S': squery += " StudentID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                    case 'F': squery += " Faculty_ID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                    case 'G': squery += " GuestID) VALUES (@username, @hashedPassword, 1, @Username)"; break;
+                }
+                if (mode !== 'admin') {
+                    bcrypt.hash(tempPassword, 10, function (err, hash) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            let m = 0;
+                            for (i = 0; i < 9999; i++) {
+                                for (j = 0; j < 999; j++) {
+                                    m += 1;
+                                }
                             }
 
-                        }).catch(function(err) {
-                            console.log(err);
-                        });
-                    }
-                });
+                            req.input('hashedPassword', sql.NVarChar, hash);
+
+                            console.log("Query: " + squery);
+                            req.query(squery).then(function (recordset) {
+                                console.log("New " + mode + " login entry inserted into database.");
+                                if(mode === 'guest') {
+                                    response.write("New guest user created. <br>Guest ID: " + Username);
+                                    response.end();                    
+                                }
+                
+                            }).catch(function (err) {
+                                console.log(err);
+                            });
+                        }
+                    });
+                }
             }
         }
-    }
-        
-    }).catch(function(err) {
+
+    }).catch(function (err) {
         console.error("Unable to get a DB connection");
         console.log(err);
     });
-    
+
 }
 
-function search(response) {
-    console.log("Request handler 'search' was called.");
-    var sdata = fs.readFileSync('search.html');
-    response.writeHead(200, { "Content-Type": "text/html" });
-    response.write(sdata);
-    response.end();
-}
-
-function adminUI(response){
+function adminUI(response) {
     console.log("Request handler 'adminUI' was called.");
     var adata = fs.readFileSync('adminUI.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -432,7 +501,7 @@ function adminUI(response){
     response.end();
 }
 
-function BookEntry(response){
+function BookEntry(response) {
     console.log("Request handler 'BookEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -440,7 +509,7 @@ function BookEntry(response){
     response.end();
 }
 
-function ElectronicsEntry(response){
+function ElectronicsEntry(response) {
     console.log("Request handler 'ElectronicsEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -448,7 +517,7 @@ function ElectronicsEntry(response){
     response.end();
 }
 
-function MediaEntry(response){
+function MediaEntry(response) {
     console.log("Request handler 'MediaEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -456,7 +525,7 @@ function MediaEntry(response){
     response.end();
 }
 
-function ObjectEntry(response){
+function ObjectEntry(response) {
     console.log("Request handler 'ObjectEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -464,7 +533,7 @@ function ObjectEntry(response){
     response.end();
 }
 
-function TransactionEntry(response){
+function TransactionEntry(response) {
     console.log("Request handler 'TransactionEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/TransactionEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -472,7 +541,7 @@ function TransactionEntry(response){
     response.end();
 }
 
-function BookEdit(response){
+function BookEdit(response) {
 
     console.log("Request handler 'BookEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/BookEdit.html');
@@ -482,7 +551,7 @@ function BookEdit(response){
 
 }
 
-function ElectronicsEdit(response){
+function ElectronicsEdit(response) {
 
     console.log("Request handler 'ElectornicsEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ElectronicsEdit.html');
@@ -492,7 +561,7 @@ function ElectronicsEdit(response){
 
 }
 
-function ObjectEdit(response){
+function ObjectEdit(response) {
 
     console.log("Request handler 'ObjectEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/ObjectEdit.html');
@@ -502,7 +571,7 @@ function ObjectEdit(response){
 
 }
 
-function MediaEdit(response){
+function MediaEdit(response) {
 
     console.log("Request handler 'MediaEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/MediaEdit.html');
@@ -512,7 +581,7 @@ function MediaEdit(response){
 
 }
 
-function FacultyEdit(response){
+function FacultyEdit(response) {
 
     console.log("Request handler 'FacultyEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/FacultyEdit.html');
@@ -522,7 +591,7 @@ function FacultyEdit(response){
 
 }
 
-function StudentEdit(response){
+function StudentEdit(response) {
 
     console.log("Request handler 'StudentEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/StudentEdit.html');
@@ -532,7 +601,7 @@ function StudentEdit(response){
 
 }
 
-function GuestEdit(response){
+function GuestEdit(response) {
 
     console.log("Request handler 'GuestEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/GuestEdit.html');
@@ -542,7 +611,7 @@ function GuestEdit(response){
 
 }
 
-function TransactionsEdit(response){
+function TransactionsEdit(response) {
 
     console.log("Request handler 'TransactionsEdit' was called.");
     var fdata = fs.readFileSync('AdminUI/AdminUI-Edit/TransactionsEdit.html');
@@ -552,7 +621,7 @@ function TransactionsEdit(response){
 
 }
 
-function StudentEntry(response){
+function StudentEntry(response) {
     console.log("Request handler 'StudentEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/StudentEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -560,10 +629,10 @@ function StudentEntry(response){
     response.end();
 }
 
-function GuestEntry(response){
+function GuestEntry(response) {
     console.log("Request handler 'GuestEntry' was called.");
-    cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html',{uname: ''}, function(err, html){
-        if(err) {
+    cons.ejs('./AdminUI/AdminUI-Entry/GuestEntry.html', { uname: '' }, function (err, html) {
+        if (err) {
             console.error('Error templating with EJS');
             throw err;
         }
@@ -577,7 +646,7 @@ function GuestEntry(response){
     // response.end();
 }
 
-function FacultyEntry(response){
+function FacultyEntry(response) {
     console.log("Request handler 'FacultyEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/FacultyEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -585,7 +654,7 @@ function FacultyEntry(response){
     response.end();
 }
 
-function AdminEntry(response){
+function AdminEntry(response) {
     console.log("Request handler 'AdminEntry' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Entry/AdminEntry.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -593,166 +662,168 @@ function AdminEntry(response){
     response.end();
 }
 
-function SearchBooks(response, postData){
+function SearchBooks(response, postData) {
 
     sql.connect(config).then(function () {
         var req = new sql.Request();
-try{
-        var querystring = require('querystring');
-        var params = querystring.parse(postData);
-        var bookname = params['bookName'];
-        var dollarvalue = params['dollarValue'];
-        var numOfCompies = params['numOfCopies'];
-        var author = params['author'];
-        var genre = params['genre'];
-        var isbn = params['isbn'];
-        var language = params['language'];
-        var publisher = params['publisherName'];
-        var Created_BY = params['createdBy'];
-        var Created_date = params['createdDate'];
-        var Updated_BY = params['updatedBy'];
-        var Updated_date = params['updatedDate'];
+        try {
+            var querystring = require('querystring');
+            var params = querystring.parse(postData);
+            var bookname = params['bookName'];
+            var dollarvalue = params['dollarValue'];
+            var numOfCompies = params['numOfCopies'];
+            var author = params['author'];
+            var genre = params['genre'];
+            var isbn = params['isbn'];
+            var language = params['language'];
+            var publisher = params['publisherName'];
+            var Created_BY = params['createdBy'];
+            var Created_date = params['createdDate'];
+            var Updated_BY = params['updatedBy'];
+            var Updated_date = params['updatedDate'];
 
-        // string query to hold the SQL query
-        var query = null;
-        // counter for the # of attributes
-        var counter = 0;
-        // array to hold the attributes
-        let StringArray = [];
+            // string query to hold the SQL query
+            var query = null;
+            // counter for the # of attributes
+            var counter = 0;
+            // array to hold the attributes
+            let StringArray = [];
 
-        // if the attribute is not empty, add it to the array
+            // if the attribute is not empty, add it to the array
 
-        if(bookname != undefined && bookname != ""){
-            var bookstring = "Book_Name = '" + bookname + "'";
-            StringArray.push(bookstring);
-            counter++;
-        }
-        if(dollarvalue != undefined && dollarvalue != ""){
-            vardollarstring = "Dollar_Value = " + dollarvalue;
-            StringArray.push(vardollarstring);
-            counter++;
-        }
-        if(numOfCompies != undefined && numOfCompies != ""){
-            varnumofcopiesstring = "Num_Of_Copies = " + numOfCompies;
-            StringArray.push(varnumofcopiesstring);
-            counter++;
-        }
-        if(author != undefined && author != ""){
-            varauthorstring = "Author = '" + author + "'";
-            StringArray.push(varauthorstring);
-            counter++;
-        }
-        if(genre != undefined && genre != ""){
-            vargenrestring = "Genre = '" + genre + "'";
-            StringArray.push(vargenrestring);
-            counter++;
-        }
-        if(isbn != undefined && isbn != ""){
-            varisbnstring = "ISBN = '" + isbn + "'";
-            StringArray.push(varisbnstring);
-            counter++;
-        }
-        if(language != undefined && language != ""){
-            varlanguagestring = "Language = '" + language + "'";
-            StringArray.push(varlanguagestring);
-            counter++;
-        }
-        if(publisher != undefined && publisher != ""){
-            varpublisherstring = "Publisher_Name = '" + publisher + "'";
-            StringArray.push(varpublisherstring);
-            counter++;
-        }
-        if(Created_BY != undefined && Created_BY != ""){
-            varcreatedbystring = "Created_By = '" + Created_BY + "'";
-            StringArray.push(varcreatedbystring);
-            counter++;
-        }
-        if(Created_date != undefined && Created_date != ""){
-            varcreateddatestring = "Created_Date = '" + Created_date + "'";
-            StringArray.push(varcreateddatestring);
-            counter++;
-        }
-        if(Updated_BY != undefined && Updated_BY  != ""){
-            varupdatedbystring = "Updated_By = '" + Updated_BY + "'";
-            StringArray.push(varupdatedbystring);
-            counter++;
-        }
-        if(Updated_date != undefined && Updated_date != ""){
-            varupdateddatestring = "Updated_Date = '" + Updated_date + "'";
-            StringArray.push(varupdateddatestring);
-            counter++;
-        }
-        // if the array is empty let the user know else build the query
-        // this is the ultimate SELECT * query builder
-        switch(counter){
-            case 0: console.log("No attributes entered, returning all books");
-            query = "SELECT * FROM dbo.Book;";
-            break;
-            case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + ";";
-            break;
-            case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
-            break;
-            case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
-            break;
-            case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
-            break;
-            case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
-            break;
-            case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
-            break;
-            case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
-            break;
-            case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
-            break;
-            case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
-            break;
-            case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
-            break;
-            case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
-            break;
-            case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
-            query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
-            break;
+            if (bookname != undefined && bookname != "") {
+                var bookstring = "Book_Name = '" + bookname + "'";
+                StringArray.push(bookstring);
+                counter++;
+            }
+            if (dollarvalue != undefined && dollarvalue != "") {
+                vardollarstring = "Dollar_Value = " + dollarvalue;
+                StringArray.push(vardollarstring);
+                counter++;
+            }
+            if (numOfCompies != undefined && numOfCompies != "") {
+                varnumofcopiesstring = "Num_Of_Copies = " + numOfCompies;
+                StringArray.push(varnumofcopiesstring);
+                counter++;
+            }
+            if (author != undefined && author != "") {
+                varauthorstring = "Author = '" + author + "'";
+                StringArray.push(varauthorstring);
+                counter++;
+            }
+            if (genre != undefined && genre != "") {
+                vargenrestring = "Genre = '" + genre + "'";
+                StringArray.push(vargenrestring);
+                counter++;
+            }
+            if (isbn != undefined && isbn != "") {
+                varisbnstring = "ISBN = '" + isbn + "'";
+                StringArray.push(varisbnstring);
+                counter++;
+            }
+            if (language != undefined && language != "") {
+                varlanguagestring = "Language = '" + language + "'";
+                StringArray.push(varlanguagestring);
+                counter++;
+            }
+            if (publisher != undefined && publisher != "") {
+                varpublisherstring = "Publisher_Name = '" + publisher + "'";
+                StringArray.push(varpublisherstring);
+                counter++;
+            }
+            if (Created_BY != undefined && Created_BY != "") {
+                varcreatedbystring = "Created_By = '" + Created_BY + "'";
+                StringArray.push(varcreatedbystring);
+                counter++;
+            }
+            if (Created_date != undefined && Created_date != "") {
+                varcreateddatestring = "Created_Date = '" + Created_date + "'";
+                StringArray.push(varcreateddatestring);
+                counter++;
+            }
+            if (Updated_BY != undefined && Updated_BY != "") {
+                varupdatedbystring = "Updated_By = '" + Updated_BY + "'";
+                StringArray.push(varupdatedbystring);
+                counter++;
+            }
+            if (Updated_date != undefined && Updated_date != "") {
+                varupdateddatestring = "Updated_Date = '" + Updated_date + "'";
+                StringArray.push(varupdateddatestring);
+                counter++;
+            }
+            // if the array is empty let the user know else build the query
+            // this is the ultimate SELECT * query builder
+            switch (counter) {
+                case 0: console.log("No attributes entered, returning all books");
+                    query = "SELECT * FROM dbo.Book;";
+                    break;
+                case 1: console.log("1 attribute entered, searching for " + StringArray[0]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + ";";
+                    break;
+                case 2: console.log("2 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + ";";
+                    break;
+                case 3: console.log("3 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + ";";
+                    break;
+                case 4: console.log("4 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + ";";
+                    break;
+                case 5: console.log("5 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + ";";
+                    break;
+                case 6: console.log("6 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + ";";
+                    break;
+                case 7: console.log("7 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + ";";
+                    break;
+                case 8: console.log("8 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + ";";
+                    break;
+                case 9: console.log("9 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + ";";
+                    break;
+                case 10: console.log("10 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + ";";
+                    break;
+                case 11: console.log("11 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + ";";
+                    break;
+                case 12: console.log("12 attributes entered, searching for " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11]);
+                    query = "SELECT * FROM dbo.Book WHERE " + StringArray[0] + " AND " + StringArray[1] + " AND " + StringArray[2] + " AND " + StringArray[3] + " AND " + StringArray[4] + " AND " + StringArray[5] + " AND " + StringArray[6] + " AND " + StringArray[7] + " AND " + StringArray[8] + " AND " + StringArray[9] + " AND " + StringArray[10] + " AND " + StringArray[11] + ";";
+                    break;
+
+            }
+
+            req.query(query).then(function (recordset) {
+                console.log("New admin user entry will be viewed in the database.");
+
+                if (recordset.recordsets.length > 0) {
+                    console.log("Found " + recordset.recordsets.length + " records");
+                    console.log(recordset);
+                    const resultArray = recordset.recordsets[0];
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.write(JSON.stringify(resultArray));
+                    response.end();
+                }
+                else {
+                    console.log("No records found")
+                    response.write("No records found");
+                }
+            }).catch(function (err) {
+                console.error("error");
+                console.log(err);
+            });
 
         }
-
-       req.query(query).then(function(recordset) {
-        console.log("New admin user entry will be viewed in the database.");
-        
-        if(recordset.recordsets.length > 0) {
-            console.log("Found " + recordset.recordsets.length + " records");
-            console.log(recordset);
-            const resultArray = recordset.recordsets[0];     
-            response.writeHead(200, {"Content-Type": "application/json"});
-            response.write(JSON.stringify(resultArray));
-            response.end(); 
-        } 
-        else {
-            console.log("No records found")
-            response.write("No records found");
+        catch (err) {
+            console.log(err);
+            response.write("Error");
         }
-    }).catch(function(err) {
-        console.error("error");
-        console.log(err);
-    });
+    })
+};
 
-}
-catch(err){
-    console.log(err);
-    response.write("Error");
-}})};
-    
 function DeleteBook(response, postData) {
 
     sql.connect(config).then(function () {
@@ -763,14 +834,16 @@ function DeleteBook(response, postData) {
         var bookISBN = data.deletebookisbn;
         var query = "DELETE FROM dbo.Book WHERE ISBN = '" + bookISBN + "';";
         console.log(query);
-        req.query(query).then(function(recordset) {
+        req.query(query).then(function (recordset) {
             console.log("a tuple in the book table will be deleted from the database.");
             response.write("Book deleted");
-            response.end();}
+            response.end();
+        }
         )
-        })};
+    })
+};
 
-function UpdateBook(response, postData){
+function UpdateBook(response, postData) {
 
 
     sql.connect(config).then(function () {
@@ -780,7 +853,7 @@ function UpdateBook(response, postData){
         var data = querystring.parse(postData);
 
         var bookISBN = data.ISBN;
-        var bookName = data.Book_Name;   
+        var bookName = data.Book_Name;
         var bookDollarValue = data.Dollar_Value;
         var Number_of_Copies = data.Number_of_Copies;
         var bookAuthor = data.Author;
@@ -788,7 +861,7 @@ function UpdateBook(response, postData){
         var bookLanguage = data.Language;
         var bookPublisher = data.Publisher_Name;
 
-        
+
 
         console.log("Book ISBN: " + bookISBN);
         console.log("Book Name: " + bookName);
@@ -804,36 +877,25 @@ function UpdateBook(response, postData){
         var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
 
 
-        req.query(query).then(function(recordset) {
+        req.query(query).then(function (recordset) {
             console.log("First query executed");
-            req.query(secondquery).then(function(recordset) {
-            response.write("Book Modified");
-            response.end();}
-        )});
+            req.query(secondquery).then(function (recordset) {
+                response.write("Book Modified");
+                response.end();
+            }
+            )
+        });
 
 
 
-    })}
-
-
-/*function searchresults(response, postData) {
-    var querystring = require('querystring');
-    var params = querystring.parse(postData);
-    var bookname = params['BookName'];
-    var author = params['Author']; 
-    var genre = params['Genre'];
-    var language = params['Language'];
-    var isbn = params['ISBN'];
-
-    
+    })
 }
-*/
+
 
 exports.login = login;
 exports.loginverify = loginverify;
 exports.PasswordChanger = PasswordChanger;
 
-exports.search = search;
 exports.adminUI = adminUI;
 exports.BookEntry = BookEntry;
 exports.ElectronicsEntry = ElectronicsEntry;
@@ -855,7 +917,6 @@ exports.TransactionsEdit = TransactionsEdit;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
-//exports.searchresults = searchresults;
 
 exports.createUser = createUser;
 exports.addLogin = addLogin;

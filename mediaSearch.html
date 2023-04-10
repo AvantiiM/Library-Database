@@ -20,41 +20,40 @@
     </script>
     <header></header>
 
-    <div style="position: relative; margin-top: 200px; border-radius: 5px; padding: 15px 30%;">
+    <div style="margin-top: 100px; border-radius: 5px; padding: 15px 600px;">
         <h1>
-            <center>Book Search</center>
+            <center>Media Search</center>
         </h1>
-        <div class="card card-body" style="position: relative; display:flex; justify-content: center; ">
-            <input hidden id='searchBy' value='book'></input>
+        <div class="card card-body" style="display:flex; justify-content: center; ">
+            <input hidden id='searchBy' value='media'></input>
 
             <b><label for="title-input"> Title: </label></b>
             <input id="title-input" class="form-control" type="text" name="Title">
 
+            <b><label for="mediaid-input"> Media ID: </label></b>
+            <input id="mediaid-input" class="form-control" type="text" name="MediaID">
+
             <b><label for="author-input"> Author: </label></b>
             <input id="author-input" class="form-control" type="text" name="Author">
 
-            <b><label for="genre-input"> Genre: </label></b>
-            <input id="genre-input" class="form-control" type="text" name="Genre">
+            <b><label for="type-input"> Type: </label></b>
+            <input id="type-input" class="form-control" type="text" name="Type">
 
-            <b><label for="language-input"> Language: </label></b>
-            <input id="language-input" class="form-control" type="text" name="Language">
-
-            <b><label for="isbn-input"> ISBN: </label></b>
-            <input id="isbn-input" class="form-control form-control-sm" type="text" name="ISBN">
+            <b><label for="publisher-input"> Publisher: </label></b>
+            <input id="publisher-input" class="form-control" type="text" name="Publisher">
 
             <button class="btn btn-primary" style="width: 100px;" id="search-button" type="button">Search</button>
         </div>
     </div>
 
-    <div style="padding: 15px 5%;">
-    <table class="table table-striped" >
+    <table class="table table-striped">
         <thead>
             <tr class="bg-info">
                 <th id="title-header" data-colname="Title" data-order="desc">Title &#9650</th>
+                <th id="mediaid-header" data-colname="MediaID" data-order="desc">Media ID &#9650</th>
                 <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
-                <th id="genre-header" data-colname="Genre" data-order="desc">Genre &#9650</th>
-                <th id="language-header" data-colname="Language" data-order="desc">Language &#9650</th>
-                <th id="isbn-header" data-colname="ISBN" data-order="desc">ISBN &#9650</th>
+                <th id="type-header" data-colname="Type" data-order="desc">Type &#9650</th>
+                <th id="publisher-header" data-colname="Publisher" data-order="desc">Publisher &#9650</th>
                 <th id="reserve-header" data-colname="Reserve" data-order="desc">Reserve &#9650</th>
             </tr>
         </thead>
@@ -69,10 +68,10 @@
                     data: {
                         searchBy: $("#searchBy").val(),
                         Title: $("#title-input").val(),
+                        MediaID: $("#mediaid-input").val(),
                         Author: $("#author-input").val(),
-                        Genre: $("#genre-input").val(),
-                        Language: $("#language-input").val(),
-                        ISBN: $("#isbn-input").val()
+                        Type: $("#type-input").val(),
+                        Publisher: $("#publisher-input").val()
                     },
                     url: '/librarySearch',
                     success: function (response) {
@@ -87,17 +86,17 @@
                 });
             });
 
-            function reserve(btn, isbn) {
-                console.log("isbn: " + isbn)
+            function reserve(btn, mediaid) {
+                console.log("mediaid: " + mediaid)
                 $.ajax({
                     type: 'POST',
                     data: {
-                        ISBN: isbn,
+                        MediaID: mediaid,
                     },
-                    url: '/bookReserve',
+                    url: '/mediaReserve',
                     success: function (response) {
                         console.log(response)
-                        document.getElementById("bdiv" + isbn).innerHTML = response;
+                        document.getElementById("mdiv" + mediaid).innerHTML = response;
                     },
                     error: function (xhr, status, error) {
                         console.log(xhr.responseText);
@@ -111,18 +110,17 @@
                 $.each(data, function (index, row) {
                     var tr = $('<tr>');
                     tr.append('<td>' + row.Title + '</td>');
+                    tr.append('<td>' + row.MediaID + '</td>');
                     tr.append('<td>' + row.Author + '</td>');
-                    tr.append('<td>' + row.Genre + '</td>');
-                    tr.append('<td>' + row.Language + '</td>');
-                    tr.append('<td>' + row.ISBN + '</td>');
-                    tr.append(`<td><div id="bdiv${row.ISBN}"> <button class="btn btn-primary" onclick="reserve(this, ${row.ISBN})">Reserve</button></div></td>'`);
+                    tr.append('<td>' + row.Type + '</td>');
+                    tr.append('<td>' + row.Publisher + '</td>');
+                    tr.append(`<td><div id="mdiv${row.MediaID}"> <button class="btn btn-primary" onclick="reserve(this, ${row.MediaID})">Reserve</button></div></td>'`);
                     tbody.append(tr);
                 });
             }
         </script>
 
     </table>
-</div>
 </body>
 
 </html>

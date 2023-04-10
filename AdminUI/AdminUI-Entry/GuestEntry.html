@@ -33,15 +33,6 @@
                 border: 1px #ecc8af;
             }
         </style>
-        <script>
-            function generateUsername() {
-                let username = '';
-                for (let i = 0; i < 9; i++) {
-                    username += Math.floor(Math.random() * 10);
-                }
-                username = "G" + username;
-            }
-        </script>
     </head>
 
     <body>
@@ -98,8 +89,10 @@
                 </tbody>
             </table>
             </div>
-            <input type="submit" value="Create New Guest">
+            <input type="button" value="Create New Guest" onClick=" return inserGuestUser(this.form)">
         </form>
-        <h2><%= uname %></h2>
+        <P>
+            <center><div id="guestmsg" style="background-color: lightblue;"></div></center>
+        </P>
     </body>
 </html>

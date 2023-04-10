@@ -11,7 +11,12 @@ handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/PasswordChanger"] = requestHandlers.PasswordChanger; //http://localhost:3000/PasswordChanger
 handle["/memberUI"] = mUI_requestHandlers.memberUI; //http://localhost:3000/memberUI
 handle["/bookSearch"] = mUI_requestHandlers.bookSearch; //http://localhost:3000/bookSearch
+handle["/mediaSearch"] = mUI_requestHandlers.mediaSearch; //http://localhost:3000/mediaSearch
+handle["/electronicSearch"] = mUI_requestHandlers.electronicSearch; //http://localhost:3000/electronicSearch
 handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost:3000/librarySearch
+handle["/bookReserve"] = mUI_requestHandlers.bookReserve; 
+handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve; 
+handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
@@ -48,4 +53,10 @@ handle["/UpdateBook"] = requestHandlers.UpdateBook; //http://localhost:3000/Book
 handle["/SearchElectronics"] = EditrequestHandlers.SearchElectronics; //http://localhost:3000/ElectronicsUpdate
 handle["/UpdateElectronics"] = EditrequestHandlers.UpdateElectronics; //http://localhost:3000/ElectronicsUpdate
 handle["/DeleteElectronics"] = EditrequestHandlers.DeleteElectronics; //http://localhost:3000/DeleteElectronics
+
+handle["/SearchObjects"] = EditrequestHandlers.SearchObjects; //http://localhost:3000/SearchObjects
+handle["/UpdateObjects"] = EditrequestHandlers.UpdateObjects; //http://localhost:3000/UpdateObjects
+handle["/DeleteObjects"] = EditrequestHandlers.DeleteObjects; //http://localhost:3000/DeleteObjects
+
+
 server.start(router.route, handle);

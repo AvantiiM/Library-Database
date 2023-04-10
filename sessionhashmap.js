@@ -1,4 +1,4 @@
-var hashmapSession = {};
+const hashmapSession = {};
 
 exports.auth = auth = {
   set : function(key, value){

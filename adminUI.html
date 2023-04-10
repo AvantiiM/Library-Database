@@ -1,17 +1,18 @@
 <html>
+
 <head>
 	<title>Administrator</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="public/styles-adminUI.css">
 </head>
+
 <body>
 	<div class="tabs">
-		<div class="tab active" onclick="openTab('datamanagement')">Data Entry</div>
+		<div class="tab active" onclick="openTab('datareports')">Data Reports</div>
+		<div class="tab" onclick="openTab('datamanagement')">Data Entry</div>
 		<div class="tab" onclick="openTab('datamodification')">Data Modification</div>
-		<div class="tab" onclick="openTab('datareports')">Data Reports</div>
 	</div>
-	<div class="tabcontent active" id="datamanagement">
-		<h2>Data Management Content Goes Here</h2>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mauris sed libero pharetra finibus in eget sapien. Donec tincidunt, nibh a eleifend fringilla, purus dolor facilisis est, eget dignissim eros mi eu urna.</p>
+	<div class="tabcontent" id="datamanagement">
 
 		<div>
 			<select class="Drop-down" id="TableSelection" onchange="selectOption()">
@@ -31,19 +32,51 @@
 	</div>
 
 
-	<div class="tabcontent" id="datareports">
-		<h2>Data Reports Content Goes Here</h2>
-		<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+	<div class="tabcontent active" id="datareports">
+		<h2>Summary of the reports</h2>
+
+
+		<div class="donutchartholder">
+			<div id="donutchart" class="donutchart" style="border-radius: 25px"></div>
+		</div>
+
+		<div class="regchartholder">
+			<div id="chart_div" class="regchart"></div>
+		</div>
+
+		<div class="availabilitychartholder">
+			<div id="barchart_material" class="availabilitychart"></div>
+		</div>
+		<div class="ReportButtonHolder">
+			<br></br>
+
+			<h2 style="color: black;">Report Search</H2>
+			<button class="reportbutton" onclick="window.location.href='BookEdit'">Reports</button>
+		</div>
+		<br></br>
+	</div>
+
 	</div>
 	<div class="tabcontent" id="datamodification">
-		<h2>Data Modification Content Goes Here</h2>
+		<h2>Data Modification</h2>
 		<p>Please Select A table you would like to edit</p>
-		<div>
-			<button class="button" onclick="window.location.href='http://localhost:3000/BookEdit'">Book</button>
-			<button class="button" onclick="window.location.href='http://localhost:3000/ElectronicsEdit'">Electronics</button>
-			
-			</div>
-				
+		<div class="EditButtons">
+			<button class="button" onclick="window.location.href='BookEdit'">Book</button>
+			<button class="button" onclick="window.location.href='ElectronicsEdit'">Electronics</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='ObjectEdit'">Object</button>
+			<button class="button" onclick="window.location.href='MediaEdit'">Media</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='TransactionEdit'">Transactions</button>
+			<button class="button" onclick="window.location.href='ReservationsEdit'">Reservations</button>
+
+			<br></br>
+			<button class="button" onclick="window.location.href='StudentEdit'">Student</button>
+			<button class="button" onclick="window.location.href='GuestEdit'">Guest</button>
+			<br></br>
+			<button class="button" onclick="window.location.href='FacultyEdit'">Faculty</button>
+		</div>
+
 	</div>
 
 
@@ -60,84 +93,209 @@
 			}
 			document.getElementById(tabName).classList.add("active");
 			event.currentTarget.classList.add("active");
-			
+
 		}
 
 
 		function selectOption() {
- 			 var selectedOption = document.getElementById("TableSelection").value;
- 			 var contentDiv = document.getElementById("content");
+			var selectedOption = document.getElementById("TableSelection").value;
+			var contentDiv = document.getElementById("content");
 
- 			 switch (selectedOption) {
-			 case "Transactions":
-			 	fetch("http://localhost:3000/TransactionEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-			break;
-   			 case "Books":
-				fetch("http://localhost:3000/BookEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Electronics":
-				fetch("http://localhost:3000/ElectronicsEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-     		 break;
-    		case "Objects":
-				fetch("http://localhost:3000/ObjectEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Media":
-				fetch("http://localhost:3000/MediaEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Student":
-			fetch("http://localhost:3000/StudentEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Guest":
-			fetch("http://localhost:3000/GuestEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Faculty":
-			fetch("http://localhost:3000/FacultyEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-			case "Admin":
-			fetch("http://localhost:3000/AdminEntry")
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                });
-      		break;
-    		default:
-     		 contentDiv.innerHTML = "";
-  }
-}
-		
+			switch (selectedOption) {
+				case "Transactions":
+					fetch("TransactionEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Books":
+					fetch("BookEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Electronics":
+					fetch("ElectronicsEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Objects":
+					fetch("ObjectEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Media":
+					fetch("MediaEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Student":
+					fetch("StudentEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Guest":
+					fetch("GuestEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Faculty":
+					fetch("FacultyEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				case "Admin":
+					fetch("AdminEntry")
+						.then(response => response.text())
+						.then(html => {
+							contentDiv.innerHTML = html;
+						});
+					break;
+				default:
+					contentDiv.innerHTML = "";
+			}
+		}
+		function checkUN(chrs, form, msg) {
+			if (form.Username.value.charAt(0) !== chrs) {
+				alert(msg);
+				return false;
+			} else if (form.Username.value.length != 10) {
+				alert("Username must contain 10 digits including an S/F");
+			} else {
+				form.submit();
+			}
+		}
+		function inserGuestUser(form) {
+			$.ajax({
+				type: 'POST',
+				data: {
+					searchBy: 'guest',
+					tempPassword: form.tempPassword.value,
+					FName: form.FName.value,
+					LName: form.LName.value,
+					MName: form.MName.value,
+					Race: form.Race.value,
+					PhoneNum: form.PhoneNum.value,
+					Email: form.Email.value,
+					Gender: form.Gender.value,
+					BirthDate: form.BirthDate.value
+				},
+				url: '/addLogin',
+				success: function (response) {
+					console.log(response)
+					document.getElementById("guestmsg").innerHTML = response;
+					form.reset();
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr.responseText);
+				}
+			});
+		}
 	</script>
-</body>
-</html>
 
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+		google.charts.load("current", { packages: ["corechart"] });
+		google.charts.setOnLoadCallback(drawChart);
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				['Member', 'number'],
+				['Faculty', 11],
+				['Guests', 10],
+				['Students', 24],
+			]);
+
+			var options = {
+				title: 'Users',
+				pieHole: 0.35,
+				colors: ['#B8621B', '#E3CCAE', '#262A56']
+			};
+
+			var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+			chart.draw(data, options);
+
+		}
+	</script>
+
+	<script type="text/javascript">
+		google.charts.load('current', { 'packages': ['corechart'] });
+		google.charts.setOnLoadCallback(drawVisualization);
+
+		function drawVisualization() {
+			// Some raw data (not necessarily accurate)
+			var data = google.visualization.arrayToDataTable([
+				['Month', 'Books', 'Electronics', 'Objects', 'Media', 'Average'],
+				['2004/05', 165, 938, 522, 998, 614.6],
+				['2005/06', 1268, 1120, 599, 135, 682],
+				['2006/07', 157, 1167, 587, 807, 623],
+				['2007/08', 139, 1110, 615, 968, 609.4],
+				['2008/09', 136, 691, 629, 1026, 569.6]
+			]);
+
+
+			//
+
+			var options = {
+				title: 'overview of items borrowed in the past months',
+				vAxis: { title: 'Items' },
+				hAxis: { title: 'Month' },
+				seriesType: 'bars',
+				series: { 4: { type: 'line' } },
+				colors: ['#DF7857', '#19A7CE', '#FFA559', '#675D50', '#000000']
+			};
+
+			var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+			chart.draw(data, options);
+		}
+	</script>
+
+
+
+
+	<script type="text/javascript">
+		google.charts.load('current', { 'packages': ['bar'] });
+		google.charts.setOnLoadCallback(drawChart);
+
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				['Items', 'on Hand', 'Max'],
+				['Books', 10, 50],
+				['Electronics', 10, 50],
+				['Objects', 20, 50],
+				['Media', 40, 50]
+			]);
+
+			var options = {
+				chart: {
+					title: 'Items on Hand',
+				},
+				bars: 'horizontal', // Required for Material Bar Charts.
+				colors: ['#678983', '#65647C']
+			};
+
+			var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+
+			chart.draw(data, google.charts.Bar.convertOptions(options));
+		}
+	</script>
+
+
+
+
+</body>
+
+</html>
