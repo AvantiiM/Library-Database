@@ -89,5 +89,16 @@ handle["/UpdateGuests"] = EditrequestHandlers.UpdateGuests; //http://localhost:3
 handle["/UserReportSum"] = requestHandlersReport.UserReportSum; //http://localhost:3000/UserReportSum
 handle["/TransactionReportSum"] = requestHandlersReport.TransactionReportSum; //http://localhost:3000/TransactionReportSum
 handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost:3000/MaxReportSum
+
+handle["/AvailableBooks"] = requestHandlersReport.AvailableBooks; //http://localhost:3000/AvailableBooks
+handle["/AdminTransactions"] = requestHandlers.AdminTransactions; //http://localhost:3000/AdminTransactions
+handle["/AdminTransactionsSearch"] = requestHandlers.AdminTransactionsSearch; //http://localhost:3000/AdminTransactionsSearch
+
+
+handle["/AdminSFaculty"] = requestHandlers.AdminSFaculty; //http://localhost:3000/AdminSFaculty
+handle["/AdminSGuest"] = requestHandlers.AdminSGuest; //http://localhost:3000/AdminSGuest
+handle["/AdminSStudents"] = requestHandlers.AdminSStudents; //http://localhost:3000/AdminSStudents
+
 server.start(router.route, handle);
+
 

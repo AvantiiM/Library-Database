@@ -222,7 +222,72 @@ function MaxReportSum(response, postData){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Available BOOKS ###################################################################################################################################################################################################################################################
+
+
+
+
+function AvailableBooks(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+try{
+    const query = "SELECT * FROM dbo.book WHERE  Num_of_copies > 1;";
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+}
+catch(err){
+    console.log(err);
+    response.write("Error");
+}})};
+
+
+
+
+
+
+
+
+
 // exports #####################################################################################################
     exports.UserReportSum = UserReportSum;
     exports.TransactionReportSum = TransactionReportSum;
     exports.MaxReportSum = MaxReportSum;
+    exports.AvailableBooks = AvailableBooks;
