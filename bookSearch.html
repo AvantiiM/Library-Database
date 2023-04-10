@@ -40,89 +40,89 @@
             <input id="language-input" class="form-control" type="text" name="Language">
 
             <b><label for="isbn-input"> ISBN: </label></b>
-            <input id="isbn-input" class="form-control form-control-sm" type="text" name="ISBN">
+            <input id="isbn-input" class="form-control form-control-sm" type="number" name="ISBN">
 
             <button class="btn btn-primary" style="width: 100px;" id="search-button" type="button">Search</button>
         </div>
     </div>
 
     <div style="padding: 15px 5%;">
-    <table class="table table-striped" >
-        <thead>
-            <tr class="bg-info">
-                <th id="title-header" data-colname="Title" data-order="desc">Title &#9650</th>
-                <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
-                <th id="genre-header" data-colname="Genre" data-order="desc">Genre &#9650</th>
-                <th id="language-header" data-colname="Language" data-order="desc">Language &#9650</th>
-                <th id="isbn-header" data-colname="ISBN" data-order="desc">ISBN &#9650</th>
-                <th id="reserve-header" data-colname="Reserve" data-order="desc">Reserve &#9650</th>
-            </tr>
-        </thead>
-        <tbody id="myTable">
-        </tbody>
-        <script>
-            var myArray;
+        <table class="table table-striped">
+            <thead>
+                <tr class="bg-info">
+                    <th id="title-header" data-colname="Title" data-order="desc">Title &#9650</th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
+                    <th id="genre-header" data-colname="Genre" data-order="desc">Genre &#9650</th>
+                    <th id="language-header" data-colname="Language" data-order="desc">Language &#9650</th>
+                    <th id="isbn-header" data-colname="ISBN" data-order="desc">ISBN &#9650</th>
+                    <th id="reserve-header" data-colname="Reserve" data-order="desc">Reserve &#9650</th>
+                </tr>
+            </thead>
+            <tbody id="myTable">
+            </tbody>
+            <script>
+                var myArray;
 
-            $("#search-button").click(function () {
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        searchBy: $("#searchBy").val(),
-                        Title: $("#title-input").val(),
-                        Author: $("#author-input").val(),
-                        Genre: $("#genre-input").val(),
-                        Language: $("#language-input").val(),
-                        ISBN: $("#isbn-input").val()
-                    },
-                    url: '/librarySearch',
-                    success: function (response) {
-                        console.log(response)
-                        myArray = response
-                        console.log(myArray)
-                        buildTable(response)
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
+                $("#search-button").click(function () {
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            searchBy: $("#searchBy").val(),
+                            Title: $("#title-input").val(),
+                            Author: $("#author-input").val(),
+                            Genre: $("#genre-input").val(),
+                            Language: $("#language-input").val(),
+                            ISBN: $("#isbn-input").val()
+                        },
+                        url: '/librarySearch',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
                 });
-            });
 
-            function reserve(btn, isbn) {
-                console.log("isbn: " + isbn)
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        ISBN: isbn,
-                    },
-                    url: '/bookReserve',
-                    success: function (response) {
-                        console.log(response)
-                        document.getElementById("bdiv" + isbn).innerHTML = response;
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
+                function reserve(btn, isbn) {
+                    console.log("isbn: " + isbn);
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            ISBN: isbn,
+                        },
+                        url: '/bookReserve',
+                        success: function (response) {
+                            console.log(response)
+                            document.getElementById("bdiv" + isbn).innerHTML = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
 
-            function buildTable(data) {
-                var tbody = $('#myTable');
-                tbody.empty();
-                $.each(data, function (index, row) {
-                    var tr = $('<tr>');
-                    tr.append('<td>' + row.Title + '</td>');
-                    tr.append('<td>' + row.Author + '</td>');
-                    tr.append('<td>' + row.Genre + '</td>');
-                    tr.append('<td>' + row.Language + '</td>');
-                    tr.append('<td>' + row.ISBN + '</td>');
-                    tr.append(`<td><div id="bdiv${row.ISBN}"> <button class="btn btn-primary" onclick="reserve(this, ${row.ISBN})">Reserve</button></div></td>'`);
-                    tbody.append(tr);
-                });
-            }
-        </script>
+                function buildTable(data) {
+                    var tbody = $('#myTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Title + '</td>');
+                        tr.append('<td>' + row.Author + '</td>');
+                        tr.append('<td>' + row.Genre + '</td>');
+                        tr.append('<td>' + row.Language + '</td>');
+                        tr.append('<td>' + row.ISBN + '</td>');
+                        tr.append(`<td><div id="bdiv${row.ISBN}"> <button class="btn btn-primary" onclick="reserve(this, '${row.ISBN}')">Reserve</button></div></td>'`);
+                        tbody.append(tr);
+                    });
+                }
+            </script>
 
-    </table>
-</div>
+        </table>
+    </div>
 </body>
 
 </html>

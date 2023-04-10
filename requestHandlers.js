@@ -737,6 +737,42 @@ function AdminReportBookSearch(response){
     response.end();
 }
 
+function AdminTransactions(response){
+    console.log("Request handler 'AdminTransactions' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminTransactions.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+function AdminTransactionsSearch(response){
+    console.log("Request handler 'AdminTransactionsSearch' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminTransactionsSearch.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+function AdminSFaculty(response){
+    console.log("Request handler 'AdminSFaculty' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSFaculty.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+function AdminSGuest(response){
+    console.log("Request handler 'AdminSGuest' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSGuest.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+function AdminSStudents(response){
+    console.log("Request handler 'AdminSStudent' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSStudent.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
 
 function AdminReportMain(response){
     console.log("Request handler 'AdminReportMain' was called.");
@@ -1019,9 +1055,15 @@ exports.StudentEdit = StudentEdit;
 exports.GuestEdit = GuestEdit;
 exports.TransactionsEdit = TransactionsEdit;
 exports.ReservationsEdit = ReservationsEdit;
+exports.AdminTransactions = AdminTransactions;
+exports.AdminTransactionsSearch = AdminTransactionsSearch;
+exports.AdminSFaculty = AdminSFaculty;
+exports.AdminSGuest = AdminSGuest;
+exports.AdminSStudents = AdminSStudents;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
+//exports.searchresults = searchresults;
 
 exports.createUser = createUser;
 exports.addLogin = addLogin;

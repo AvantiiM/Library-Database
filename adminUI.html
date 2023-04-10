@@ -8,6 +8,7 @@
 		<div class="tab active" onclick="openTab('datareports')">Data Reports</div>
 		<div class="tab" onclick="openTab('datamanagement')">Data Entry</div>
 		<div class="tab" onclick="openTab('datamodification')">Data Modification</div>
+		<div class="tab" onclick="window.location.href='login'">Logout</div>
 	</div>
 	<div class="tabcontent" id="datamanagement">
 		<h2>Data Entry</h2>
@@ -37,7 +38,7 @@
 
 
 	<div class="tabcontent active" id="datareports">
-		<h2>Summary of the reports</h2>
+		<h2>Summary of The Reports</h2>
 		
 
 		<div class="donutchartholder">
@@ -53,7 +54,6 @@
 		</div>
 		<div class="ReportButtonHolder">
 			<br></br>
-			
 			<h2 style = "color: black;">Report Search</H2>
 			<button class="reportbutton" onclick="window.location.href='AdminReportMain'">Reports</button>
 		</div>
@@ -104,42 +104,42 @@
 		
 	</script>
 
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
-// 	google.charts.load("current", {packages:["corechart"]});
-// 	google.charts.setOnLoadCallback(drawChart);
-// 	function drawChart() {
-//     //call to the function to get the results of the query
-//     const xhr = new XMLHttpRequest();
-//     xhr.open('POST', 'UserReportSum');
-//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//     xhr.onload = function() {
-//       if (xhr.status === 200) {
-//         console.log('Chart request submission successful!');
-//         let responseData = JSON.parse(xhr.responseText);
-//         console.log(responseData.faculty);
+	google.charts.load("current", {packages:["corechart"]});
+	google.charts.setOnLoadCallback(drawChart);
+	function drawChart() {
+    //call to the function to get the results of the query
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'UserReportSum');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        console.log('Chart request submission successful!');
+        let responseData = JSON.parse(xhr.responseText);
+        console.log(responseData.faculty);
 
-//         //#######################  donut CHART  ############################
-//         var data = google.visualization.arrayToDataTable([
-//           ['Member', 'number'],
-//           ['Faculty',     responseData.faculty],
-//           ['Guests',      responseData.guests],
-//           ['Students',  responseData.students],
-//         ]);
+        //#######################  donut CHART  ############################
+        var data = google.visualization.arrayToDataTable([
+          ['Member', 'number'],
+          ['Faculty',     responseData.faculty],
+          ['Guests',      responseData.guests],
+          ['Students',  responseData.students],
+        ]);
 
-//         var options = {
-//           title: 'Users',
-//           pieHole: 0.35,
-//           colors: ['#B8621B', '#E3CCAE', '#262A56']
-//         };
+        var options = {
+          title: 'Users',
+          pieHole: 0.35,
+          colors: ['#B8621B', '#E3CCAE', '#262A56']
+        };
 
-//         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-//         chart.draw(data, options);
-//       }
-//     };
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    };
 
-//     xhr.send();
-//   }
+    xhr.send();
+  } -->
 
 	</script>
 
@@ -174,7 +174,7 @@
 // 		]);
 
 
-// 		//
+		
 
 // 		var options = {
 // 			title : 'overview of items borrowed in the past months',
@@ -198,8 +198,8 @@
 
 
 	<script type="text/javascript">
-		google.charts.load('current', {'packages':['bar']});
-		google.charts.setOnLoadCallback(drawChart);
+	// 	google.charts.load('current', {'packages':['bar']});
+	// 	google.charts.setOnLoadCallback(drawChart);
 
 	// 	function drawChart() {
 

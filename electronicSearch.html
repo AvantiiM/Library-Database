@@ -20,89 +20,91 @@
     </script>
     <header></header>
 
-    <div style="margin-top: 100px; border-radius: 5px; padding: 15px 600px;">
+    <div style="position: relative; margin-top: 200px; border-radius: 5px; padding: 15px 30%;">
         <h1>
             <center>Electronic Search</center>
         </h1>
         <div class="card card-body" style="display:flex; justify-content: center; ">
             <input hidden id='searchBy' value='electronic'></input>
 
-            <b><label for="title-input"> Title: </label></b>
+            <b><label for="title-input"> Electronic Name: </label></b>
             <input id="title-input" class="form-control" type="text" name="Title">
 
-            <b><label for="serialno-input"> Media ID: </label></b>
+            <b><label for="serialno-input"> Serial No. </label></b>
             <input id="serialno-input" class="form-control" type="text" name="SerialNo">
 
             <button class="btn btn-primary" style="width: 100px;" id="search-button" type="button">Search</button>
         </div>
     </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr class="bg-info">
-                <th id="title-header" data-colname="Title" data-order="desc">Electronic Name &#9650</th>
-                <th id="serialno-header" data-colname="SerialNo" data-order="desc">Media ID &#9650</th>\
-                <th id="borrow-header" data-colname="Borrow" data-order="desc">Borrow &#9650</th>
-            </tr>
-        </thead>
-        <tbody id="myTable">
-        </tbody>
-        <script>
-            var myArray;
+    <div style="padding: 15px 5%;">
+        <table class="table table-striped">
+            <thead>
+                <tr class="bg-info">
+                    <th id="title-header" data-colname="Title" data-order="desc">Electronic Name &#9650</th>
+                    <th id="serialno-header" data-colname="SerialNo" data-order="desc">Media ID &#9650</th>\
+                    <th id="borrow-header" data-colname="Borrow" data-order="desc">Borrow &#9650</th>
+                </tr>
+            </thead>
+            <tbody id="myTable">
+            </tbody>
+            <script>
+                var myArray;
 
-            $("#search-button").click(function () {
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        searchBy: $("#searchBy").val(),
-                        Title: $("#title-input").val(),
-                        SerialNo: $("#serialno-input").val()
-                    },
-                    url: '/librarySearch',
-                    success: function (response) {
-                        console.log(response)
-                        myArray = response
-                        console.log(myArray)
-                        buildTable(response)
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
+                $("#search-button").click(function () {
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            searchBy: $("#searchBy").val(),
+                            Title: $("#title-input").val(),
+                            SerialNo: $("#serialno-input").val()
+                        },
+                        url: '/librarySearch',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
                 });
-            });
 
-            function reserve(btn, serialno) {
-                console.log("serialno: " + serialno)
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        SerialNo: serialno,
-                    },
-                    url: '/electronicReserve',
-                    success: function (response) {
-                        console.log(response)
-                        document.getElementById("ediv" + serialno).innerHTML = response;
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
+                function reserve(btn, serialno) {
+                    console.log("serialno: " + serialno)
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            SerialNo: serialno,
+                        },
+                        url: '/electronicReserve',
+                        success: function (response) {
+                            console.log(response)
+                            document.getElementById("ediv" + serialno).innerHTML = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
 
-            function buildTable(data) {
-                var tbody = $('#myTable');
-                tbody.empty();
-                $.each(data, function (index, row) {
-                    var tr = $('<tr>');
-                    tr.append('<td>' + row.Title + '</td>');
-                    tr.append('<td>' + row.SerialNo + '</td>');
-                    tr.append(`<td><div id="ediv${row.SerialNo}"> <button class="btn btn-primary" onclick="reserve(this, ${row.SerialNo})">Borrow</button></div></td>'`);
-                    tbody.append(tr);
-                });
-            }
-        </script>
+                function buildTable(data) {
+                    var tbody = $('#myTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Title + '</td>');
+                        tr.append('<td>' + row.SerialNo + '</td>');
+                        tr.append(`<td><div id="ediv${row.SerialNo}"> <button class="btn btn-primary" onclick="reserve(this, '${row.SerialNo}')">Borrow</button></div></td>'`);
+                        tbody.append(tr);
+                    });
+                }
+            </script>
 
-    </table>
+        </table>
+    </div>
 </body>
 
 </html>
