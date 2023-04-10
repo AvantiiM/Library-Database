@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Transaction Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'SearchTransactions');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("TransactionsTableBody");	
+				
+
+                // <th>Reciept Number</th>
+                // <th>Return Due Date</th>
+                // <th>Active/Void Status</th>
+                // <th>Returned Items Actual return Date</th>
+                // <th>Late Fees</th>
+                // <th>Damage Fees</th>
+                // <th>Student ID</th>
+                // <th>Faculty ID</th>
+                // <th>Guest ID</th>
+                // <th>Book ISBN</th>
+                // <th>Electronics ID</th>
+                // <th>Media ID</th>
+                // <th>Object ID</th>
+				// <th>Created By</th>
+				// <th>Created Date</th>
+				// <th>Updated By</th>
+				// <th>Last Updated</th>
+				// <th>Actions</th>
+
+
+				responseData.forEach(Transactions => {
+					const Checkisbn = Transactions.Reciept_num;
+					// Check if a row with the same ISBN already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = Transactions.Reciept_num;
+						cells[2].innerText = Transactions.Return_Due_Date;
+						cells[3].innerText = Transactions.Active_Void_Status;
+						cells[4].innerText = Transactions.Actual_return_Date;
+						cells[5].innerText = Transactions.Late_Fees;
+						cells[6].innerText = Transactions.Damage_Fees;
+						cells[7].innerText = Transactions.Student_ID;
+						cells[8].innerText = Transactions.Faculty_ID;
+						cells[9].innerText = Transactions.Guest_ID;
+						cells[10].innerText = Transactions.Book_ID;
+						cells[11].innerText = Transactions.Electronics_ID;
+                        cells[12].innerText = Transactions.Media_ID;
+                        cells[13].innerText = Transactions.Object_ID;
+                        cells[14].innerText = Transactions.Created_By;
+                        cells[15].innerText = Transactions.Created_Date;
+                        cells[16].innerText = Transactions.Updated_By;
+                        cells[17].innerText = Transactions.Last_Updated;
+					} else {
+					console.log(Transactions);
+					const row = table.insertRow();
+					const RecieptNumber = row.insertCell();
+					RecieptNumber.innerText = Transactions.Reciept_num;
+					const ReturnDueDate = row.insertCell();
+                    ReturnDueDate.innerText = Transactions.Return_Due_Date;
+                    const ActiveVoidStatus = row.insertCell();
+                    ActiveVoidStatus.innerText = Transactions.Active_Void_Status;
+                    const ActualReturnDate = row.insertCell();
+                    ActualReturnDate.innerText = Transactions.Actual_return_Date;
+                    const LateFees = row.insertCell();
+                    LateFees.innerText = Transactions.Late_Fees;
+                    const DamageFees = row.insertCell();
+                    DamageFees.innerText = Transactions.Damage_Fees;
+                    const StudentID = row.insertCell();
+                    StudentID.innerText = Transactions.Student_ID;
+                    const FacultyID = row.insertCell();
+                    FacultyID.innerText = Transactions.Faculty_ID;
+                    const GuestID = row.insertCell();
+                    GuestID.innerText = Transactions.Guest_ID;
+                    const BookID = row.insertCell();
+                    BookID.innerText = Transactions.Book_ID;
+                    const ElectronicsID = row.insertCell();
+                    ElectronicsID.innerText = Transactions.Electronics_ID;
+                    const MediaID = row.insertCell();
+                    MediaID.innerText = Transactions.Media_ID;
+                    const ObjectID = row.insertCell();
+                    ObjectID.innerText = Transactions.Object_ID;
+                    const CreatedBy = row.insertCell();
+                    CreatedBy.innerText = Transactions.Created_By;
+                    const CreatedDate = row.insertCell();
+                    CreatedDate.innerText = Transactions.Created_Date;
+                    const UpdatedBy = row.insertCell();
+                    UpdatedBy.innerText = Transactions.Updated_By;
+                    const LastUpdated = row.insertCell();
+                    LastUpdated.innerText = Transactions.Last_Updated;
+
+
+
+	
+
+
+
+
+
+					table.appendChild(row);
+					}});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
+</head>
+<body>
+	
+
+	<h1>Transactions Search</h1>
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+	<!-- <form action="/SearchBooks" method="post"> -->
+		<div class="form-group">
+			<label for="RecieptNumber">Reciept number:</label>
+			<input type="text" id="RecieptNumberInput" name="RecieptNumber" placeholder="Enter Reciept number...">
+		</div>
+		<div class="form-group">
+			<label for="ReturnDueDate">Return Due Date:</label>
+			<input type="text" id="ReturnDueDate" name="ReturnDueDate" placeholder="Enter The Return Due Date...">
+		</div>
+		<div class="form-group">
+			<label for="AVStatus">Active/Void Status:</label>
+			<input type="text" id="AVStatus" name="AVStatus" placeholder="Enter True or False...">
+		</div>
+		<div class="form-group">
+			<label for="ActualReturnDate">Returned Items Actual return Date:</label>
+			<input type="text" id="ActualReturnDate" name="ActualReturnDate" placeholder="Enter Returned Items Actual return Date...">
+		</div>
+		<div class="form-group">
+			<label for="LateFees">Late Fees:</label>
+			<input type="text" id="LateFees" name="LateFees" placeholder="Enter Late Fees...">
+		</div>
+		<div class="form-group">
+			<label for="DamageFees">Damage Fees:</label>
+			<input type="text" id="DamageFees" name="DamageFees" placeholder="Enter Damage Fees...">
+		</div>
+		<div class="form-group">
+			<label for="StudentID">Student ID:</label>
+			<input type="text" id="StudentID" name="StudentID" placeholder="Enter Student ID...">
+		</div>
+        <div class="form-group">
+            <label for="FacultyID">Faculty ID:</label>
+            <input type="text" id="FacultyID" name="FacultyID" placeholder="Enter Faculty ID...">
+        </div>
+        <div class="form-group">
+            <label for="GuestID">Guest ID:</label>
+            <input type="text" id="GuestID" name="GuestID" placeholder="Enter Guest ID...">
+        </div>
+        <div class = "form-group">
+            <label for="BOOKISBN">Book ISBN:</label>
+            <input type="text" id="BOOKISBN" name="BOOKISBN" placeholder="Enter ISBN...">
+        </div>
+        <div class = "form-group">
+            <label for="ELECTRONICSID">Electronics ID:</label>
+            <input type="text" id="ELECTRONICSID" name="ELECTRONICSID" placeholder="Enter Electronics ID...">
+        </div>
+        <div class = "form-group">
+            <label for="MEDIAID">Media ID:</label>
+            <input type="text" id="MEDIAID" name="MEDIAID" placeholder="Enter Media ID...">
+        </div>
+        <div class = "form-group">
+            <label for="OBJECTID">Object ID:</label>
+            <input type="text" id="OBJECTID" name="OBJECTID" placeholder="Enter Object ID...">
+        </div>
+		<div class="form-group">
+			<label for="createdBy">Created By:</label>
+			<input type="text" id="createdBy" name="createdBy" placeholder="Enter created by...">
+		</div>
+		<div class="form-group">
+			<label for="createdDate">Created Date:</label>
+			<input type="text" id="createdDate" name="createdDate" placeholder="Enter created date...">
+		</div>
+		<div class="form-group">
+			<label for="updatedBy">Updated By:</label>
+			<input type="text" id="updatedBy" name="updatedBy" placeholder="Enter updated by...">
+		</div>
+		<div class="form-group">
+			<label for="lastUpdated">Last Updated:</label>
+			<input type="text" id="lastUpdated" name="lastUpdated" placeholder="Enter last updated...">
+		</div>
+		<input type="submit" value="Search">
+	</form>
+	<table id="TransactionsTable">
+		<thead>
+			<tr>
+				<th>Reciept Number</th>
+                <th>Return Due Date</th>
+                <th>Active/Void Status</th>
+                <th>Returned Items Actual return Date</th>
+                <th>Late Fees</th>
+                <th>Damage Fees</th>
+                <th>Student ID</th>
+                <th>Faculty ID</th>
+                <th>Guest ID</th>
+                <th>Book ISBN</th>
+                <th>Electronics ID</th>
+                <th>Media ID</th>
+                <th>Object ID</th>
+				<th>Created By</th>
+				<th>Created Date</th>
+				<th>Updated By</th>
+				<th>Last Updated</th>
+			</tr>
+		</thead>
+		<tbody id="TransactionsTableBody">
+		</tbody>
+	</table>
+
+
+</body>
+</html>
