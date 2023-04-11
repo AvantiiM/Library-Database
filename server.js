@@ -37,7 +37,7 @@ function start(route, handle) {
     console.log("Request for " + pathname + " received.");
 
     if (pathname === "/favicon.ico") {
-      let frstream = fs.readFileSync("./libDB.ico");
+      let frstream = fs.readFileSync("./favicon.ico");
       response.statusCode = "200";
       response.setHeader("Content-Type", "image/jpeg");
       //frstream.pipe(response);

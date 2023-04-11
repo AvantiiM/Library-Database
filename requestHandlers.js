@@ -192,7 +192,7 @@ function sendFile(response, pathname, sessionId = null) {
 }
 
 
-function addItem(response, postData) {
+function addItem(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function () {
         var req = new sql.Request();
@@ -223,6 +223,7 @@ function addItem(response, postData) {
         req.input('Genre', sql.NVarChar, Genre);
         req.input('Availability', sql.Bit, Availability);
         req.input('Status', sql.NVarChar, Status);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
         function generateMediaID() {
             const timestamp = new Date().getTime();
             const randomNumber = Math.floor(Math.random() * 100000000)
@@ -244,7 +245,7 @@ function addItem(response, postData) {
         var queryStr = "";
         switch (mode) {
             case 'Electronic':
-              queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), 'F111122223', @Availability, @Status, getdate(), 'F111122223', @DValue)";
+              queryStr = "INSERT INTO Electronics (Serial_No, Electronics_Name, Last_Updated, Created_By, Available, Item_Status, Created_Date, Last_Updated_By, Dollar_Value) VALUES (@itemID, @itemName, getdate(), @userID, @Availability, @Status, getdate(), @userID, @DValue)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Electronic entry inserted into database.");
                 var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/ElectronicsEntry.html');
@@ -269,7 +270,7 @@ function addItem(response, postData) {
             });
               break;
             case 'Book':
-              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
+              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Book entry inserted into database.");
                 var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
@@ -297,7 +298,7 @@ function addItem(response, postData) {
             case 'Media':
                 function insertMediaQuery(req, tempMID) {
                     req.input('tempMID', sql.NVarChar, tempMID);
-                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
                     req.query(queryStr).then(function (recordset) {
                         console.log("Media entry inserted into database.");
                         var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
@@ -327,7 +328,7 @@ function addItem(response, postData) {
             case 'Object':
                     function insertObjectQuery(req, tempOID){
                         req.input('tempOID', sql.NVarChar, tempOID);
-                        queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), 'F111122223', getdate(), 'F111122223', @DValue, @NCopies)"
+                        queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @NCopies)"
                         req.query(queryStr).then(function(recordset) {
                             console.log("Object entry inserted into database.");
                             var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
