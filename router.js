@@ -4,6 +4,7 @@ function route(handle, pathname, response, postData, userData) {
         case '/loginverify': 
         case '/bookReserve': 
         case '/mediaReserve': 
+        case '/addItem':
         case '/electronicReserve':handle[pathname](response, postData, userData); break;
         default:
             if (typeof handle[pathname] === 'function') {
