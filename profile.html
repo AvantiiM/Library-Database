@@ -86,11 +86,9 @@
         
         sql.connect(config).then(function() {
           var req = new sql.Request();
-          // req.input('username', sql.NVarChar, username);
           var username = 'G799463126';
           sql.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
             
-            // console.log(result);
             if (recordset.recordsets[0].length > 0) { 
               var faculty = recordset.recordsets[0][0].Faculty_ID;
               var stud = recordset.recordsets[0][0].StudentID;
@@ -114,15 +112,10 @@
                   document.getElementById("balance").innerHTML = balance;
                   document.getElementById("dep").innerHTML = dep;
                   
-                //   var fullID = 'FullName: ' + firstN + ' ' + lastN + ' Email: ' + email + ' Department: ' + dep + ' Balance: ' + balance;
-                //   console.log(fullID);
                 }
               })
-            //   console.log(faculty);
             }else if(stud != null){
-              // console.log(stud);
               sql.query("SELECT FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
-                // console.log(result);
                 if (recordset.recordsets[0].length > 0) { 
                   firstN = recordset.recordsets[0][0].FirstN;
                   lastN = recordset.recordsets[0][0].LastN;
@@ -138,9 +131,6 @@
                   document.getElementById("balance").innerHTML = balance;
                   document.getElementById("dep").innerHTML = major;
                 }
-                
-                // var fullID = 'FullName: ' + firstN + ' ' + lastN + ' Email: ' + email + ' Major: ' + major + ' Balance: ' + balance;
-                // console.log(fullID);
               })
             }
             else if(guest != null){
@@ -159,11 +149,7 @@
                   document.getElementById("email").innerHTML = email;
                   document.getElementById("balance").innerHTML = balance;
                 }
-                
-                // var fullID = 'FullName: ' + firstN + ' ' + lastN + ' Email: ' + email + ' Balance: ' + balance;
-                // console.log(fullID);
               })
-            //   console.log(guest);
             }
             else {
               console.log('Error');
