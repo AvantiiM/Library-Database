@@ -424,6 +424,8 @@ function addLogin(response, postData) {
         function callback() {
             req.query(queryStr).then(function (recordset) {
                 console.log("Admin entry inserted into database.");
+                response.write("New admin user created. <br>Admin ID: " + Username);
+                response.end();  
             }).catch(function (err) {
                 console.log(err);
             });
@@ -520,8 +522,14 @@ function addLogin(response, postData) {
                                 if(mode === 'guest') {
                                     response.write("New guest user created. <br>Guest ID: " + Username);
                                     response.end();                    
+                                } else if(mode === 'student') {
+                                    response.write("New student user created. <br>Student ID: " + Username);
+                                    response.end();                    
+                                } else if(mode === 'faculty') {
+                                    response.write("New faculty user created. <br>Faculty ID: " + Username);
+                                    response.end();                    
                                 }
-                
+            
                             }).catch(function (err) {
                                 console.log(err);
                             });

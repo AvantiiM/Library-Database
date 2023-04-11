@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="US">
     <head>
-        <title>Guest Entry</title>
+        <title>Admin Entry</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
         <style>
             body{
 			background-image: url("/public/test11.jpg");
@@ -87,6 +88,43 @@
 			text-align: center;
 			}
         </style>
+
+<script>
+    function checkUN(chrs, form, msg) {
+        if (form.Username.value.charAt(0) !== chrs) {
+            alert(msg);
+            return false;
+        } else if (form.Username.value.length != 10) {
+            alert("Username must contain 10 digits including an F");
+        } else {
+            return true;
+        }
+    }
+
+    function inserAdminUser(form) {
+        if (checkUN('F', form, 'Invalid username when creating an Admin. \nMust begin with an F')) {
+            $.ajax({
+                type: 'POST',
+                data: {
+                    searchBy: 'admin',
+                    Username: form.Username.value,
+                    Email: form.Email.value
+                },
+                url: '/addLogin',
+                success: function (response) {
+                    console.log(response)
+                    document.getElementById("adminmsg").innerHTML = response;
+                    form.reset();
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    }
+
+</script>
+
     </head>
 
     <body>
@@ -108,8 +146,14 @@
                 </table>
         </fieldset>
             <br></br>
-        <input type="submit" value="Create New Admin" onClick=" return checkUN('F',this.form,'Invalid username when creating an Admin. \nMust begin with an F')">
+            <input type="button" value="Create New Admin" onClick=" return inserAdminUser(this.form)">
     </form>
+
+    <P>
+        <center><b>
+                <div id="adminmsg" style="background-color: lightblue;"></div>
+            </b></center>
+    </P>
 
 </body>
 

@@ -760,6 +760,72 @@ function electronicReserve(response, postData, sessionData) {
 
 
 }
+function profile(response){
+    console.log("Request handler 'profile' was called.");
+    var data = fs.readFileSync('profile.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(data);
+    response.end();
+}
+
+function borrowHolds(response) {
+    console.log("Request handler 'borrowHolds' was called.");
+    var data = fs.readFileSync('borrowHolds.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(data);
+    response.end();
+}
+
+function memberReservations(response, postData, sessionData) {
+    console.log("In librarySearch");
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reservation_Num, Book_ID, Book_Name, holdPosition, Author, Creation_Date FROM Reservation, Book WHERE Student_ID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Reservation.Book_ID = book.ISBN";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE StudentID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'G':
+                queryOne = "select Reservation_Num, Book_ID, Book_Name, holdPosition, Author, Creation_Date FROM Reservation, Book WHERE Guest_ID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Reservation.Book_ID = book.ISBN";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Guest_ID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'F':
+                queryOne = "select Reservation_Num, Book_ID, Book_Name, holdPosition, Author, Creation_Date FROM Reservation, Book WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Reservation.Book_ID = book.ISBN";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Faculty_ID=@userID AND Active_Void_Status = 1";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Reservations Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
 
 
 
@@ -771,3 +837,6 @@ exports.librarySearch = librarySearch;
 exports.bookReserve = bookReserve;
 exports.mediaReserve = mediaReserve;
 exports.electronicReserve = electronicReserve;
+exports.borrowHolds = borrowHolds;
+exports.memberReservations = memberReservations;
+exports.profile = profile;
