@@ -4,7 +4,7 @@
     <div style="text-align: center;">
         <h1 style="color:#495867;">Profile</h1>
     </div>
-    
+
         <title>Library Search Style</title>
         <style>
             form {
@@ -56,33 +56,40 @@
                 margin-top: 20px;
             }
         </style>
-</head>
-
-
-<body> 
-    <form action="/profile" method="post">
-        <label for= "fullname"> Fullname: <span id="fullName"></span></label> 
-        <label for= "email"> Email: <span id="email"></span> </label> 
-        <label for="id"> ID: <span id="ID"></span> </label> 
-        <label for="major"> Major: <span id="dep"></span> </label> 
-        <label for="balance"> Balance: <span id="balance"></span> </label> 
-
-    </form>
-
-    <script type="text/javascript">
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <!-- </head>
+    <!-- <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     
-    function infoGetter(){
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'getInfo');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    </head> -->
 
-    }
-    window.onload = function(){
-        infoGetter();
-    }
 
-    </script>
+    <body onload="infoGetter()"> 
+        <form>
+            <label for= "fullname"> Fullname: <span id="fullName"></span></label> 
+            <label for= "email"> Email: <span id="email"></span> </label> 
+            <label for= "id"> ID: <span id="ID"></span> </label> 
+            <label for= "major"> Major: <span id="dep"></span> </label> 
+            <label for= "balance"> Balance: <span id="balance"></span> </label> 
+        </form>
 
-</body>
+        <script type = "text/javascript">
+        
+        function infoGetter(){
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'getInfo');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        }
+        window.onload = function(){
+            infoGetter();
+        }
+
+        </script>
+
+    </body>
+
 </html>
 
