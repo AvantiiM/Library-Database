@@ -1137,7 +1137,6 @@ function insertTransaction(response, postData) {
 
         req.input('returnDate', sql.Date, returnDate);
         query += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', @BID, @itemID, 1, getDate(), @returnDate, @userId, @userId)";
-        console.log(query);
 
         req.query(query).then(function (recordset) {
             console.log("Transaction Completed.");
