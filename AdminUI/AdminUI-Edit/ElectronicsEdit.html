@@ -295,6 +295,7 @@
 							// update the table values
 							if (xhr.status === 200) {
 							alert("Electronic updated successfully please refresh the page to see the changes");
+							location.reload();
 							for (let i = 0; i < cells.length; i++) {
 								// const cell = cells[i];
 								// const columnName = cell.getAttribute("data-column-name");
@@ -331,6 +332,7 @@
 							xhr.onload = function() {
 								if (xhr.status === 200) {
 									alert("Electronic deleted successfully please refresh the page to see the changes");
+									location.reload();
 								} else {
 									console.log("Error deleting book");
 								}
