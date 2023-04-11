@@ -84,7 +84,14 @@
                 var stud = recordset.recordsets[0][0].StudentID;
                 var guest = recordset.recordset[0][0].GuestID;
                 if(fac != null){
-                    req.query("SELECT FirstN, LastN, MiddleN, Email, FROM Faculty WHERE Username=@username").then(function(recordset) {}
+                    req.query("SELECT FirstN, LastN, MiddleN, Email,  FROM Faculty WHERE Username=@username").then(function(recordset) {
+                        var first = recordset.recordsets[0][0].FirstN;
+                        var middle = recordset.recordsets[0][0].MiddleN;
+                        var last = recordset.recordsets[0][0].LastN;
+                        var email = recordset.recordsets[0][0].Email;
+                        var first = recordset.recordsets[0][0].FirstN;
+
+                    });
                 }
                 else if(stud != null){
 
