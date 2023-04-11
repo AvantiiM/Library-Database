@@ -10,7 +10,8 @@ function route(handle, pathname, response, postData, userData) {
         case '/mediaReservations':
         case '/electronicReservations':
         case '/electronicReserve':
-        case '/getInfo':handle[pathname](response, postData, userData); break;
+        case '/addLogin':
+        case '/getInfo':
         case '/UpdateBook':handle[pathname](response, postData, userData); break;
         default:
             if (typeof handle[pathname] === 'function') {

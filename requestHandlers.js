@@ -476,7 +476,7 @@ function generateUsername() {
     return username;
 }
 
-function addLogin(response, postData) {
+function addLogin(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
 
     sql.connect(config).then(function () {
@@ -496,6 +496,8 @@ function addLogin(response, postData) {
         var tempPassword = params['tempPassword'];
 
         var mode = params['searchBy'];
+
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
         var adminPermission = params['adminPermission']; // === 'on' ? 1 : 0;
         var adminp = 0;
@@ -535,7 +537,7 @@ function addLogin(response, postData) {
         }
         switch (firstChar) {
             case 'S':
-                queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Email, Gender, PhoneN, Bday, Major, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @email, @gender, @phonenum, @birthdate, @major, 'F111122223', 'F111122223', getdate(), getdate())";
+                queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Email, Gender, PhoneN, Bday, Major, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @email, @gender, @phonenum, @birthdate, @major, @userId, @userId, getdate(), getdate())";
                 break;
             case 'F':
                 if (mode === 'admin') {
@@ -548,7 +550,7 @@ function addLogin(response, postData) {
                             req.input('MadminN', sql.NVarChar, MadminN);
                             req.input('LadminN', sql.NVarChar, LadminN);
                             console.log("Faculty found: " + Username);
-                            queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, MiddleN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @MadminN, @email, 'F111122223', 'F111122223', getdate(), getdate())";
+                            queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, MiddleN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @MadminN, @email, @userId, @userId, getdate(), getdate())";
                             callback();
                         } else {
                             failed = true;
@@ -565,12 +567,12 @@ function addLogin(response, postData) {
                     });
 
                 } else {
-                    queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
+                    queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, @adminpermission, @department, @userId, @userId, getdate(), getdate())";
                 }
 
                 break;
             case 'G':
-                queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, 'F111122223', 'F111122223', getdate(), getdate())";
+                queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender,  @userId,  @userId, getdate(), getdate())";
                 break;
 
         }
@@ -587,7 +589,7 @@ function addLogin(response, postData) {
 
             function insertAdmin() {
                 if (adminp === 1 && firstChar === 'F') {
-                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
+                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email,  @userId,  @userId, getdate(), getdate())");
                     req.query(query).then(function (recordset) {
                         console.log("New admin user entry inserted into database.");
 
