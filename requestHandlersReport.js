@@ -279,6 +279,223 @@ catch(err){
 }})};
 
 
+// Transactions Report ###################################################################################################################################################################################################################################################
+
+function TransactionPeriods(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var answer = params['Month'];
+        let query1 = null;
+
+
+
+
+
+        switch(answer){
+            case "1":
+            query1 = "SELECT * FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31';";
+            break;
+            case "2":
+            query1 = "SELECT * FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-02-01' AND '2023-02-28';";
+            break;
+            case "3":
+            query1 = "SELECT * FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-03-01' AND '2023-03-31';";
+            break;
+            case "4":
+            query1 = "SELECT * FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-04-01' AND '2023-04-30';";
+            break; }
+    
+
+            console.log(query1);
+
+
+            req.query(query1).then(function (recordset) {
+                console.log("New admin user entry will be viewed in the database.");
+
+                if (recordset.recordsets.length > 0) {
+                    console.log("Found " + recordset.recordsets.length + " records");
+                    console.log(recordset);
+                    const resultArray = recordset.recordsets[0];
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.write(JSON.stringify(resultArray));
+                    response.end();
+                }
+                else {
+                    console.log("No records found")
+                    response.write("No records found");
+                }
+            }).catch(function (err) {
+                console.error("error");
+                console.log(err);
+            });
+
+        }
+    
+    
+    
+    
+    )};
+
+
+
+    function TransactionPeriodsBalance(response, postData){
+
+        sql.connect(config).then(function () {
+            var req = new sql.Request();
+    
+            var querystring = require('querystring');
+            var params = querystring.parse(postData);
+            var answer = params['Month'];
+            let query1 = null;
+            let query2 = null;
+    
+            switch(answer){
+                case "1":
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31' AND Late_Fees > 0;"; 
+                    break;
+                case "2":
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-02-01' AND '2023-02-28';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-02-01' AND '2023-02-28' AND Late_Fees > 0;"; 
+                    break;
+                case "3":
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-03-01' AND '2023-03-31';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-03-01' AND '2023-03-31' AND Late_Fees > 0;"; 
+                    break;
+                case "4":
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-04-01' AND '2023-04-30';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-04-01' AND '2023-04-30' AND Late_Fees > 0;"; 
+                    break; 
+            }
+    
+            Promise.all([req.query(query1), req.query(query2)]).then(function (results) {
+                console.log(results); // add this line to log the results
+                const count = results[0].recordset[0].count;
+                const sum = results[1].recordset[0].sum;
+                const resultObject = { count, sum };
+                console.log(resultObject); // add this line to log the result object
+                const resultArray = [resultObject];
+                console.log(resultArray);
+                response.writeHead(200, { "Content-Type": "application/json" });
+                response.write(JSON.stringify(resultArray));
+                response.end();
+            }).catch(function (err) {
+                console.error("error");
+                console.log(err);
+                response.end();
+            });
+        }).catch(function (err) {
+            console.log(err);
+            response.writeHead(500, { "Content-Type": "text/plain" });
+            response.end("Error connecting to database");
+        });
+    }
+    
+
+// Suspended Users ###################################################################################################################################################################################################################################################
+
+
+
+function SuspendedStudents(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var query = "SELECT * FROM dbo.Students WHERE SUSPENSION = 'Y';";
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+  }); 
+
+} 
+
+
+
+
+function SuspendedFaculty(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var query = "SELECT * FROM dbo.Faculty WHERE SUSPENSION = 'Y';";
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+  }); 
+
+} 
+
+
+
+function SuspendedGuests(response, postData){
+
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var query = "SELECT * FROM dbo.Guest WHERE SUSPENSION = 'Y';";
+
+       req.query(query).then(function(recordset) {
+        console.log("New admin user entry will be viewed in the database.");
+        
+        if(recordset.recordsets.length > 0) {
+            console.log("Found " + recordset.recordsets.length + " records");
+            console.log(recordset);
+            const resultArray = recordset.recordsets[0];     
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write(JSON.stringify(resultArray));
+            response.end(); 
+        } 
+        else {
+            console.log("No records found")
+            response.write("No records found");
+        }
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+
+  }); 
+
+} 
 
 
 
@@ -291,3 +508,8 @@ catch(err){
     exports.TransactionReportSum = TransactionReportSum;
     exports.MaxReportSum = MaxReportSum;
     exports.AvailableBooks = AvailableBooks;
+    exports.TransactionPeriods = TransactionPeriods;
+    exports.TransactionPeriodsBalance = TransactionPeriodsBalance;
+    exports.SuspendedStudents = SuspendedStudents;
+    exports.SuspendedFaculty = SuspendedFaculty;
+    exports.SuspendedGuests = SuspendedGuests;

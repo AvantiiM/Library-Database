@@ -776,7 +776,7 @@ function AdminSGuest(response){
 }
 function AdminSStudents(response){
     console.log("Request handler 'AdminSStudent' was called.");
-    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSStudent.html');
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSStudents.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(edata);
     response.end();

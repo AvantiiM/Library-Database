@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Transaction Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'TransactionPeriods');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+				console.log(responseData[0].Reciept_num);
+// 3. Generate the table
+
+				const table = document.getElementById("TransactionsTableBody");	
+
+				
+				responseData.forEach(Transactions => {
+					const Checkisbn = Transactions.Reciept_num;
+					// Check if a row with the same ISBN already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						console.log('Row exists');
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = Transactions.Reciept_num;
+						cells[2].innerText = Transactions.Return_Due_Date;
+						cells[3].innerText = Transactions.Active_Void_Status;
+						cells[4].innerText = Transactions.Actual_return_Date;
+						cells[5].innerText = Transactions.Late_Fees;
+						cells[6].innerText = Transactions.Damage_Fees;
+						cells[7].innerText = Transactions.Student_ID;
+						cells[8].innerText = Transactions.Faculty_ID;
+						cells[9].innerText = Transactions.Guest_ID;
+						cells[10].innerText = Transactions.Book_ID;
+						cells[11].innerText = Transactions.Electronics_ID;
+                        cells[12].innerText = Transactions.Media_ID;
+                        cells[13].innerText = Transactions.Object_ID;
+                        cells[14].innerText = Transactions.Created_By;
+                        cells[15].innerText = Transactions.Created_Date;
+                        cells[16].innerText = Transactions.Updated_By;
+                        cells[17].innerText = Transactions.Last_Updated;
+					} else {
+						
+					console.log(Transactions);
+					const row = table.insertRow();
+					const RecieptNumber = row.insertCell();
+					RecieptNumber.innerText = Transactions.Reciept_num;
+					const ReturnDueDate = row.insertCell();
+                    ReturnDueDate.innerText = Transactions.Return_Due_Date;
+                    const ActiveVoidStatus = row.insertCell();
+                    ActiveVoidStatus.innerText = Transactions.Active_Void_Status;
+                    const ActualReturnDate = row.insertCell();
+                    ActualReturnDate.innerText = Transactions.Actual_return_Date;
+                    const LateFees = row.insertCell();
+                    LateFees.innerText = Transactions.Late_Fees;
+                    const DamageFees = row.insertCell();
+                    DamageFees.innerText = Transactions.Damage_Fees;
+                    const StudentID = row.insertCell();
+                    StudentID.innerText = Transactions.Student_ID;
+                    const FacultyID = row.insertCell();
+                    FacultyID.innerText = Transactions.Faculty_ID;
+                    const GuestID = row.insertCell();
+                    GuestID.innerText = Transactions.Guest_ID;
+                    const BookID = row.insertCell();
+                    BookID.innerText = Transactions.Book_ID;
+                    const ElectronicsID = row.insertCell();
+                    ElectronicsID.innerText = Transactions.Electronics_ID;
+                    const MediaID = row.insertCell();
+                    MediaID.innerText = Transactions.Media_ID;
+                    const ObjectID = row.insertCell();
+                    ObjectID.innerText = Transactions.Object_ID;
+                    const CreatedBy = row.insertCell();
+                    CreatedBy.innerText = Transactions.Created_BY;
+                    const CreatedDate = row.insertCell();
+                    CreatedDate.innerText = Transactions.Creation_Date;
+                
+
+
+
+	
+
+
+
+
+
+					table.appendChild(row);
+					}});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+
+
+			
+				
+						
+				// 1. Call the node fn
+
+
+						// create a new XMLHttpRequest objec
+						const xhr2 = new XMLHttpRequest();
+
+						
+
+					xhr2.open('POST', 'TransactionPeriodsBalance');
+					xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+					xhr2.send(new URLSearchParams(formData).toString());
+
+
+			xhr2.onload = function() {
+
+
+				if (xhr2.status === 200) {
+					console.log('Form submission successful!');
+					let responseData2 = [];
+					responseData2 = JSON.parse(xhr2.responseText);
+					console.log(responseData2);
+					// 3. Generate the table
+					
+					console.log(responseData2[0].count);
+					console.log(responseData2[0].sum);
+
+
+					const table2 = document.getElementById("SUMTableBody");	
+					const row = table2.insertRow();
+					const NumofTransactions = row.insertCell();
+					NumofTransactions.innerText = responseData2[0].count;
+					const balanceofTransactions = row.insertCell();
+					balanceofTransactions.innerText = responseData2[0].sum;
+					table2.appendChild(row);
+							}
+
+
+			
+		}
+	
+	
+	
+	};
+	</script>
+
+
+</head>
+<body>
+	
+
+	<h1>Transactions Report</h1>
+    
+
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+		<div class="form-group">
+			<label for="Month">Month:</label>
+			<input type="text" id="Month" name="Month" placeholder="Enter Month number...">
+		</div>
+		<div class="form-group">
+			<label for="Year">Year:</label>
+			<input type="text" id="Year" name="Year" placeholder="Enter Year...">
+		</div>
+        <input type="submit" value="Generate Report" id="searchBtn">
+	</form>
+
+	<table id="TransactionsTable">
+		<thead>
+			<tr>
+				<th>Reciept Number</th>
+                <th>Return Due Date</th>
+                <th>Active/Void Status</th>
+                <th>Returned Items Actual return Date</th>
+                <th>Late Fees</th>
+                <th>Damage Fees</th>
+                <th>Student ID</th>
+                <th>Faculty ID</th>
+                <th>Guest ID</th>
+                <th>Book ISBN</th>
+                <th>Electronics ID</th>
+                <th>Media ID</th>
+                <th>Object ID</th>
+				<th>Created By</th>
+				<th>Created Date</th>
+			</tr>
+		</thead>
+		<tbody id="TransactionsTableBody">
+		</tbody>
+	</table>
+	<table id="SUMTable">
+		<thead>
+			<tr>
+				<th>Number of transactions</th>
+				<th>Amount $</th>
+			</tr>
+		</thead>
+		<tbody id="SUMTableBody">
+		</tbody>
+	</table>
+</body>
+</html>
