@@ -350,6 +350,9 @@ function TransactionPeriods(response, postData){
             var querystring = require('querystring');
             var params = querystring.parse(postData);
             var answer = params['Month'];
+            if (answer == null) {
+                answer = "1";
+            }
             let query1 = null;
             let query2 = null;
     
@@ -370,6 +373,18 @@ function TransactionPeriods(response, postData){
                     query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-04-01' AND '2023-04-30';";
                     query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-04-01' AND '2023-04-30' AND Late_Fees > 0;"; 
                     break; 
+                case null:
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31' AND Late_Fees > 0;";
+                    break;
+                case "0":
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31' AND Late_Fees > 0;";
+                    break;
+                default:
+                    query1 = "SELECT COUNT(*) AS count FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31';";
+                    query2 = "SELECT SUM(Late_Fees) AS sum FROM dbo.Transactions WHERE Creation_Date BETWEEN '2023-01-01' AND '2023-01-31' AND Late_Fees > 0;";
+                    break;
             }
     
             Promise.all([req.query(query1), req.query(query2)]).then(function (results) {
