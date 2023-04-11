@@ -19,7 +19,11 @@ handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost
 handle["/bookReserve"] = mUI_requestHandlers.bookReserve; 
 handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve; 
 handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
-handle["/memberReservations"] = mUI_requestHandlers.memberReservations; 
+handle["/bookReservations"] = mUI_requestHandlers.bookReservations; 
+handle["/mediaReservations"] = mUI_requestHandlers.mediaReservations; 
+handle["/electronicReservations"] = mUI_requestHandlers.electronicReservations; 
+
+
 
 handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 
