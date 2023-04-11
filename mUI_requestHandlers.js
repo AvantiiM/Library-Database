@@ -760,6 +760,13 @@ function electronicReserve(response, postData, sessionData) {
 
 
 }
+function profile(response){
+    console.log("Request handler 'profile' was called.");
+    var data = fs.readFileSync('profile.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(data);
+    response.end();
+}
 
 function borrowHolds(response) {
     console.log("Request handler 'borrowHolds' was called.");
@@ -832,3 +839,4 @@ exports.mediaReserve = mediaReserve;
 exports.electronicReserve = electronicReserve;
 exports.borrowHolds = borrowHolds;
 exports.memberReservations = memberReservations;
+exports.profile = profile;

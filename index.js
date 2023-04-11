@@ -21,6 +21,8 @@ handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve;
 handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
 handle["/memberReservations"] = mUI_requestHandlers.memberReservations; 
 
+handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
+
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
@@ -56,7 +58,6 @@ handle["/AdminReportBookSearch"] = requestHandlers.AdminReportBookSearch; //http
 
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
-handle["/profile"] = requestHandlers.profile; //http://localhost:3000/profile
 handle["/UpdateBook"] = requestHandlers.UpdateBook; //http://localhost:3000/BookUpdate
 
 handle["/SearchElectronics"] = EditrequestHandlers.SearchElectronics; //http://localhost:3000/ElectronicsUpdate
@@ -71,6 +72,7 @@ handle["/SearchMedia"] = EditrequestHandlers.SearchMedia; //http://localhost:300
 handle["/UpdateMedia"] = EditrequestHandlers.UpdateMedia; //http://localhost:3000/UpdateMedia
 handle["/DeleteMedia"] = EditrequestHandlers.DeleteMedia; //http://localhost:3000/DeleteMedia
 
+handle["/insertTransaction"] = requestHandlers.insertTransaction; //http://localhost:3000/insertTransaction
 handle["/SearchTransactions"] = EditrequestHandlers.SearchTransactions; //http://localhost:3000/SearchTransactions
 handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http://localhost:3000/UpdateTransactions
 handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
