@@ -152,7 +152,13 @@
 			// get form from data
 			const form = document.getElementById('searchForm');
 			const formData = new FormData(form);
-			
+		
+			const monthField = formData.get('Month').trim();
+				if (!monthField) {
+					formData.set('Month', '4');
+				}
+
+
 // 1. Call the node fn
 
 
@@ -216,7 +222,10 @@
 					const ReturnDueDate = row.insertCell();
                     ReturnDueDate.innerText = Transactions.Return_Due_Date;
                     const ActiveVoidStatus = row.insertCell();
-                    ActiveVoidStatus.innerText = Transactions.Active_Void_Status;
+					let UIAV = Transactions.Active_Void_Status;
+                    if(Transactions.Active_Void_Status === true){UIAV = "Active";}
+					else{UIAV = "Not Active";}
+                    ActiveVoidStatus.innerText = UIAV;
                     const ActualReturnDate = row.insertCell();
 					let UIDueDate = Transactions.Actual_Return_Date ;
                     if(Transactions.Actual_Return_Date === undefined){UIDueDate = "Not Returned Yet";}
@@ -346,7 +355,7 @@
 			<tr>
 				<th>Reciept Number</th>
                 <th>Return Due Date</th>
-                <th>Active/Void Status</th>
+                <th>Active/ Not Active Status</th>
                 <th>Returned Items Actual return Date</th>
                 <th>Late Fees</th>
                 <th>Damage Fees</th>
