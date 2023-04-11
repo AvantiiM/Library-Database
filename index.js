@@ -53,7 +53,7 @@ handle["/AdminReportBookSearch"] = requestHandlers.AdminReportBookSearch; //http
 
 handle["/addItem"] = requestHandlers.addItem; //http://localhost:3000/addItem
 handle["/DeleteBook"] = requestHandlers.DeleteBook; //http://localhost:3000/DeleteBook
-handle["/profile"] = requestHandlers.profile; //http://localhost:3000/profile
+handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 handle["/UpdateBook"] = requestHandlers.UpdateBook; //http://localhost:3000/BookUpdate
 
 handle["/SearchElectronics"] = EditrequestHandlers.SearchElectronics; //http://localhost:3000/ElectronicsUpdate

@@ -760,6 +760,13 @@ function electronicReserve(response, postData, sessionData) {
 
 
 }
+function profile(response){
+    console.log("Request handler 'profile' was called.");
+    var data = fs.readFileSync('profile.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(data);
+    response.end();
+}
 
 
 
@@ -771,3 +778,4 @@ exports.librarySearch = librarySearch;
 exports.bookReserve = bookReserve;
 exports.mediaReserve = mediaReserve;
 exports.electronicReserve = electronicReserve;
+exports.profile = profile;
