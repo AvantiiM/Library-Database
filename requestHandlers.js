@@ -58,7 +58,7 @@ function loginverify(response, postData, sessionData = null) {
                                         // response.writeHead(302, { "Location": "/adminUI" });
                                         // response.end();
                                     } else {
-                                        sendFile(response, "memberUI.html", sessionData.getSessonId());
+                                        sendFile(response, "borrowHolds.html", sessionData.getSessonId());
                                     }
                                     
                                 }).catch(function (err) {
@@ -69,7 +69,7 @@ function loginverify(response, postData, sessionData = null) {
                                 //response.writeHead(302, {'Cookie': 'sessionId=${sessionData.getSessonId()}' "Location": "/adminUI" });
                             } else {
                                 //response.writeHead(302, {"Location": "/memberUI" });
-                                sendFile(response, "memberUI.html", sessionData.getSessonId());
+                                sendFile(response, "borrowHolds.html", sessionData.getSessonId());
 
                                 // var hd = "{'Set-Cookie': 'sessionId=" + sessionData.getSessonId() + "', 'Location': '/memberUI' }";
                                 // response.writeHead(302, hd);
