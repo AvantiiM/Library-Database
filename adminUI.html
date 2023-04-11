@@ -104,48 +104,48 @@
 		
 	</script>
 
-	<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
 	google.charts.load("current", {packages:["corechart"]});
 	google.charts.setOnLoadCallback(drawChart);
-	function drawChart() {
-    //call to the function to get the results of the query
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'UserReportSum');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        console.log('Chart request submission successful!');
-        let responseData = JSON.parse(xhr.responseText);
-        console.log(responseData.faculty);
+// 	function drawChart() {
+//     //call to the function to get the results of the query
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', 'UserReportSum');
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.onload = function() {
+//       if (xhr.status === 200) {
+//         console.log('Chart request submission successful!');
+//         let responseData = JSON.parse(xhr.responseText);
+//         console.log(responseData.faculty);
 
-        //#######################  donut CHART  ############################
-        var data = google.visualization.arrayToDataTable([
-          ['Member', 'number'],
-          ['Faculty',     responseData.faculty],
-          ['Guests',      responseData.guests],
-          ['Students',  responseData.students],
-        ]);
+//         //#######################  donut CHART  ############################
+//         var data = google.visualization.arrayToDataTable([
+//           ['Member', 'number'],
+//           ['Faculty',     responseData.faculty],
+//           ['Guests',      responseData.guests],
+//           ['Students',  responseData.students],
+//         ]);
 
-        var options = {
-          title: 'Users',
-          pieHole: 0.35,
-          colors: ['#B8621B', '#E3CCAE', '#262A56']
-        };
+//         var options = {
+//           title: 'Users',
+//           pieHole: 0.35,
+//           colors: ['#B8621B', '#E3CCAE', '#262A56']
+//         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        chart.draw(data, options);
-      }
-    };
+//         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+//         chart.draw(data, options);
+//       }
+//     };
 
-    xhr.send();
-  } -->
+//     xhr.send();
+//   }
 
 	</script>
 
 	<script type="text/javascript">
-// 		google.charts.load('current', {'packages':['corechart']});
-// 		google.charts.setOnLoadCallback(drawVisualization);
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawVisualization);
 
 // 		function drawVisualization() {
 // 		// Some raw data (not necessarily accurate)
@@ -198,8 +198,8 @@
 
 
 	<script type="text/javascript">
-	// 	google.charts.load('current', {'packages':['bar']});
-	// 	google.charts.setOnLoadCallback(drawChart);
+		google.charts.load('current', {'packages':['bar']});
+		google.charts.setOnLoadCallback(drawChart);
 
 	// 	function drawChart() {
 

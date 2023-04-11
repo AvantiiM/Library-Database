@@ -27,6 +27,7 @@ handle["/electronicReservations"] = mUI_requestHandlers.electronicReservations;
 
 handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 
+handle["/getInfo"] = requestHandlers.getInfo;
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
@@ -107,6 +108,13 @@ handle["/AdminTransactionsSearch"] = requestHandlers.AdminTransactionsSearch; //
 handle["/AdminSFaculty"] = requestHandlers.AdminSFaculty; //http://localhost:3000/AdminSFaculty
 handle["/AdminSGuest"] = requestHandlers.AdminSGuest; //http://localhost:3000/AdminSGuest
 handle["/AdminSStudents"] = requestHandlers.AdminSStudents; //http://localhost:3000/AdminSStudents
+
+handle['/TransactionPeriods'] = requestHandlersReport.TransactionPeriods; //http://localhost:3000/TransactionPeriods
+handle['/TransactionPeriodsBalance'] = requestHandlersReport.TransactionPeriodsBalance; //http://localhost:3000/TransactionperiodsBalance
+
+handle['/SuspendedStudents'] = requestHandlersReport.SuspendedStudents; //http://localhost:3000/SuspendedStudents
+handle['/SuspendedFaculty'] = requestHandlersReport.SuspendedFaculty; //http://localhost:3000/SuspendedFaculty
+handle['/SuspendedGuests'] = requestHandlersReport.SuspendedGuests; //http://localhost:3000/SuspendedGuests
 
 server.start(router.route, handle);
 
