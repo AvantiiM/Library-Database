@@ -108,38 +108,38 @@
 	<script type="text/javascript">
 	google.charts.load("current", {packages:["corechart"]});
 	google.charts.setOnLoadCallback(drawChart);
-// 	function drawChart() {
-//     //call to the function to get the results of the query
-//     const xhr = new XMLHttpRequest();
-//     xhr.open('POST', 'UserReportSum');
-//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//     xhr.onload = function() {
-//       if (xhr.status === 200) {
-//         console.log('Chart request submission successful!');
-//         let responseData = JSON.parse(xhr.responseText);
-//         console.log(responseData.faculty);
+	function drawChart() {
+    //call to the function to get the results of the query
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'UserReportSum');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        console.log('Chart request submission successful!');
+        let responseData = JSON.parse(xhr.responseText);
+        console.log(responseData.faculty);
 
-//         //#######################  donut CHART  ############################
-//         var data = google.visualization.arrayToDataTable([
-//           ['Member', 'number'],
-//           ['Faculty',     responseData.faculty],
-//           ['Guests',      responseData.guests],
-//           ['Students',  responseData.students],
-//         ]);
+        //#######################  donut CHART  ############################
+        var data = google.visualization.arrayToDataTable([
+          ['Member', 'number'],
+          ['Faculty',     responseData.faculty],
+          ['Guests',      responseData.guests],
+          ['Students',  responseData.students],
+        ]);
 
-//         var options = {
-//           title: 'Users',
-//           pieHole: 0.35,
-//           colors: ['#B8621B', '#E3CCAE', '#262A56']
-//         };
+        var options = {
+          title: 'Users',
+          pieHole: 0.35,
+          colors: ['#B8621B', '#E3CCAE', '#262A56']
+        };
 
-//         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-//         chart.draw(data, options);
-//       }
-//     };
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    };
 
-//     xhr.send();
-//   }
+    xhr.send();
+  }
 
 	</script>
 
@@ -147,50 +147,50 @@
 		google.charts.load('current', {'packages':['corechart']});
 		google.charts.setOnLoadCallback(drawVisualization);
 
-// 		function drawVisualization() {
-// 		// Some raw data (not necessarily accurate)
-// 		const xhr1 = new XMLHttpRequest();
-// 		xhr1.open('POST', 'TransactionReportSum');
-// 		xhr1.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		function drawVisualization() {
+		// Some raw data (not necessarily accurate)
+		const xhr1 = new XMLHttpRequest();
+		xhr1.open('POST', 'TransactionReportSum');
+		xhr1.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-//  		xhr1.onload = function() {
-//      	if (xhr1.status === 200) {
-//         console.log('Chart request submission successful!');
-//         let responseDataTransaction = JSON.parse(xhr1.responseText);
-//         console.log(responseDataTransaction);
-
-
-// 			var aprilaverage = (responseDataTransaction.april.books + responseDataTransaction.april.electronics + responseDataTransaction.april.objects + responseDataTransaction.april.media)/4;
-// 			var marchaverage = (responseDataTransaction.march.books + responseDataTransaction.march.electronics + responseDataTransaction.march.objects + responseDataTransaction.march.media)/4;
-// 			var februaryaverage = (responseDataTransaction.feb.books + responseDataTransaction.feb.electronics + responseDataTransaction.feb.objects + responseDataTransaction.feb.media)/4;
+ 		xhr1.onload = function() {
+     	if (xhr1.status === 200) {
+        console.log('Chart request submission successful!');
+        let responseDataTransaction = JSON.parse(xhr1.responseText);
+        console.log(responseDataTransaction);
 
 
+			var aprilaverage = (responseDataTransaction.april.books + responseDataTransaction.april.electronics + responseDataTransaction.april.objects + responseDataTransaction.april.media)/4;
+			var marchaverage = (responseDataTransaction.march.books + responseDataTransaction.march.electronics + responseDataTransaction.march.objects + responseDataTransaction.march.media)/4;
+			var februaryaverage = (responseDataTransaction.feb.books + responseDataTransaction.feb.electronics + responseDataTransaction.feb.objects + responseDataTransaction.feb.media)/4;
 
-// 		var data = google.visualization.arrayToDataTable([
-// 			['Month', 'Books', 'Electronics', 'Objects', 'Media', 'Average'],
-// 			['2023/04',  responseDataTransaction.april.books,      responseDataTransaction.april.electronics,         responseDataTransaction.april.objects,        responseDataTransaction.april.media,      aprilaverage],
-// 			['2023/03',  responseDataTransaction.march.books,      responseDataTransaction.march.electronics,        responseDataTransaction.march.objects,        responseDataTransaction.march.media,       marchaverage],
-// 			['2023/02',  responseDataTransaction.feb.books,      responseDataTransaction.feb.electronics,        responseDataTransaction.feb.objects,       responseDataTransaction.feb.media,       februaryaverage]
-// 		]);
+
+
+		var data = google.visualization.arrayToDataTable([
+			['Month', 'Books', 'Electronics', 'Objects', 'Media', 'Average'],
+			['2023/02',  responseDataTransaction.feb.books,      responseDataTransaction.feb.electronics,        responseDataTransaction.feb.objects,       responseDataTransaction.feb.media,       februaryaverage],
+			['2023/03',  responseDataTransaction.march.books,      responseDataTransaction.march.electronics,        responseDataTransaction.march.objects,        responseDataTransaction.march.media,       marchaverage],
+			['2023/04',  responseDataTransaction.april.books,      responseDataTransaction.april.electronics,         responseDataTransaction.april.objects,        responseDataTransaction.april.media,      aprilaverage],
+		]);
 
 
 		
 
-// 		var options = {
-// 			title : 'overview of items borrowed in the past months',
-// 			vAxis: {title: 'Items'},
-// 			hAxis: {title: 'Month'},
-// 			seriesType: 'bars',
-// 			series: {4: {type: 'line'}},
-// 			colors: ['#DF7857', '#19A7CE', '#FFA559', '#675D50', '#000000']
-// 		};
+		var options = {
+			title : 'overview of items borrowed in the past months',
+			vAxis: {title: 'Items'},
+			hAxis: {title: 'Month'},
+			seriesType: 'bars',
+			series: {4: {type: 'line'}},
+			colors: ['#DF7857', '#19A7CE', '#FFA559', '#675D50', '#000000']
+		};
 
-// 		var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-// 		chart.draw(data, options);
+		var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+		chart.draw(data, options);
 		
-// 	}}
-// 	xhr1.send();
-// }
+	}}
+	xhr1.send();
+}
 	
 	</script>
 
@@ -201,43 +201,43 @@
 		google.charts.load('current', {'packages':['bar']});
 		google.charts.setOnLoadCallback(drawChart);
 
-	// 	function drawChart() {
+		function drawChart() {
 
-	// 		const xhr2 = new XMLHttpRequest();
-	// 	xhr2.open('POST', 'MaxReportSum');
-	// 	xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			const xhr2 = new XMLHttpRequest();
+		xhr2.open('POST', 'MaxReportSum');
+		xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
- 	// 	xhr2.onload = function() {
-    //  	if (xhr2.status === 200) {
-    //     console.log('Chart request submission successful!');
-    //     let responseDataMax= JSON.parse(xhr2.responseText);
-    //     console.log(responseDataMax);
+ 		xhr2.onload = function() {
+     	if (xhr2.status === 200) {
+        console.log('Chart request submission successful!');
+        let responseDataMax= JSON.parse(xhr2.responseText);
+        console.log(responseDataMax);
 
 
 
-	// 	var data = google.visualization.arrayToDataTable([
-	// 		['Items', 'on Hand', 'Max'],
-	// 		['Books', responseDataMax.Book_copies, responseDataMax.total_Book_copies],
-	// 		['Electronics', responseDataMax.Electronic_count, responseDataMax.total_Electronic_copies],
-	// 		['Objects', responseDataMax.Object_copies, responseDataMax.total_Object_copies],
-	// 		['Media', responseDataMax.Media_copies, responseDataMax.total_Media_copies]
-	// 	]);
+		var data = google.visualization.arrayToDataTable([
+			['Items', 'on Hand', 'Max'],
+			['Books', responseDataMax.Book_copies, responseDataMax.total_Book_copies],
+			['Electronics', responseDataMax.Electronic_count, responseDataMax.total_Electronic_copies],
+			['Objects', responseDataMax.Object_copies, responseDataMax.total_Object_copies],
+			['Media', responseDataMax.Media_copies, responseDataMax.total_Media_copies]
+		]);
 
-	// 	var options = {
-	// 		chart: {
-	// 		title: 'Items on Hand',
-	// 		},
-	// 		bars: 'horizontal', // Required for Material Bar Charts.
-	// 		colors: ['#678983', '#65647C']
-	// 	};
+		var options = {
+			chart: {
+			title: 'Items on Hand',
+			},
+			bars: 'horizontal', // Required for Material Bar Charts.
+			colors: ['#678983', '#65647C']
+		};
 
-	// 	var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+		var chart = new google.charts.Bar(document.getElementById('barchart_material'));
 
-	// 	chart.draw(data, google.charts.Bar.convertOptions(options));
-	// 	}
-	// 	}
-	// 	xhr2.send();
-	// }
+		chart.draw(data, google.charts.Bar.convertOptions(options));
+		}
+		}
+		xhr2.send();
+	}
 	</script>
 
 

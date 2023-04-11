@@ -218,17 +218,25 @@
                     const ActiveVoidStatus = row.insertCell();
                     ActiveVoidStatus.innerText = Transactions.Active_Void_Status;
                     const ActualReturnDate = row.insertCell();
-                    ActualReturnDate.innerText = Transactions.Actual_return_Date;
+					let UIDueDate = Transactions.Actual_Return_Date ;
+                    if(Transactions.Actual_Return_Date === undefined){UIDueDate = "Not Returned Yet";}
+                    ActualReturnDate.innerText = UIDueDate;
                     const LateFees = row.insertCell();
                     LateFees.innerText = Transactions.Late_Fees;
                     const DamageFees = row.insertCell();
                     DamageFees.innerText = Transactions.Damage_Fees;
                     const StudentID = row.insertCell();
-                    StudentID.innerText = Transactions.Student_ID;
+					let UIStudent = Transactions.Student_ID;
+                    if(Transactions.Student_ID === undefined ){UIStudent = "NA";}
+                    StudentID.innerText = UIStudent;
                     const FacultyID = row.insertCell();
-                    FacultyID.innerText = Transactions.Faculty_ID;
+					let UIFaculty = Transactions.Faculty_ID;
+                    if(Transactions.Faculty_ID === undefined){UIFaculty = "NA";}
+                    FacultyID.innerText = UIFaculty;
                     const GuestID = row.insertCell();
-                    GuestID.innerText = Transactions.Guest_ID;
+					let UIguest = Transactions.Guest_ID;
+                    if(Transactions.Guest_ID === undefined){UIguest = "NA";}
+                    GuestID.innerText = UIguest;
                     const BookID = row.insertCell();
                     BookID.innerText = Transactions.Book_ID;
                     const ElectronicsID = row.insertCell();
