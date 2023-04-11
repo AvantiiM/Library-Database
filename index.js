@@ -23,6 +23,7 @@ handle["/memberReservations"] = mUI_requestHandlers.memberReservations;
 
 handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 
+handle["/getInfo"] = requestHandlers.getInfo;
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
