@@ -1092,7 +1092,7 @@ function DeleteBook(response, postData) {
     })
 };
 
-function UpdateBook(response, postData) {
+function UpdateBook(response, postData,sessionData) {
 
 
     sql.connect(config).then(function () {
@@ -1100,6 +1100,8 @@ function UpdateBook(response, postData) {
 
         var querystring = require('querystring');
         var data = querystring.parse(postData);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+
 
         var bookISBN = data.ISBN;
         var bookName = data.Book_Name;
@@ -1109,9 +1111,9 @@ function UpdateBook(response, postData) {
         var bookGenre = data.Genre;
         var bookLanguage = data.Language;
         var bookPublisher = data.Publisher_Name;
+        var updatedBy = sessionData.logginId;
 
-
-
+        console.log("Updated By: " + updatedBy);
         console.log("Book ISBN: " + bookISBN);
         console.log("Book Name: " + bookName);
         console.log("Book Dollar Value: " + bookDollarValue);
@@ -1122,7 +1124,11 @@ function UpdateBook(response, postData) {
         console.log("Book Publisher: " + bookPublisher);
 
 
-        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "' WHERE ISBN = '" + bookISBN + "';";
+        const currentDate = new Date();
+        console.log(currentDate);
+        const sqlFormattedDate =  currentDate.toISOString().slice(0, 10);
+
+        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "', Updated_BY = '"+ updatedBy+ "', Last_Updated = '"+ sqlFormattedDate +"' WHERE ISBN = '" + bookISBN + "';";
         var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
 
 
