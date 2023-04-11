@@ -776,7 +776,7 @@ function borrowHolds(response) {
     response.end();
 }
 
-function memberReservations(response, postData, sessionData) {
+function bookReservations(response, postData, sessionData) {
     console.log("In librarySearch");
     sql.connect(config).then(function () {
 
@@ -827,6 +827,107 @@ function memberReservations(response, postData, sessionData) {
     });
 }
 
+function mediaReservations(response, postData, sessionData) {
+    console.log("In librarySearch");
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reservation_Num, Reservation.Media_ID, Media_Name, holdPosition, Author, Creation_Date FROM Reservation, Media WHERE Student_ID =@userID AND Active_Void_Status = 1 and Reservation.Media_ID is not null and Reservation.Media_ID = media.Media_ID";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE StudentID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'G':
+                queryOne = "select Reservation_Num, Reservation.Media_ID, Media_Name, holdPosition, Author, Creation_Date FROM Reservation, Media WHERE Guest_ID =@userID AND Active_Void_Status = 1 and Reservation.Media_ID is not null and Reservation.Media_ID = media.Media_ID";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Guest_ID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'F':
+                queryOne = "select Reservation_Num, Reservation.Media_ID, Media_Name, holdPosition, Author, Creation_Date FROM Reservation, Media WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Reservation.Media_ID is not null and Reservation.Media_ID = media.Media_ID";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Faculty_ID=@userID AND Active_Void_Status = 1";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Reservations Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
+
+function electronicReservations(response, postData, sessionData) {
+    console.log("In librarySearch");
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reservation_Num, Reservation.Electronics_ID, Electronics_Name, holdPosition, Creation_Date FROM Reservation, Electronics WHERE Student_ID =@userID AND Active_Void_Status = 1 and Reservation.Electronics_ID is not null and Reservation.Electronics_ID = electronics.Serial_No";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE StudentID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'G':
+                queryOne = "select Reservation_Num, Reservation.Electronics_ID, Electronics_Name, holdPosition, Creation_Date FROM Reservation, Electronics WHERE Guest_ID =@userID AND Active_Void_Status = 1 and Reservation.Electronics_ID is not null and Reservation.Electronics_ID = electronics.Serial_No";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Guest_ID=@userID AND Active_Void_Status = 1";
+                break;
+            case 'F':
+                queryOne = "select Reservation_Num, Reservation.Electronics_ID, Electronics_Name, holdPosition, Creation_Date FROM Reservation, Electronics WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Reservation.Electronics_ID is not null and Reservation.Electronics_ID = electronics.Serial_No";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Faculty_ID=@userID AND Active_Void_Status = 1";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Reservations Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
 
 
 exports.memberUI = memberUI;
@@ -838,5 +939,7 @@ exports.bookReserve = bookReserve;
 exports.mediaReserve = mediaReserve;
 exports.electronicReserve = electronicReserve;
 exports.borrowHolds = borrowHolds;
-exports.memberReservations = memberReservations;
+exports.bookReservations = bookReservations;
 exports.profile = profile;
+exports.mediaReservations = mediaReservations;
+exports.electronicReservations = electronicReservations;

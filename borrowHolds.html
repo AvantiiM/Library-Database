@@ -8,7 +8,7 @@
 
 </head>
 
-<body onload="getReservations()">
+<body onload="getBookReservations(); getMediaReservations(); getElectronicReservations(); ">
     <script>
         fetch("memberUI")
             .then(response => {
@@ -36,34 +36,33 @@
                     <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
                     <th id="title-header" data-colname="Book_Name" data-order="desc">Title &#9650</th>
                     <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
-                    <th id="itemid-header" data-colname="Book_ID" data-order="desc">Item ID &#9650</th>
+                    <th id="bookid-header" data-colname="Book_ID" data-order="desc">Item ID &#9650</th>
                     <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
                     <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
                     <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
                 </tr>
             </thead>
-            <tbody id="myTable">
+            <tbody id="bookTable">
             </tbody>
             
             <script>
                 var myArray;
-                function getReservations(btn, isbn) {
+                function getBookReservations(btn, isbn) {
                     $.ajax({
-                        url: '/memberReservations',
+                        url: '/bookReservations',
                         success: function (response) {
                             console.log(response)
                             myArray = response
                             console.log(myArray)
-                            buildTable(response)
+                            buildBookTable(response)
                         },
                         error: function (xhr, status, error) {
                             console.log(xhr.responseText);
                         }
                     });
                 }
-                Reservation_Num, Creation_Date, Book_ID, Electronics_ID, Media_ID, holdPosition
-                function buildTable(data) {
-                    var tbody = $('#myTable');
+                function buildBookTable(data) {
+                    var tbody = $('#bookTable');
                     tbody.empty();
                     $.each(data, function (index, row) {
                         var tr = $('<tr>');
@@ -73,13 +72,117 @@
                         tr.append('<td>' + row.Book_ID + '</td>');
                         tr.append('<td>' + row.Creation_Date + '</td>');
                         tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.ReservationNum}"> <button class="btn btn-primary" onclick="getReservations(this, '${row.ReservationNum}')">Delete</button></div></td>'`);
+                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBookReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
                         tbody.append(tr);
                     });
                 }
             </script>
 
         </table>
+
+        <table class="table table-striped">
+            <thead>
+                <h3 style="color: rgb(61, 11, 241)">
+                    <center><b><u>Media Reservations</u></b></center>
+                </h3>
+                <tr class="bg-info">
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
+                    <th id="title-header" data-colname="Media_Name" data-order="desc">Title &#9650</th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
+                    <th id="mediaid-header" data-colname="Media_ID" data-order="desc">Item ID &#9650</th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                </tr>
+            </thead>
+            <tbody id="mediaTable">
+            </tbody>
+            
+            <script>
+                var myArray;
+                function getMediaReservations(btn, isbn) {
+                    $.ajax({
+                        url: '/mediaReservations',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildMediaTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+                function buildMediaTable(data) {
+                    var tbody = $('#mediaTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Reservation_Num + '</td>');
+                        tr.append('<td>' + row.Media_Name + '</td>');
+                        tr.append('<td>' + row.Author + '</td>');
+                        tr.append('<td>' + row.Media_ID + '</td>');
+                        tr.append('<td>' + row.Creation_Date + '</td>');
+                        tr.append('<td>' + row.holdPosition + '</td>');
+                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getMediaReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tbody.append(tr);
+                    });
+                }
+            </script>
+        </table> 
+
+        <table class="table table-striped">
+            <thead>
+                <h3 style="color: rgb(61, 11, 241)">
+                    <center><b><u>Electronic Reservations</u></b></center>
+                </h3>
+                <tr class="bg-info">
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
+                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title &#9650</th>
+                    <th id="mediaid-header" data-colname="Electronics_ID" data-order="desc">Item ID &#9650</th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                </tr>
+            </thead>
+            <tbody id="electronicTable">
+            </tbody>
+            
+            <script>
+                var myArray;
+                function getElectronicReservations(btn, isbn) {
+                    $.ajax({
+                        url: '/electronicReservations',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildElectronicTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+                function buildElectronicTable(data) {
+                    var tbody = $('#electronicTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Reservation_Num + '</td>');
+                        tr.append('<td>' + row.Electronics_Name + '</td>');
+                        tr.append('<td>' + row.Electronics_ID + '</td>');
+                        tr.append('<td>' + row.Creation_Date + '</td>');
+                        tr.append('<td>' + row.holdPosition + '</td>');
+                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getElectronicReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tbody.append(tr);
+                    });
+                }
+            </script>
+        </table> 
+
+
     </div>
 </body>
 
