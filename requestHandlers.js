@@ -1141,33 +1141,24 @@ function UpdateBook(response, postData) {
 }
 
 function insertTransaction(response, postData) {
-    console.log("function called");
     var conn = new sql.ConnectionPool(config);
-    console.log("Connection pool did");
     sql.connect(config).then(function() {
-        console.log("Did something");
         var req = new sql.Request();
-        console.log("This is where I error");
 
         var querystring = require('querystring');
         var params = querystring.parse(postData);
-
-        console.log("after I called params?");
 
         var BID = params['BID'];
         var itemID = params['itemID'];
         var itemType = params['itemType'];
         var itemName = params['itemName'];
 
-        console.log("Maybe after assigning params?");
-
         req.input('itemName', sql.NVarChar, itemName);
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
-        console.log("Perchance after doing req.input()?");
-
-        var sql = "";
+        var query = "INSERT INTO Transactions (Reciept_Num, ";
         
         // Students can take up to 5 Books from the library 
         // Students can take up to 1 Electronic from the library
@@ -1185,76 +1176,74 @@ function insertTransaction(response, postData) {
 
         const DAYSOFWEEK = 7;
         let returnDate = new Date();
-        console.log("Before switch statements");
         switch (BID.charAt(0)) {
         case 'G':
+            query += "GuestID, ";
             switch (itemType) {
                 case 'Book':
-                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                    query += "Book_ID, ";
                     break;
                 case 'Media':
-                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                    query += "Media_ID, ";
                     break;
                 case 'Object':
-                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                    query += "Object_ID, ";
                     break;
             }
             break;
         case 'S':
+            query += "StudentID, ";
             switch (itemType) {
                 case 'Book':
-                    returnDate.setDate(new Date().setDate() + 15 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
+                    query += "Book_ID, ";
                     break;
                 case 'Electronic':
-                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                    query += "Electronics_ID, ";
                     break;
                 case 'Media':
-                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                    query += "Media_ID, ";
                     break;
                 case 'Object':
-                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                    query += "Object_ID, ";
                     break;
             }
             break;
         case 'F':
+            query += "Faculty_ID, ";
             switch (itemType) {
                 case 'Book':
-                    returnDate.setDate(new Date().setDate() + 30 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
+                    query += "Book_ID, ";
                     break;
                 case 'Electronic':
-                    returnDate.setDate(new Date().setDate() + 4 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 4 * DAYSOFWEEK);
+                    query += "Electronics_ID, ";
                     break;
                 case 'Media':
-                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                    query += "Media_ID, ";
                     break;
                 case 'Object':
-                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
-                    break;
+                    returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                    query += "Object_ID, ";
+                    break;                
             }
             break;
         }
 
-        console.log("maybe here");
         req.input('returnDate', sql.Date, returnDate);
-        console.log("after");
+        query += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', @BID, @itemID, 1, getDate(), @returnDate, @userId, @userId)";
 
-        switch (BID.charAt(0)) {
-        case 'G':
-            sql = "INSERT INTO Transactions (Reciept_Num, GuestID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
-            break;
-        case 'S':
-            sql = "INSERT INTO Transactions (Reciept_Num, StudentID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
-            break;
-        case 'F':
-            sql = "INSERT INTO Transactions (Reciept_Num, Faculty_ID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
-            break;
-        }
-
-
-        console.log("here");
-        req.query(sql).then(function (recordset) {
+        req.query(query).then(function (recordset) {
             console.log("Transaction Completed.");
-            response.write("Transaction Completed.");
+            response.alert("Transaction Completed.");
             response.end();
         }).catch(function (err) {
             console.error("error");
