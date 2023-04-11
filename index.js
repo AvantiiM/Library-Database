@@ -14,10 +14,13 @@ handle["/memberUI"] = mUI_requestHandlers.memberUI; //http://localhost:3000/memb
 handle["/bookSearch"] = mUI_requestHandlers.bookSearch; //http://localhost:3000/bookSearch
 handle["/mediaSearch"] = mUI_requestHandlers.mediaSearch; //http://localhost:3000/mediaSearch
 handle["/electronicSearch"] = mUI_requestHandlers.electronicSearch; //http://localhost:3000/electronicSearch
+handle["/borrowHolds"] = mUI_requestHandlers.borrowHolds; //http://localhost:3000/borrowHolds
 handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost:3000/librarySearch
 handle["/bookReserve"] = mUI_requestHandlers.bookReserve; 
 handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve; 
 handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
+handle["/memberReservations"] = mUI_requestHandlers.memberReservations; 
+
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser

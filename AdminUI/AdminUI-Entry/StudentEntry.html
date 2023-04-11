@@ -3,6 +3,7 @@
 
 <head>
     <title>Student Entry</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
     <style>
         body {
             background-image: url("/public/test11.jpg");
@@ -106,9 +107,40 @@
                 alert(msg);
                 return false;
             } else if (form.Username.value.length != 10) {
-                alert("Username must contain 10 digits including an S/F");
+                alert("Username must contain 10 digits including an S");
             } else {
-                form.submit();
+                return true;
+            }
+        }
+
+        function inserStudentUser(form) {
+            if (checkUN('S', form, 'Invalid username when creating an Student. \nMust begin with an S')) {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        searchBy: 'student',
+                        Username: form.Username.value,
+                        tempPassword: form.tempPassword.value,
+                        FName: form.FName.value,
+                        LName: form.LName.value,
+                        MName: form.MName.value,
+                        Race: form.Race.value,
+                        Major: form.Major.value,
+                        PhoneNum: form.PhoneNum.value,
+                        Email: form.Email.value,
+                        Gender: form.Gender.value,
+                        BirthDate: form.BirthDate.value
+                    },
+                    url: '/addLogin',
+                    success: function (response) {
+                        console.log(response)
+                        document.getElementById("studentmsg").innerHTML = response;
+                        form.reset();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
             }
         }
 
@@ -217,9 +249,14 @@
             </table>
         </fieldset>
         <br></br>
-        <input type="submit" value="Create New Student"
-            onClick=" return checkUN('S',this.form,'Invalid username when creating an Student. \nMust begin with an S')">
+        <input type="button" value="Create New Student" onClick=" return inserStudentUser(this.form)">
+        <!-- onClick=" return checkUN('S',this.form,'Invalid username when creating an Student. \nMust begin with an S')"> -->
     </form>
+    <P>
+        <center><b>
+                <div id="studentmsg" style="background-color: lightblue;"></div>
+            </b></center>
+    </P>
 </body>
 
 </html>

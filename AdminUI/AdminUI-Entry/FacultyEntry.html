@@ -3,6 +3,7 @@
 
 <head>
     <title>Faculty Entry</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
     <style>
         body {
             background-image: url("/public/test11.jpg");
@@ -107,9 +108,40 @@
                 alert(msg);
                 return false;
             } else if (form.Username.value.length != 10) {
-                alert("Username must contain 10 digits including an S/F");
+                alert("Username must contain 10 digits including an F");
             } else {
-                form.submit();
+                return true;
+            }
+        }
+
+        function inserFacultyUser(form) {
+            if (checkUN('F', form, 'Invalid username when creating an Faculty. \nMust begin with an F')) {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        searchBy: 'faculty',
+                        Username: form.Username.value,
+                        tempPassword: form.tempPassword.value,
+                        FName: form.FName.value,
+                        LName: form.LName.value,
+                        MName: form.MName.value,
+                        Race: form.Race.value,
+                        Department: form.Department.value,
+                        PhoneNum: form.PhoneNum.value,
+                        Email: form.Email.value,
+                        Gender: form.Gender.value,
+                        BirthDate: form.BirthDate.value
+                    },
+                    url: '/addLogin',
+                    success: function (response) {
+                        console.log(response)
+                        document.getElementById("facultymsg").innerHTML = response;
+                        form.reset();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
             }
         }
 
@@ -126,19 +158,19 @@
             <table>
                 <tr>
                     <td type="head">Faculty ID</td>
-                    <td><input type="text" name="Username" placeholder="Enter Faculty ID"></input></td>
+                    <td><input type="text" name="Username" required placeholder="Enter Faculty ID"></input></td>
                 </tr>
                 <tr>
                     <td type="head">Temporary Password</td>
-                    <td><input type="text" name="tempPassword" placeholder="Enter Temp Password"></input></td>
+                    <td><input type="text" name="tempPassword" required placeholder="Enter Temp Password"></input></td>
                 </tr>
                 <tr>
                     <td type="head">First Name</td>
-                    <td><input type="text" name="FName" placeholder="Enter First Name"></input></td>
+                    <td><input type="text" name="FName" required placeholder="Enter First Name"></input></td>
                 </tr>
                 <tr>
                     <td type="head">Last Name</td>
-                    <td><input type="text" name="LName" placeholder="Enter Last Name"></input></td>
+                    <td><input type="text" name="LName" required placeholder="Enter Last Name"></input></td>
                 </tr>
                 <tr>
                     <td type="head">Middle Name</td>
@@ -217,9 +249,13 @@
             </table>
         </fieldset>
         <br></br>
-        <input type="submit" value="Create New Faculty"
-            onClick=" return checkUN('F',this.form,'Invalid username when creating an Faculty. \nMust begin with an F')">
+        <input type="button" value="Create New Faculty" onClick=" return inserFacultyUser(this.form)">
     </form>
+    <P>
+        <center><b>
+                <div id="facultymsg" style="background-color: lightblue;"></div>
+            </b></center>
+    </P>
 </body>
 
 </html>
