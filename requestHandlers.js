@@ -1028,6 +1028,132 @@ function UpdateBook(response, postData) {
     })
 }
 
+function insertTransaction(response, postData) {
+    console.log("function called");
+    var conn = new sql.ConnectionPool(config);
+    console.log("Connection pool did");
+    sql.connect(config).then(function() {
+        console.log("Did something");
+        var req = new sql.Request();
+        console.log("This is where I error");
+
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+
+        console.log("after I called params?");
+
+        var BID = params['BID'];
+        var itemID = params['itemID'];
+        var itemType = params['itemType'];
+        var itemName = params['itemName'];
+
+        console.log("Maybe after assigning params?");
+
+        req.input('itemName', sql.NVarChar, itemName);
+        req.input('itemID', sql.NVarChar, itemID);
+        req.input('BID', sql.NVarChar, BID);
+
+        console.log("Perchance after doing req.input()?");
+
+        var sql = "";
+        
+        // Students can take up to 5 Books from the library 
+        // Students can take up to 1 Electronic from the library
+        // Students can take up to 2 Objects from the library
+        // Students can take up to 5 Media from the library
+        // Faculty can take up to 30 Books from the library
+        // Faculty can take up to 5 Electronic from the library
+        // Faculty can take up to 10 Object from the library
+        // Faculty can take up to 30 Media Books from the library
+        // Guests can take up to 2 Books from the library
+        // Guests can take up to 0 Electronic from the library
+        // Guests can take up to 2 Objects from the library
+        // Guests can take up to 2 Media from the library
+
+
+        const DAYSOFWEEK = 7;
+        let returnDate = new Date();
+        console.log("Before switch statements");
+        switch (BID.charAt(0)) {
+        case 'G':
+            switch (itemType) {
+                case 'Book':
+                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    break;
+                case 'Media':
+                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    break;
+                case 'Object':
+                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    break;
+            }
+            break;
+        case 'S':
+            switch (itemType) {
+                case 'Book':
+                    returnDate.setDate(new Date().setDate() + 15 * DAYSOFWEEK);
+                    break;
+                case 'Electronic':
+                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    break;
+                case 'Media':
+                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    break;
+                case 'Object':
+                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    break;
+            }
+            break;
+        case 'F':
+            switch (itemType) {
+                case 'Book':
+                    returnDate.setDate(new Date().setDate() + 30 * DAYSOFWEEK);
+                    break;
+                case 'Electronic':
+                    returnDate.setDate(new Date().setDate() + 4 * DAYSOFWEEK);
+                    break;
+                case 'Media':
+                    returnDate.setDate(new Date().setDate() + 2 * DAYSOFWEEK);
+                    break;
+                case 'Object':
+                    returnDate.setDate(new Date().setDate() + DAYSOFWEEK);
+                    break;
+            }
+            break;
+        }
+
+        console.log("maybe here");
+        req.input('returnDate', sql.Date, returnDate);
+        console.log("after");
+
+        switch (BID.charAt(0)) {
+        case 'G':
+            sql = "INSERT INTO Transactions (Reciept_Num, GuestID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
+            break;
+        case 'S':
+            sql = "INSERT INTO Transactions (Reciept_Num, StudentID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
+            break;
+        case 'F':
+            sql = "INSERT INTO Transactions (Reciept_Num, Faculty_ID, itemID, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', '@itemID', '@BID', getDate(), @returnDate, 'F111122223', 'F111122223')";
+            break;
+        }
+
+
+        console.log("here");
+        req.query(sql).then(function (recordset) {
+            console.log("Transaction Completed.");
+            response.write("Transaction Completed.");
+            response.end();
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+	}).catch(function(err) {
+        console.error("Unable to get a DB connection");
+        console.log(err);
+    });
+}
+
 
 exports.login = login;
 exports.loginverify = loginverify;
@@ -1068,3 +1194,4 @@ exports.UpdateBook = UpdateBook;
 exports.createUser = createUser;
 exports.addLogin = addLogin;
 exports.addItem = addItem;
+exports.insertTransaction = insertTransaction;

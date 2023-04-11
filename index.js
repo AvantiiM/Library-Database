@@ -68,6 +68,7 @@ handle["/SearchMedia"] = EditrequestHandlers.SearchMedia; //http://localhost:300
 handle["/UpdateMedia"] = EditrequestHandlers.UpdateMedia; //http://localhost:3000/UpdateMedia
 handle["/DeleteMedia"] = EditrequestHandlers.DeleteMedia; //http://localhost:3000/DeleteMedia
 
+handle["/insertTransaction"] = requestHandlers.insertTransaction; //http://localhost:3000/insertTransaction
 handle["/SearchTransactions"] = EditrequestHandlers.SearchTransactions; //http://localhost:3000/SearchTransactions
 handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http://localhost:3000/UpdateTransactions
 handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
