@@ -62,96 +62,101 @@
 
   </head>
 
-<body>    
+<body> 
     <form action="/profile" id="fetch">
-        <label for= "fullname"> Fullname: <%= userSess.getUserName() %> <%= user.lastname %> </label> 
-        <label for= "email"> Email: <%= user.email %> </label> 
-        <label for="id"> ID: <%= user.username %> </label> 
-        <label for="major"> Major: <% user.major %> </label> 
+        <label for= "fullname"> Fullname: <span id="fullName"></span></label> 
+        <label for= "email"> Email: <span id="email"></span> </label> 
+        <label for="id"> ID: <span id="ID"></span> </label> 
+        <label for="major"> Major: <span id="dep"></span> </label> 
+        <label for="balance"> Balance: <span id="balance"></span> </label> 
+
     </form>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-
-    var conn = new sql.ConnectionPool(config);
-    sql.connect(config).then(function() {
-        var req = new sql.Request();
-        // req.input('username', sql.NVarChar, username);
-        var username = 'F111111111'
-        req.query("SELECT FacultyID, StudentID, GuestID FROM Login WHERE Username=@username").then(function(recordset) {
-            if (recordset.recordsets[0].length > 0) {
-                var fac = recordset.recordsets[0][0].FacultyID; 
-                var stud = recordset.recordsets[0][0].StudentID;
-                var guest = recordset.recordset[0][0].GuestID;
-                if(fac != null){
-                    req.query("SELECT FirstN, LastN, MiddleN, Email,  FROM Faculty WHERE Username=@username").then(function(recordset) {
-                        var first = recordset.recordsets[0][0].FirstN;
-                        var middle = recordset.recordsets[0][0].MiddleN;
-                        var last = recordset.recordsets[0][0].LastN;
-                        var email = recordset.recordsets[0][0].Email;
-                        var first = recordset.recordsets[0][0].FirstN;
-
-                    });
+        var sql = require('mssql');
+        var config = require('./db_connect');
+        let firstN;
+        let lastN;
+        let middleN;
+        let fullName;
+        let email;
+        let dep;
+        let balance;
+        
+        sql.connect(config).then(function() {
+          var req = new sql.Request();
+          var username = 'G799463126';
+          sql.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
+            
+            if (recordset.recordsets[0].length > 0) { 
+              var faculty = recordset.recordsets[0][0].Faculty_ID;
+              var stud = recordset.recordsets[0][0].StudentID;
+              var guest = recordset.recordsets[0][0].GuestID;
+            }
+            if(faculty != null){
+              sql.query("SELECT FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
+                
+                if (recordset.recordsets[0].length > 0) { 
+                  firstN = recordset.recordsets[0][0].FirstN;
+                  lastN = recordset.recordsets[0][0].LastN;
+                  middleN = recordset.recordsets[0][0].MiddleN;
+                  fullName = firstN +' '+ lastN;
+                  email = recordset.recordsets[0][0].Email;
+                  dep = recordset.recordsets[0][0].Department;
+                  balance = recordset.recordsets[0][0].Balance;
+                  balance = balance + '.00';
+                  document.getElementById("ID").innerHTML = faculty;
+                  document.getElementById("fullName").innerHTML = fullName;
+                  document.getElementById("email").innerHTML = email;
+                  document.getElementById("balance").innerHTML = balance;
+                  document.getElementById("dep").innerHTML = dep;
+                  
                 }
-                else if(stud != null){
-
+              })
+            }else if(stud != null){
+              sql.query("SELECT FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
+                if (recordset.recordsets[0].length > 0) { 
+                  firstN = recordset.recordsets[0][0].FirstN;
+                  lastN = recordset.recordsets[0][0].LastN;
+                  middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
+                  fullName = firstN +' '+ lastN;
+                  email = recordset.recordsets[0][0].Email;
+                  major = recordset.recordsets[0][0].Major;
+                  balance = recordset.recordsets[0][0].Balance;
+                  balance = balance + '.00';
+                  document.getElementById("ID").innerHTML = stud;
+                  document.getElementById("fullName").innerHTML = fullName;
+                  document.getElementById("email").innerHTML = email;
+                  document.getElementById("balance").innerHTML = balance;
+                  document.getElementById("dep").innerHTML = major;
                 }
-                else{
-
+              })
+            }
+            else if(guest != null){
+              sql.query("SELECT FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
+                // console.log(result);
+                if (recordset.recordsets[0].length > 0) { 
+                  firstN = recordset.recordsets[0][0].FirstN;
+                  lastN = recordset.recordsets[0][0].LastN;
+                  middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
+                  fullName = firstN +' '+ lastN;
+                  email = recordset.recordsets[0][0].Email;
+                  balance = recordset.recordsets[0][0].Balance;
+                  balance = balance + '.00';
+                  document.getElementById("ID").innerHTML = guest;
+                  document.getElementById("fullName").innerHTML = fullName;
+                  document.getElementById("email").innerHTML = email;
+                  document.getElementById("balance").innerHTML = balance;
                 }
-                // bcrypt.compare(password, hash, function(err, result) { 
-                //     if (result) {
-                //         // Passwords match, show a success message
-                //         console.log("success");
-                //         //sessionData.setLogginId(username)
-                //         console.log("Temp =" + temp);
-                //         if(temp) {
-                //             cons.ejs('./changePassword.html',{username: username, oldpassword: password}, function(err, html){
-                //                 if(err) {
-                //                     console.error('Error templating with EJS');
-                //                     throw err;
-                //                 }
-                //                 response.write(html);
-                //                 response.end();
-                //                 //return;
-                //             });
-
-                //             //response.writeHead(302, {"Location": "/changePassword"})
-                //         } else {
-                //             if(adminlogin) {
-                //                 response.writeHead(302, { "Location": "/adminUI" });
-                //             } else {
-                //                 response.writeHead(302, { "Location": "/search" });
-                //             }
-                //             response.end();
-                //         }
-                //         console.log("response ended");
-                //     } else {
-                //         // Passwords do not match, show an error message
-                //         console.log("Failed");
-                //         response.writeHead(302, { "Location": "/login" });
-                //         response.end();
-                    // }
-                // });
-                //response.writeHead(302, { "Location": "/search" });
-                //response.end();
-    //         } else {
-    //             // Username and password are incorrect, show an error message
-    //             //response.writeHead(200, { "Content-Type": "text/html" });
-    //             //response.write("<p>Login failed</p>");
-    //             response.writeHead(302, { "Location": "/login" });
-    //             response.end();
-    //         }
-    //         //conn.close();
-    //     }).catch(function(err) {
-    //         console.log(err);
-    //         //conn.close();
-    //     });
-    // }).catch(function(err) {
-    //     console.log(err);
-    }});
-
-</script>
-
+              })
+            }
+            else {
+              console.log('Error');
+            }
+          })
+        });
+        
+    </script>
 </body>
 </html>
