@@ -81,7 +81,10 @@ handle["/insertTransaction"] = requestHandlers.insertTransaction; //http://local
 handle["/SearchTransactions"] = EditrequestHandlers.SearchTransactions; //http://localhost:3000/SearchTransactions
 handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http://localhost:3000/UpdateTransactions
 handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
+handle["/pullTransactions"] = requestHandlers.pullTransactions; //http://localhost:3000/pullTransactions
+handle["/Checkin"] = requestHandlers.Checkin; //http://localhost:3000/Checkin
 
+handle["/pullReservation"] = requestHandlers.pullReservation; //http://localhost:3000/pullReservations
 handle["/SearchReservations"] = EditrequestHandlers.SearchReservations; //http://localhost:3000/SearchReservations
 handle["/UpdateReservations"] = EditrequestHandlers.UpdateReservations; //http://localhost:3000/UpdateReservations
 handle["/DeleteReservations"] = EditrequestHandlers.DeleteReservations; //http://localhost:3000/DeleteReservations
@@ -102,6 +105,7 @@ handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost
 
 handle["/AvailableBooks"] = requestHandlersReport.AvailableBooks; //http://localhost:3000/AvailableBooks
 handle["/AdminTransactions"] = requestHandlers.AdminTransactions; //http://localhost:3000/AdminTransactions
+handle["/AdminTransactionsStatus"] = requestHandlers.AdminTransactionsStatus; //http://localhost:3000/AdminTransactionsStatus
 handle["/AdminTransactionsSearch"] = requestHandlers.AdminTransactionsSearch; //http://localhost:3000/AdminTransactionsSearch
 
 
