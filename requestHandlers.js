@@ -1173,102 +1173,135 @@ function insertTransaction(response, postData) {
         var BID = params['BID'];
         var itemID = params['itemID'];
         var itemType = params['itemType'];
+
+        if (BID.charAt(0) === 'G' && itemType === "Electronics") {
+            response.write("Guests cannot borrow Electronics");
+            response.end();
+        }
         
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
         // req.input('userId', sql.NVarChar, sessionData.logginId);
 
-        var query = "INSERT INTO Transactions (Reciept_Num, ";
-        
-        // Students can take up to 5 Books from the library 
-        // Students can take up to 1 Electronic from the library
-        // Students can take up to 2 Objects from the library
-        // Students can take up to 5 Media from the library
-        // Faculty can take up to 30 Books from the library
-        // Faculty can take up to 5 Electronic from the library
-        // Faculty can take up to 10 Object from the library
-        // Faculty can take up to 30 Media Books from the library
-        // Guests can take up to 2 Books from the library
-        // Guests can take up to 0 Electronic from the library
-        // Guests can take up to 2 Objects from the library
-        // Guests can take up to 2 Media from the library
+        // DB is being stupid rn, change recieptNum later
+        // Insert statement and getting the amount of item type already checked out respectively
+        var insertQuery = "INSERT INTO Transactions (Reciept_Num, ";
+        var limitQueryOne = "Select count(*) as Count FROM Transactions, ";
+        // var limitQueryTwo = "Select count(*) as Count FROM Reservations, ";
+        var itemLimit = 0;
 
-
+        // For getting the Due Date of item
         const DAYSOFWEEK = 7;
         let returnDate = new Date();
+
+        
         switch (BID.charAt(0)) {
         case 'G':
-            query += "GuestID, ";
+            insertQuery += "GuestID, ";
+            itemLimit = 2;
             switch (itemType) {
                 case 'Book':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
-                    query += "Book_ID, ";
+                    insertQuery += "Book_ID, ";
+                    limitQueryOne += "Book WHERE GuestID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN";
                     break;
                 case 'Media':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
-                    query += "Media_ID, ";
+                    insertQuery += "Media_ID, ";
+                    limitQueryOne += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID";
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
-                    query += "Object_ID, ";
+                    insertQuery += "Object_ID, ";
+                    limitQueryOne += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID";
                     break;
             }
             break;
         case 'S':
-            query += "StudentID, ";
+            insertQuery += "StudentID, ";
             switch (itemType) {
                 case 'Book':
                     returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
-                    query += "Book_ID, ";
+                    insertQuery += "Book_ID, ";
+                    limitQueryOne += "Book WHERE StudentID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN";
+                    itemLimit = 5;
                     break;
                 case 'Electronic':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
-                    query += "Electronics_ID, ";
+                    insertQuery += "Electronics_ID, ";
+                    limitQueryOne += "Electronics WHERE StudentID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No";
+                    itemLimit = 1;
                     break;
                 case 'Media':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
-                    query += "Media_ID, ";
+                    insertQuery += "Media_ID, ";
+                    limitQueryOne += "Media WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID";
+                    itemLimit = 5;
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
-                    query += "Object_ID, ";
+                    insertQuery += "Object_ID, ";
+                    limitQueryOne += "[Object] WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID";
+                    itemLimit = 2;
                     break;
             }
             break;
         case 'F':
-            query += "Faculty_ID, ";
+            insertQuery += "Faculty_ID, ";
             switch (itemType) {
                 case 'Book':
                     returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
-                    query += "Book_ID, ";
+                    insertQuery += "Book_ID, ";
+                    limitQueryOne += "Book WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN";
+                    itemLimit = 30;
                     break;
                 case 'Electronic':
                     returnDate.setDate(new Date().getDate() + 4 * DAYSOFWEEK);
-                    query += "Electronics_ID, ";
+                    insertQuery += "Electronics_ID, ";
+                    limitQueryOne += "Electronics WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No";
+                    itemLimit = 5;
                     break;
                 case 'Media':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
-                    query += "Media_ID, ";
+                    insertQuery += "Media_ID, ";
+                    limitQueryOne += "Media WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID";
+                    itemLimit = 30;
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
-                    query += "Object_ID, ";
+                    insertQuery += "Object_ID, ";
+                    limitQueryOne += "[Object] WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID";
+                    itemLimit = 10;
                     break;                
             }
             break;
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        query += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
-
-        req.query(query).then(function (recordset) {
-            console.log("Transaction Completed.");
-            window.alert("Transaction Completed.");
-            response.end();
-        }).catch(function (err) {
-            console.error("error");
-            console.log(err);
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000004', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+        
+        req.query(limitQueryOne).then(function (recordset) {
+            var borrowed = recordset.recordsets[0][0].Count;
+            if (borrowed < itemLimit) {
+                req.query(insertQuery).then(function (recordset) {
+                    console.log("Transaction Completed.");
+                    response.write("Transaction Completed.");
+                    // window.alert("Transaction Completed.");
+                    response.end();
+                }).catch(function (err) {
+                    console.error("error");
+                    console.log(err);
+                });
+                // TODO: Change numItems for item reserved
+                // numCopies (int) for Book, Media, and Object. Available (bit) for Electronics 
+            } else {
+                console.log("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
+                response.write("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
+                response.end();
+            }
         });
+
+        
 	}).catch(function(err) {
         console.error("Unable to get a DB connection");
         console.log(err);
