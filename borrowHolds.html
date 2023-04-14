@@ -8,7 +8,7 @@
 
 </head>
 
-<body onload="getBookReservations(); getMediaReservations(); getElectronicReservations(); ">
+<body onload="getBookReservations(); getMediaReservations(); getElectronicReservations(); getBorrowedBooks();">
     <script>
         fetch("memberUI")
             .then(response => {
@@ -176,6 +176,56 @@
                         tr.append('<td>' + row.Creation_Date + '</td>');
                         tr.append('<td>' + row.holdPosition + '</td>');
                         tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getElectronicReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tbody.append(tr);
+                    });
+                }
+            </script>
+        </table> 
+
+        <table class="table table-striped">
+            <thead>
+                <h3 style="color: rgb(61, 11, 241)">
+                    <center><b><u>Borrowed Books</u></b></center>
+                </h3>
+                <tr class="bg-info">
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
+                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title &#9650</th>
+                    <th id="mediaid-header" data-colname="Electronics_ID" data-order="desc">Item ID &#9650</th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                </tr>
+            </thead>
+            <tbody id="borrowedBooksTable">
+            </tbody>
+            
+            <script>
+                var myArray;
+                function getBorrowedBooks(btn, isbn) {
+                    $.ajax({
+                        url: '/electronicReservations',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildBBooksTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+                function buildBBooksTable(data) {
+                    var tbody = $('#borrowedBooksTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Reservation_Num + '</td>');
+                        tr.append('<td>' + row.Electronics_Name + '</td>');
+                        tr.append('<td>' + row.Electronics_ID + '</td>');
+                        tr.append('<td>' + row.Creation_Date + '</td>');
+                        tr.append('<td>' + row.holdPosition + '</td>');
+                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBorrowedBooks(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
                         tbody.append(tr);
                     });
                 }
