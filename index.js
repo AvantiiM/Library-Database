@@ -102,6 +102,7 @@ handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost
 
 handle["/AvailableBooks"] = requestHandlersReport.AvailableBooks; //http://localhost:3000/AvailableBooks
 handle["/AdminTransactions"] = requestHandlers.AdminTransactions; //http://localhost:3000/AdminTransactions
+handle["/AdminTransactionsStatus"] = requestHandlers.AdminTransactionsStatus; //http://localhost:3000/AdminTransactionsStatus
 handle["/AdminTransactionsSearch"] = requestHandlers.AdminTransactionsSearch; //http://localhost:3000/AdminTransactionsSearch
 
 

@@ -71,9 +71,9 @@ function librarySearch(response, postData) {
             if (mode === 'book') {
                 query = query + " and Book_Name LIKE '%" + Title + "%' ";
             } else if (mode === 'media') {
-                query = query + " and Media_Name LIKE '" + Title + "%' ";
+                query = query + " and Media_Name LIKE '%" + Title + "%' ";
             } else if (mode === 'electronic') {
-                query = query + " and Electronics_Name LIKE '" + Title + "%' ";
+                query = query + " and Electronics_Name LIKE '%" + Title + "%' ";
             }
         }
 
