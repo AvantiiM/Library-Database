@@ -2,13 +2,215 @@
 <html lang="en-US">
     <head>
         <title>Check In</title>
+        <style>
+            body{
+			background-image: url("/public/test11.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			}
+			table {
+                border-collapse: collapse;
+                border: 2px solid #75443c;
+                width: 50%;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				margin:auto;
+    
+            }
+    
+            th, td {
+                text-align: center;
+				margin:auto;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ecc8af;
+            }
+    
+            th:first-child, td:first-child {
+                border-left: 1px solid white;
+            }
+    
+            th {
+                background-color: #ce796b;
+                color: white
+            }
+            select,input{
+                background-color: #ecc8af;
+                color: black;
+                border: 1px #ecc8af;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				text-align: center;
+            }
+			input[type="submit"]{
+				background-color: #ce796b;
+				color: white;
+				border: 2px solid #75443c;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				cursor: pointer;
+				margin:auto;
+				font-size: 22px;
+			}
+			h1{
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+			}
+			fieldset{
+				border: none;
+			}
+			legend{
+				font-size: 1.2em;
+				font-weight: bold;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				font-size: 50px;
+			}
+			form{
+				text-align: center;
+			}
+			td[type = "head"]{
+				text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ce796b;
+				color: white;
+			}
+        </style>
     </head>
     <body>
+        <h1>Check In</h1>
         <div style="overflow-x: auto;">
-            <form onsubmit="/searchTransactions" id="loadTransaction">
+            <form onsubmit="tSearchManager(event)" id="loadTransaction">
+                <label for="BID">Borrower ID:</label>
                 <input type="text" id="BID" name="BID" placeholder="Enter an ID..." required>
                 <input type="submit" value="submit" form="loadTransaction">
             </form>
+            <table id="TransactionTable">
+                <thead>
+                    <tr>
+                        <th>Receipt Num</th>
+                        <th>Creation Date</th>
+                        <th>Due Date</th>
+                        <th>Date Returned</th>
+                        <th>Late Fees</th>
+                        <th>Damage Fees</th>
+                        <th>Created By</th>
+                        <th>Updated By</th>
+                        <th>Faculty ID</th>
+                        <th>Student ID</th>
+                        <th>Guest ID</th>
+                        <th>Book ID</th>
+                        <th>Electronics ID</th>
+                        <th>Media ID</th>
+                        <th>Active/Void Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="TransactionTableBody">
+                </tbody>
+            </table>
+            <br><br>
+            <p id="demo"></p>
+            
+            <!-- Create another form that will be revealed after the first one is submitted.
+                 Request for the item ID and the type of item -->
+            <form id="itemCheckin">
+                <input hidden id="BIDCopy" name="BID">
+                <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
+                <select id="Damages" name="Damages">
+                    <option value="0">False</option>
+                    <option value="1">True</option>
+                </select>
+                <input type="submit" value="submit" form="itemCheckin">
+            </form>
         </div>
+
+
+        <script type="text/javascript">
+            function tSearchManager(event) {
+                event.preventDefault();
+
+                const form = document.getElementById('loadTransaction');
+                const formData = new FormData(form);
+                const xhr = new XMLHttpRequest();
+
+                // This will give me the BID from the previous form!!!!!!
+                for(const value of formData.values()) {
+                    document.getElementById("BIDCopy").value = value;
+                }
+
+                xhr.open('POST', 'pullTransactions');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(new URLSearchParams(formData).toString());
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('Form submission successful!');
+                        let responseData = [];
+                        responseData = JSON.parse(xhr.responseText);
+                        console.log(responseData);
+                        const table = document.getElementById("TransactionTableBody");
+                        
+                        responseData.forEach(Reservation => {
+                            console.log(Reservation);
+                            const row = table.insertRow();
+                            const Receipt_Num = row.insertCell();
+                            Receipt_Num.innerText = Reservation.Receipt_Num;
+                            const Creation_Date = row.insertCell();
+                            Creation_Date.innerText = Reservation.Creation_Date;
+                            const Return_Due_Date = row.insertCell();
+                            Return_Due_Date.innerText = Reservation.Return_Due_Date;
+                            const Actual_Return_Date = row.insertCell();
+                            Actual_Return_Date.innerText = Reservation.Actual_Return_Date;
+                            const Late_Fees = row.insertCell();
+                            Late_Fees.innerText = Reservation.Late_Fees;
+                            const Damage_Fees = row.insertCell();
+                            Damage_Fees.innerText = Reservation.Damage_Fees;
+                            const Created_By = row.insertCell();
+                            Created_By.innerText = Reservation.Created_By;
+                            const Updated_By = row.insertCell();
+                            Updated_By.innerText = Reservation.Updated_By;
+                            const Faculty_ID = row.insertCell();
+                            Faculty_ID.innerText = Reservation.Faculty_ID;
+                            const StudentID = row.insertCell();
+                            StudentID.innerText = Reservation.StudentID;
+                            const GuestID = row.insertCell();
+                            GuestID.innerText = Reservation.GuestID;
+                            const Book_ID = row.insertCell();
+                            Book_ID.innerText = Reservation.Book_ID;
+                            const Electronics_ID = row.insertCell();
+                            Electronics_ID.innerText = Reservation.Electronics_ID;
+                            const Media_ID = row.insertCell();
+                            Media_ID.innerText = Reservation.Media_ID;
+                            const Active_Void_Status = row.insertCell();
+                            Active_Void_Status.innerText = Reservation.Active_Void_Status;
+
+                            // Create the cell for the edit and delete buttons
+                            const actionsCell = row.insertCell();
+
+                            // Create the edit button
+                            const checkInButton = document.createElement("button");
+                            checkInButton.innerText = "Check In";
+                            checkInButton.className = "CheckIn-btn"
+                            // addButton.addEventListener("click", () => {
+                            //     console.log("WIP");
+                            // });
+                            actionsCell.appendChild(checkInButton);
+                            table.appendChild(row);
+                        }); 
+                    } else {
+                        console.error('Form submission failed.');
+                    }
+                };
+            }
+        </script>
     </body>
 </html>

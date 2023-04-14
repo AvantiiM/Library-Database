@@ -593,6 +593,13 @@ function TransactionEntry(response) {
     response.write(edata);
     response.end();
 }
+function Checkin(response) {
+    console.log("Request handler 'Checkin' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Entry/Checkin.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
 
 function BookEdit(response) {
 
@@ -1048,12 +1055,10 @@ function insertTransaction(response, postData) {
         var BID = params['BID'];
         var itemID = params['itemID'];
         var itemType = params['itemType'];
-        var itemName = params['itemName'];
-
-        req.input('itemName', sql.NVarChar, itemName);
+        
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
-        req.input('userId', sql.NVarChar, sessionData.logginId);
+        // req.input('userId', sql.NVarChar, sessionData.logginId);
 
         var query = "INSERT INTO Transactions (Reciept_Num, ";
         
@@ -1136,11 +1141,11 @@ function insertTransaction(response, postData) {
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        query += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', @BID, @itemID, 1, getDate(), @returnDate, @userId, @userId)";
+        query += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000001', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
 
         req.query(query).then(function (recordset) {
             console.log("Transaction Completed.");
-            response.alert("Transaction Completed.");
+            window.alert("Transaction Completed.");
             response.end();
         }).catch(function (err) {
             console.error("error");
@@ -1151,6 +1156,172 @@ function insertTransaction(response, postData) {
         console.log(err);
     });
 }
+
+function pullTransactions(response, postData){
+    var conn = new sql.ConnectionPool(config);
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+
+        var BID = params['BID'];
+        req.input('BID', sql.NVarChar, BID);
+
+        var query = "SELECT * FROM Transactions WHERE ";
+
+        switch (BID.charAt(0)) {
+            case 'G':
+                query += "GuestID=";
+                break;
+            case 'S':
+                query += "StudentID=";
+                break;
+            case 'F':
+                query += "Faculty_ID=";
+                break;
+        }
+        query += "@BID AND Active_Void_Status=1;";
+
+        req.query(query).then(function(recordset) {
+            console.log("Searching for transaction.");
+            
+            if(recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                console.log(recordset);
+                const resultArray = recordset.recordsets[0];     
+                response.writeHead(200, {"Content-Type": "application/json"});
+                response.write(JSON.stringify(resultArray));
+                response.end(); 
+            } 
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function(err) {
+            console.error("error");
+            console.log(err);
+        });
+    }).catch(function(err) {
+        console.log("error");
+        console.log(err);
+    })
+}
+
+
+function pullReservation(response, postData){
+    var conn = new sql.ConnectionPool(config);
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+
+        var BID = params['BID'];
+        req.input('BID', sql.NVarChar, BID);
+
+        var query = "SELECT * FROM Reservation WHERE ";
+
+        switch (BID.charAt(0)) {
+            case 'G':
+                query += "GuestID=";
+                break;
+            case 'S':
+                query += "StudentID=";
+                break;
+            case 'F':
+                query += "Faculty_ID=";
+                break;
+        }
+        query += "@BID AND Active_Void_Status=1;";
+
+        req.query(query).then(function(recordset) {
+            console.log("Searching for reservation.");
+            
+            if(recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                console.log(recordset);
+                const resultArray = recordset.recordsets[0];     
+                response.writeHead(200, {"Content-Type": "application/json"});
+                response.write(JSON.stringify(resultArray));
+                response.end(); 
+            } 
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function(err) {
+            console.error("error");
+            console.log(err);
+        });
+    }).catch(function(err) {
+        console.log("error");
+        console.log(err);
+    })
+}
+
+
+
+
+
+// function DeleteElectronics(response, postData) {
+
+//     sql.connect(config).then(function () {
+//         var req = new sql.Request();
+
+//         var querystring = require('querystring');
+//         var data = querystring.parse(postData);
+//         var ElectronicDelete = data.deleteElectronicSerialNo;
+//         var query = "DELETE FROM dbo.Electronics WHERE Serial_No = '" + ElectronicDelete + "';";
+//         console.log(query);
+//         req.query(query).then(function(recordset) {
+//             console.log("a tuple in the Electronics table will be deleted from the database.");
+//             response.write("Electronics deleted");
+//             response.end();}
+//         )
+//         })};
+
+// function UpdateElectronics(response, postData){
+
+
+//     sql.connect(config).then(function () {
+//         var req = new sql.Request();
+
+//         var querystring = require('querystring');
+//         var data = querystring.parse(postData);
+
+
+//         var ElectronicsSerialNumber = data.SerialNumber;
+//         var Electronic_Name = data.Electronic_Name;   
+//         var ElectronicsDollar_Value = data.Dollar_Value;
+//         var Electronicavailability = data.availability;
+//         var ElectronicItem_Status = data.Item_Status;
+        
+      
+        
+
+//         console.log("Serial_No: " + ElectronicsSerialNumber);
+//         console.log("Electronics_Name: " + Electronic_Name);
+//         console.log("Dollar_Value: " + ElectronicsDollar_Value);
+//         console.log("Available: " + Electronicavailability);
+//         console.log("Item_Status: " + ElectronicItem_Status);
+      
+
+//         var query = "UPDATE dbo.Electronics SET Electronics_Name = '" + Electronic_Name + "', Dollar_Value = '" + ElectronicsDollar_Value + "', Available = '" + Electronicavailability + "', Item_Status = '" + ElectronicItem_Status + "' WHERE Serial_No = '" + ElectronicsSerialNumber + "';";
+//         var secondquery = "UPDATE dbo.Electronics SET Serial_No = '" + ElectronicsSerialNumber + "' WHERE Electronics_Name = '" + Electronic_Name + "' AND Dollar_Value = '" + ElectronicsDollar_Value + "' AND Available = '" + Electronicavailability + "' AND Item_Status = '" + ElectronicItem_Status + "';";
+
+
+
+//         req.query(query).then(function(recordset) {
+//             console.log("First query executed");
+//             req.query(secondquery).then(function(recordset) {
+//             response.write("Electronics Modified");
+//             response.end();}
+//         )});
+
+
+
+// })}
 
 
 exports.login = login;
@@ -1193,3 +1364,6 @@ exports.createUser = createUser;
 exports.addLogin = addLogin;
 exports.addItem = addItem;
 exports.insertTransaction = insertTransaction;
+exports.pullReservation = pullReservation;
+exports.pullTransactions = pullTransactions;
+exports.Checkin = Checkin;
