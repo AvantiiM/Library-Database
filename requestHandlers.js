@@ -58,7 +58,7 @@ function loginverify(response, postData, sessionData = null) {
                                         // response.writeHead(302, { "Location": "/adminUI" });
                                         // response.end();
                                     } else {
-                                        sendFile(response, "memberUI.html", sessionData.getSessonId());
+                                        sendFile(response, "borrowHolds.html", sessionData.getSessonId());
                                     }
                                     
                                 }).catch(function (err) {
@@ -69,7 +69,7 @@ function loginverify(response, postData, sessionData = null) {
                                 //response.writeHead(302, {'Cookie': 'sessionId=${sessionData.getSessonId()}' "Location": "/adminUI" });
                             } else {
                                 //response.writeHead(302, {"Location": "/memberUI" });
-                                sendFile(response, "memberUI.html", sessionData.getSessonId());
+                                sendFile(response, "borrowHolds.html", sessionData.getSessonId());
 
                                 // var hd = "{'Set-Cookie': 'sessionId=" + sessionData.getSessonId() + "', 'Location': '/memberUI' }";
                                 // response.writeHead(302, hd);
@@ -116,6 +116,109 @@ function sendEJSFile(response, filename, msgtxt) {
         return;
       });
 
+}
+
+function getInfo(response, postData, sessionData){
+    req.input('userId', sql.NVarChar, sessionData.logginId);
+
+    let firstN;
+    let lastN;
+    let middleN;
+    let fullName;
+    let email;
+    let dep;
+    let balance;
+    console.log(sessionData.logginId)
+    sql.connect(config).then(function() {
+      var username = sessionData.logginId;
+      var req = new sql.Request();
+      req.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
+        
+        if (recordset.recordsets[0].length > 0) { 
+          var faculty = recordset.recordsets[0][0].Faculty_ID;
+          var stud = recordset.recordsets[0][0].StudentID;
+          var guest = recordset.recordsets[0][0].GuestID;
+        }
+        if(faculty != null){
+            req.query("SELECT FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
+            
+            if (recordset.recordsets[0].length > 0) { 
+                firstN = recordset.recordsets[0][0].FirstN;
+                lastN = recordset.recordsets[0][0].LastN;
+                middleN = recordset.recordsets[0][0].MiddleN;
+                fullName = firstN +' '+ lastN;
+                email = recordset.recordsets[0][0].Email;
+                dep = recordset.recordsets[0][0].Department;
+                balance = recordset.recordsets[0][0].Balance;
+                balance = balance + '.00';
+            
+                window.localStorage.setItem("faculty", ID);
+                window.localStorage.setItem("fullName", fullName);
+                window.localStorage.setItem("email", email);
+                window.localStorage.setItem("balance", balance);
+                window.localStorage.setItem("dep", dep);
+            //   document.getElementById("ID").innerHTML = faculty;
+            //   document.getElementById("fullName").innerHTML = fullName;
+            //   document.getElementById("email").innerHTML = email;
+            //   document.getElementById("balance").innerHTML = balance;
+            //   document.getElementById("dep").innerHTML = dep;
+                return;
+            }
+          })
+        }else if(stud != null){
+            req.query("SELECT FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
+            if (recordset.recordsets[0].length > 0) { 
+                firstN = recordset.recordsets[0][0].FirstN;
+                lastN = recordset.recordsets[0][0].LastN;
+                middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
+                fullName = firstN +' '+ lastN;
+                email = recordset.recordsets[0][0].Email;
+                major = recordset.recordsets[0][0].Major;
+                balance = recordset.recordsets[0][0].Balance;
+                balance = balance + '.00';
+                localStorage.setItem("stud", ID);
+                localStorage.setItem("fullName", fullName);
+                localStorage.setItem("email", email);
+                localStorage.setItem("balance", balance);
+                localStorage.setItem("major", dep);
+            //   document.getElementById("ID").innerHTML = stud;
+            //   document.getElementById("fullName").innerHTML = fullName;
+            //   document.getElementById("email").innerHTML = email;
+            //   document.getElementById("balance").innerHTML = balance;
+            //   document.getElementById("dep").innerHTML = major;
+                return;
+            }
+          })
+        }
+        else if(guest != null){
+            req.query("SELECT FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
+            // console.log(result);
+            if (recordset.recordsets[0].length > 0) { 
+                firstN = recordset.recordsets[0][0].FirstN;
+                lastN = recordset.recordsets[0][0].LastN;
+                middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
+                fullName = firstN +' '+ lastN;
+                email = recordset.recordsets[0][0].Email;
+                balance = recordset.recordsets[0][0].Balance;
+                balance = balance + '.00';
+                localStorage.setItem("guest", ID);
+                localStorage.setItem("fullName", fullName);
+                localStorage.setItem("email", email);
+                localStorage.setItem("balance", balance);
+                //   document.getElementById("ID").innerHTML = guest;
+                //   document.getElementById("fullName").innerHTML = fullName;
+                //   document.getElementById("email").innerHTML = email;
+                //   document.getElementById("balance").innerHTML = balance;
+                return;
+            }
+          })
+        }
+        else {
+            console.log('Error');
+            return;
+        }
+      })
+    });
 }
 
 function PasswordChanger(response, postData) {
@@ -373,7 +476,7 @@ function generateUsername() {
     return username;
 }
 
-function addLogin(response, postData) {
+function addLogin(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
 
     sql.connect(config).then(function () {
@@ -393,6 +496,8 @@ function addLogin(response, postData) {
         var tempPassword = params['tempPassword'];
 
         var mode = params['searchBy'];
+
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
         var adminPermission = params['adminPermission']; // === 'on' ? 1 : 0;
         var adminp = 0;
@@ -432,7 +537,7 @@ function addLogin(response, postData) {
         }
         switch (firstChar) {
             case 'S':
-                queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Email, Gender, PhoneN, Bday, Major, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @email, @gender, @phonenum, @birthdate, @major, 'F111122223', 'F111122223', getdate(), getdate())";
+                queryStr = "INSERT INTO Students (StudentID, FirstN, MiddleN, LastN, Race, Email, Gender, PhoneN, Bday, Major, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @race, @email, @gender, @phonenum, @birthdate, @major, @userId, @userId, getdate(), getdate())";
                 break;
             case 'F':
                 if (mode === 'admin') {
@@ -445,7 +550,7 @@ function addLogin(response, postData) {
                             req.input('MadminN', sql.NVarChar, MadminN);
                             req.input('LadminN', sql.NVarChar, LadminN);
                             console.log("Faculty found: " + Username);
-                            queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, MiddleN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @MadminN, @email, 'F111122223', 'F111122223', getdate(), getdate())";
+                            queryStr = "INSERT INTO Admin (Admin_ID, FirstN, LastN, MiddleN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @FadminN, @LadminN, @MadminN, @email, @userId, @userId, getdate(), getdate())";
                             callback();
                         } else {
                             failed = true;
@@ -462,12 +567,12 @@ function addLogin(response, postData) {
                     });
 
                 } else {
-                    queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, @adminpermission, @department, 'F111122223', 'F111122223', getdate(), getdate())";
+                    queryStr = "INSERT INTO Faculty (Faculty_ID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Admin_Permission, Department, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, @adminpermission, @department, @userId, @userId, getdate(), getdate())";
                 }
 
                 break;
             case 'G':
-                queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender, 'F111122223', 'F111122223', getdate(), getdate())";
+                queryStr = "INSERT INTO Guest (GuestID, FirstN, MiddleN, LastN, Email, Race, PhoneN, Bday, Gender, Created_BY, Updated_BY, Created_date, Last_Updated) VALUES (@username, @fname, @mname, @lname, @email, @race, @phonenum, @birthdate, @gender,  @userId,  @userId, getdate(), getdate())";
                 break;
 
         }
@@ -484,7 +589,7 @@ function addLogin(response, postData) {
 
             function insertAdmin() {
                 if (adminp === 1 && firstChar === 'F') {
-                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email, 'F111122223', 'F111122223', getdate(), getdate())");
+                    query = req.query("INSERT INTO Admin (Admin_ID, FirstN, LastN, Email, Created_BY, Updated_BY, Creation_date, Last_Updated) VALUES (@username, @fname, @lname, @email,  @userId,  @userId, getdate(), getdate())");
                     req.query(query).then(function (recordset) {
                         console.log("New admin user entry inserted into database.");
 
@@ -767,6 +872,13 @@ function AdminTransactionsSearch(response){
     response.write(edata);
     response.end();
 }
+function AdminTransactionsStatus(response){
+    console.log("Request handler 'AdminTransactionsStatus' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminTransactionsStatus.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
 function AdminSFaculty(response){
     console.log("Request handler 'AdminSFaculty' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSFaculty.html');
@@ -783,7 +895,7 @@ function AdminSGuest(response){
 }
 function AdminSStudents(response){
     console.log("Request handler 'AdminSStudent' was called.");
-    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSStudent.html');
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSStudents.html');
     response.writeHead(200, { "Content-Type": "text/html" });
     response.write(edata);
     response.end();
@@ -996,7 +1108,7 @@ function DeleteBook(response, postData) {
     })
 };
 
-function UpdateBook(response, postData) {
+function UpdateBook(response, postData,sessionData) {
 
 
     sql.connect(config).then(function () {
@@ -1004,6 +1116,8 @@ function UpdateBook(response, postData) {
 
         var querystring = require('querystring');
         var data = querystring.parse(postData);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+
 
         var bookISBN = data.ISBN;
         var bookName = data.Book_Name;
@@ -1013,9 +1127,9 @@ function UpdateBook(response, postData) {
         var bookGenre = data.Genre;
         var bookLanguage = data.Language;
         var bookPublisher = data.Publisher_Name;
+        var updatedBy = sessionData.logginId;
 
-
-
+        console.log("Updated By: " + updatedBy);
         console.log("Book ISBN: " + bookISBN);
         console.log("Book Name: " + bookName);
         console.log("Book Dollar Value: " + bookDollarValue);
@@ -1026,7 +1140,11 @@ function UpdateBook(response, postData) {
         console.log("Book Publisher: " + bookPublisher);
 
 
-        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "' WHERE ISBN = '" + bookISBN + "';";
+        const currentDate = new Date();
+        console.log(currentDate);
+        const sqlFormattedDate =  currentDate.toISOString().slice(0, 10);
+
+        var query = "UPDATE dbo.Book SET Book_Name = '" + bookName + "', Dollar_Value = '" + bookDollarValue + "', Num_of_Copies = '" + Number_of_Copies + "', Author = '" + bookAuthor + "', Genre = '" + bookGenre + "', Language = '" + bookLanguage + "', Publisher_Name = '" + bookPublisher + "', Updated_BY = '"+ updatedBy+ "', Last_Updated = '"+ sqlFormattedDate +"' WHERE ISBN = '" + bookISBN + "';";
         var secondquery = "UPDATE dbo.Book SET ISBN = '" + bookISBN + "' WHERE Book_Name = '" + bookName + "' AND Author = '" + bookAuthor + "' AND Genre = '" + bookGenre + "' AND Language = '" + bookLanguage + "' AND Publisher_Name = '" + bookPublisher + "' AND Dollar_Value = '" + bookDollarValue + "' AND Num_of_Copies = '" + Number_of_Copies + "';";
 
 
@@ -1328,6 +1446,8 @@ exports.login = login;
 exports.loginverify = loginverify;
 exports.PasswordChanger = PasswordChanger;
 
+exports.getInfo = getInfo;
+
 exports.adminUI = adminUI;
 exports.BookEntry = BookEntry;
 exports.ElectronicsEntry = ElectronicsEntry;
@@ -1352,6 +1472,7 @@ exports.TransactionsEdit = TransactionsEdit;
 exports.ReservationsEdit = ReservationsEdit;
 exports.AdminTransactions = AdminTransactions;
 exports.AdminTransactionsSearch = AdminTransactionsSearch;
+exports.AdminTransactionsStatus = AdminTransactionsStatus;
 exports.AdminSFaculty = AdminSFaculty;
 exports.AdminSGuest = AdminSGuest;
 exports.AdminSStudents = AdminSStudents;

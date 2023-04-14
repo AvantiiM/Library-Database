@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Guest Search</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+		
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+
+
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			
+// 1. Call the node fn
+
+
+			// create a new XMLHttpRequest objec
+			const xhr = new XMLHttpRequest();
+
+			
+
+  		xhr.open('POST', 'SuspendedGuests');
+  		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(new URLSearchParams(formData).toString());
+
+				
+// 2. Get the search results
+
+
+			// set the function to handle the response from the server
+			xhr.onload = function() {
+			if (xhr.status === 200) {
+				console.log('Form submission successful!');
+				let responseData = [];
+				responseData = JSON.parse(xhr.responseText);
+				console.log(responseData);
+// 3. Generate the table
+
+				const table = document.getElementById("GuestTableBody");	
+				
+
+
+
+
+				responseData.forEach(Guest => {
+					const Checkisbn = Guest.GuestID;
+					// Check if a row with the same Guest ID already exists in the table
+					const existingRow = Array.from(table.rows).find(row => row.cells[0].innerText === Checkisbn);
+					if (existingRow) {
+						// Update the existing row with the new data
+						const cells = existingRow.cells;
+						cells[1].innerText = Guest.GuestID;
+						cells[2].innerText = Guest.FirstN;
+						cells[3].innerText = Guest.MiddleN;
+						cells[4].innerText = Guest.LastN;
+						cells[5].innerText = Guest.Race;
+						cells[6].innerText = Guest.PhoneN;
+						cells[7].innerText = Guest.Email;
+						cells[8].innerText = Guest.Bday;
+						cells[9].innerText = Guest.Gender;
+                        cells[10].innerText = Guest.Balance;
+                        cells[11].innerText = Guest.SUSPENSION;
+                        cells[12].innerText = Guest.Created_By;
+                        cells[13].innerText = Guest.Created_Date;
+                        cells[14].innerText = Guest.Last_Updated_By;
+                        cells[15].innerText = Guest.Last_Updated_Date;
+					} else {
+					console.log(Guest);
+					const row = table.insertRow();
+					const GuestID = row.insertCell();
+					GuestID.innerText = Guest.GuestID;
+					const GuestFName = row.insertCell();
+					GuestFName.innerText = Guest.FirstN;
+					const GuestMName = row.insertCell();
+					GuestMName.innerText = Guest.MiddleN;
+					const GuestLName = row.insertCell();
+					GuestLName.innerText = Guest.LastN;
+					const GuestRace = row.insertCell();
+					GuestRace.innerText = Guest.Race;
+					const GuestPhone = row.insertCell();
+					GuestPhone.innerText = Guest.PhoneN;
+					const GuestEmail = row.insertCell();
+					GuestEmail.innerText = Guest.Email;
+					const GuestBday = row.insertCell(); 
+                    let datePortion = null;
+                    if(Guest.Bday){datePortion = Guest.Bday.slice(0, Guest.Bday.indexOf("T"));}
+					GuestBday.innerText = datePortion;
+                    const GuestGender = row.insertCell();
+                    GuestGender.innerText = Guest.Gender;
+                    const GuestBalance = row.insertCell();
+                    GuestBalance.innerText = Guest.Balance;
+                    const GuestSUSPENSION = row.insertCell();
+                    GuestSUSPENSION.innerText = Guest.SUSPENSION;
+					const createdBy = row.insertCell();
+					createdBy.innerText = Guest.Created_BY;
+					const createdDate = row.insertCell();
+					createdDate.innerText = Guest.Created_date;
+					const updatedBy = row.insertCell();
+					updatedBy.innerText = Guest.Updated_BY;
+					const lastUpdated = row.insertCell();
+					lastUpdated.innerText = Guest.Last_Updated;
+					
+
+
+
+
+
+
+
+
+					table.appendChild(row);
+					}});
+
+
+				
+
+			} else {
+				console.error('Form submission failed.');
+			}
+				};
+
+
+			
+		}
+	</script>
+
+
+</head>
+<body>
+	
+
+	<h1>Suspended Guests Report</h1>
+	<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+        <input type="submit" value="Generate Report" id="searchBtn">
+	<table id="GuestTable">
+		<thead>
+			<tr>
+				<th>Guest ID</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Last Name</th>
+                <th>Race</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Birth Day</th>
+				<th>Gender</th>
+                <th>Balance</th>
+                <th>Suspended</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+                <th>Updated By</th>
+                <th>Last Updated</th>
+			</tr>
+		</thead>
+		<tbody id="GuestTableBody">
+		</tbody>
+	</table>
+
+
+</body>
+</html>

@@ -1202,17 +1202,17 @@ try{
             counter++;
         }
         if(FName != undefined && FName != ""){
-            var bookstring = "FName = '" + FName + "'";
+            var bookstring = "FirstN = '" + FName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(MName != undefined && MName != ""){
-            var bookstring = "MName = '" + MName + "'";
+            var bookstring = "MiddleN = '" + MName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(LName != undefined && LName != ""){
-            var bookstring = "LName = '" + LName + "'";
+            var bookstring = "LastN = '" + LName + "'";
             StringArray.push(bookstring);
             counter++;
         }
@@ -1446,17 +1446,17 @@ try{
             counter++;
         }
         if(FName != undefined && FName != ""){
-            var bookstring = "FName = '" + FName + "'";
+            var bookstring = "FirstN = '" + FName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(MName != undefined && MName != ""){
-            var bookstring = "MName = '" + MName + "'";
+            var bookstring = "MiddleN = '" + MName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(LName != undefined && LName != ""){
-            var bookstring = "LName = '" + LName + "'";
+            var bookstring = "LastN = '" + LName + "'";
             StringArray.push(bookstring);
             counter++;
         }
@@ -1688,17 +1688,17 @@ try{
             counter++;
         }
         if(FName != undefined && FName != ""){
-            var bookstring = "FName = '" + FName + "'";
+            var bookstring = "FirstN = '" + FName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(MName != undefined && MName != ""){
-            var bookstring = "MName = '" + MName + "'";
+            var bookstring = "MiddleN = '" + MName + "'";
             StringArray.push(bookstring);
             counter++;
         }
         if(LName != undefined && LName != ""){
-            var bookstring = "LName = '" + LName + "'";
+            var bookstring = "LastN = '" + LName + "'";
             StringArray.push(bookstring);
             counter++;
         }

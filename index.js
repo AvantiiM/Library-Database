@@ -19,10 +19,15 @@ handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost
 handle["/bookReserve"] = mUI_requestHandlers.bookReserve; 
 handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve; 
 handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
-handle["/memberReservations"] = mUI_requestHandlers.memberReservations; 
+handle["/bookReservations"] = mUI_requestHandlers.bookReservations; 
+handle["/mediaReservations"] = mUI_requestHandlers.mediaReservations; 
+handle["/electronicReservations"] = mUI_requestHandlers.electronicReservations; 
+
+
 
 handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 
+handle["/getInfo"] = requestHandlers.getInfo;
 
 handle["/search"] = requestHandlers.search; //http://localhost:3000/search
 handle["/createUser"] = requestHandlers.createUser; //http://localhost:3000/createUser
@@ -100,12 +105,20 @@ handle["/MaxReportSum"] = requestHandlersReport.MaxReportSum; //http://localhost
 
 handle["/AvailableBooks"] = requestHandlersReport.AvailableBooks; //http://localhost:3000/AvailableBooks
 handle["/AdminTransactions"] = requestHandlers.AdminTransactions; //http://localhost:3000/AdminTransactions
+handle["/AdminTransactionsStatus"] = requestHandlers.AdminTransactionsStatus; //http://localhost:3000/AdminTransactionsStatus
 handle["/AdminTransactionsSearch"] = requestHandlers.AdminTransactionsSearch; //http://localhost:3000/AdminTransactionsSearch
 
 
 handle["/AdminSFaculty"] = requestHandlers.AdminSFaculty; //http://localhost:3000/AdminSFaculty
 handle["/AdminSGuest"] = requestHandlers.AdminSGuest; //http://localhost:3000/AdminSGuest
 handle["/AdminSStudents"] = requestHandlers.AdminSStudents; //http://localhost:3000/AdminSStudents
+
+handle['/TransactionPeriods'] = requestHandlersReport.TransactionPeriods; //http://localhost:3000/TransactionPeriods
+handle['/TransactionPeriodsBalance'] = requestHandlersReport.TransactionPeriodsBalance; //http://localhost:3000/TransactionperiodsBalance
+
+handle['/SuspendedStudents'] = requestHandlersReport.SuspendedStudents; //http://localhost:3000/SuspendedStudents
+handle['/SuspendedFaculty'] = requestHandlersReport.SuspendedFaculty; //http://localhost:3000/SuspendedFaculty
+handle['/SuspendedGuests'] = requestHandlersReport.SuspendedGuests; //http://localhost:3000/SuspendedGuests
 
 server.start(router.route, handle);
 
