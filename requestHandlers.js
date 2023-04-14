@@ -865,6 +865,13 @@ function AdminTransactionsSearch(response){
     response.write(edata);
     response.end();
 }
+function AdminTransactionsStatus(response){
+    console.log("Request handler 'AdminTransactionsStatus' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminTransactionsStatus.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
 function AdminSFaculty(response){
     console.log("Request handler 'AdminSFaculty' was called.");
     var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminSFaculty.html');
@@ -1294,6 +1301,7 @@ exports.TransactionsEdit = TransactionsEdit;
 exports.ReservationsEdit = ReservationsEdit;
 exports.AdminTransactions = AdminTransactions;
 exports.AdminTransactionsSearch = AdminTransactionsSearch;
+exports.AdminTransactionsStatus = AdminTransactionsStatus;
 exports.AdminSFaculty = AdminSFaculty;
 exports.AdminSGuest = AdminSGuest;
 exports.AdminSStudents = AdminSStudents;
