@@ -7,7 +7,7 @@ var bcrypt = require('bcryptjs');
 var cons = require('consolidate');
 
 
-const { Console } = require('console');
+const { Console, error } = require('console');
 
 function loginverify(response, postData, sessionData = null) {
     //function loginverify(response, postData) {
@@ -1182,15 +1182,15 @@ function insertTransaction(response, postData) {
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
         // req.input('userId', sql.NVarChar, sessionData.logginId);
+        // Implement sessions in a bit
 
-        // DB is being stupid rn, change recieptNum later
         // reservations count too, update item value, hold positions (look into it), item checkin
         // When permissions are available; change recieptNum system, and change DamageFees to a bit
 
         var insertQuery = "INSERT INTO Transactions (Reciept_Num, "; // Insert Query
         var availQuery = "SELECT "; // Gets number of available copies for Book, Media, Object, and if item is available for electronics
         var limitQueryOne = "SELECT count(*) as Count FROM Transactions, "; // Number of active transactions for item type
-        var limitQueryTwo = "SELECT count(*) as Count FROM Reservations, "; // Number of active reservations for item type
+        var limitQueryTwo = "SELECT count(*) as Count FROM Reservation, "; // Number of active reservations for item type
         var updateItemQuery = "UPDATE "; // Query to update number of copies for Book, Media, Object or availability for electronics  
         var itemLimit = 0;
 
@@ -1217,6 +1217,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryTwo += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
+                    updateItemQuery += "Media SET Num_of_Copies=";
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
@@ -1224,6 +1225,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryTwo += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
+                    updateItemQuery += "[Object] SET Num_of_Copies=";
                     break;
             }
             break;
@@ -1236,6 +1238,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
                     limitQueryOne += "Book WHERE StudentID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE StudentID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
+                    updateItemQuery += "Book SET Num_of_Copies=";
                     itemLimit = 5;
                     break;
                 case 'Electronic':
@@ -1244,6 +1247,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Available FROM Electronics WHERE @itemID=Serial_No;";
                     limitQueryOne += "Electronics WHERE StudentID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
                     limitQueryTwo += "Electronics WHERE StudentID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
+                    updateItemQuery += "Electronics SET Available=";
                     itemLimit = 1;
                     break;
                 case 'Media':
@@ -1252,6 +1256,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryOne += "Media WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
+                    updateItemQuery += "Media SET Num_of_Copies=";
                     itemLimit = 5;
                     break;
                 case 'Object':
@@ -1260,6 +1265,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryOne += "[Object] WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
+                    updateItemQuery += "[Object] SET Num_of_Copies=";
                     itemLimit = 2;
                     break;
             }
@@ -1273,6 +1279,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
                     limitQueryOne += "Book WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
+                    updateItemQuery += "Book SET Num_of_Copies=";
                     itemLimit = 30;
                     break;
                 case 'Electronic':
@@ -1281,6 +1288,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Available FROM Electronics WHERE @itemID=Serial_No;";
                     limitQueryOne += "Electronics WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
                     limitQueryTwo += "Electronics WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
+                    updateItemQuery += "Electronics SET Available=";
                     itemLimit = 5;
                     break;
                 case 'Media':
@@ -1289,6 +1297,7 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryTwo += "Media WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
+                    updateItemQuery += "Media SET Num_of_Copies=";
                     itemLimit = 30;
                     break;
                 case 'Object':
@@ -1297,45 +1306,65 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryTwo += "[Object] WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
+                    updateItemQuery += "[Object] SET Num_of_Copies=";
                     itemLimit = 10;
-                    break;                
+                    break;
             }
             break;
         }
 
         req.input('returnDate', sql.Date, returnDate);
         insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000004', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+
+
+        var available = 0;
+        req.query(availQuery).then(function (recordset) {
+            if (itemType === "Electronic") {
+                available = recordset.recordsets[0][0].Available;
+                if (available === 0) {
+                    console.log("This item is currently not available");
+                    response.write("This item is currently not available");
+                    response.end();
+                }
+            } else {
+                available = recordset.recordsets[0][0].Num_of_Copies;
+                if (available === 0) {
+                    console.log("This item is currently not available");
+                    response.write("This item is currently not available");
+                    response.end();
+                }
+            }
+        });
         
+
+        // Get amount of active transactions/reservations for item type
         var reserved = 0;
         var borrowed = 0;
         req.query(limitQueryOne).then(function (recordset) {
             borrowed = recordset.recordsets[0][0].Count;
-        });
-        req.query(limitQueryTwo).then(function (recordset) {
-            reserved = recordset.recordsets[0][0].Count;
-        })
-        console.log("Borrowed / Reserved out of Limit: " + borrowed + " / " + reserved + " out of " + itemLimit);
-        var total = borrowed + reserved;
-
-        if (total < itemLimit) {
-            req.query(insertQuery).then(function (recordset) {
-                console.log("Transaction Completed.");
-                response.write("Transaction Completed.");
-                // window.alert("Transaction Completed.");
-                response.end();
-            }).catch(function (err) {
-                console.error("error");
-                console.log(err);
+            req.query(limitQueryTwo).then(function (recordset) {
+                reserved = recordset.recordsets[0][0].Count;
+                console.log("Borrowed / Reserved out of Limit: " + borrowed + " / " + reserved + " out of " + itemLimit);
+                var total = borrowed + reserved;
+                if (total < itemLimit) {
+                    req.query(insertQuery).then(function (recordset) {
+                        console.log("Transaction Completed.");
+                        response.write("Transaction Completed.");
+                        // window.alert("Transaction Completed.");
+                        response.end();
+                    }).catch(function (err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                    // TODO: Change numItems for item reserved
+                    // numCopies (int) for Book, Media, and Object. Available (bit) for Electronics 
+                } else {
+                    console.log("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
+                    response.write("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
+                    response.end();
+                }
             });
-            // TODO: Change numItems for item reserved
-            // numCopies (int) for Book, Media, and Object. Available (bit) for Electronics 
-        } else {
-            console.log("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
-            response.write("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
-            response.end();
-        }
-
-        
+        });   
 	}).catch(function(err) {
         console.error("Unable to get a DB connection");
         console.log(err);
@@ -1393,8 +1422,121 @@ function pullTransactions(response, postData){
     })
 }
 
+function checkInItem(response, postData) {
+    var conn = new sql.ConnectionPool(config);
+    sql.connect(config).then(function() {
+        var req = new sql.Request();
 
-function pullReservation(response, postData){
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+
+
+        var BID = params['BIDCopy'];
+        var itemID = params['itemID'];
+        var itemType = params['itemType'];
+        var damages = params['damages'];
+        var dateReturned = new Date();
+
+        req.input('BID', sql.NVarChar, BID);
+        req.input('itemID', sql.NVarChar, itemID);
+        req.input('damages', sql.Int, damages);
+        req.input('dateReturned', sql.Date, dateReturned);
+
+        var checkInQuery = "UPDATE ";
+        var damageQuery = "SELECT Dollar_Value FROM table WHERE id=@itemID;"; // Assign this to a variable if damages=1
+        // var feeQuery = "UPDATE table SET Balance=oldBalance+damages WHERE id=@BID;";
+        var availQuery = "";
+        var updateQuery = "";
+
+        // Write a query to update specific transaction record so it is complete    UPDATE Table SET Actual_Return_Date=date, Active_Void_Status=0, Late_Fees=latefees, Damage_Fees=damages WHERE bid=BID
+        // Then, write the query to charge an account for damages
+        // Next, go back to insertTransaction and finish the item update query
+        // Come back and write the item update query for that
+        // Finally, write some code to calculate late fees
+
+        console.log(BID);
+        console.log(itemID);
+        console.log(itemType);
+        console.log(damages);
+        console.log(dateReturned);
+        switch (itemType) {
+            case 'Book':
+                checkInQuery += "Book SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE "
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        checkInQuery += "GuestID=@BID AND Book_ID=@itemID;";
+                        break;
+                    case 'S':
+                        checkInQuery += "StudentID=@BID AND Book_ID=@itemID;";
+                        break;
+                    case 'F':
+                        checkInQuery += "Faculty_ID=@BID AND Book_ID=@itemID;";
+                        break;
+                }
+                break;
+            case 'Electronic':
+                checkInQuery += "Electronic SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE "
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        checkInQuery += "GuestID=@BID AND Electronics_ID=@itemID;";
+                        break;
+                    case 'S':
+                        checkInQuery += "StudentID=@BID AND Electronics_ID=@itemID;";
+                        break;
+                    case 'F':
+                        checkInQuery += "Faculty_ID=@BID AND Electronics_ID=@itemID;";
+                        break;
+                }
+                break;
+            case 'Media':
+                checkInQuery += "Book SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE "
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        checkInQuery += "GuestID=@BID AND Media_ID=@itemID;";
+                        break;
+                    case 'S':
+                        checkInQuery += "StudentID=@BID AND Media_ID=@itemID;";
+                        break;
+                    case 'F':
+                        checkInQuery += "Faculty_ID=@BID AND Media_ID=@itemID;";
+                        break;
+                }
+                break;
+            case 'Object':
+                checkInQuery += "Book SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE "
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        checkInQuery += "GuestID=@BID AND Object_ID=@itemID;";
+                        break;
+                    case 'S':
+                        checkInQuery += "StudentID=@BID AND Object_ID=@itemID;";
+                        break;
+                    case 'F':
+                        checkInQuery += "Faculty_ID=@BID AND Object_ID=@itemID;";
+                        break;
+                }
+                break;
+        }
+
+        //send query
+        console.log(checkInQuery);
+        // req.query(checkInQuery).then(function(recordset) {
+        //     console.log("Check In Successful.");
+        //     response.write("Check In Successful.");
+        //     response.end();
+        // }).catch(function(err) {
+        //     console.error("error");
+        //     console.log(err);
+        // });
+        response.end();
+    }).catch(function(err) {
+        console.error("error");
+        console.log(err);
+    });
+}
+
+
+function pullReservation(response, postData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function () {
         var req = new sql.Request();
@@ -1445,68 +1587,19 @@ function pullReservation(response, postData){
     })
 }
 
-
-
-
-
-// function DeleteElectronics(response, postData) {
-
+// function rTot(response, postData) {
+//     var conn = new sql.ConnectionPool(config);
 //     sql.connect(config).then(function () {
 //         var req = new sql.Request();
 
 //         var querystring = require('querystring');
-//         var data = querystring.parse(postData);
-//         var ElectronicDelete = data.deleteElectronicSerialNo;
-//         var query = "DELETE FROM dbo.Electronics WHERE Serial_No = '" + ElectronicDelete + "';";
-//         console.log(query);
-//         req.query(query).then(function(recordset) {
-//             console.log("a tuple in the Electronics table will be deleted from the database.");
-//             response.write("Electronics deleted");
-//             response.end();}
-//         )
-//         })};
+//         var params = querystring.parse(postData);
 
-// function UpdateElectronics(response, postData){
+//         // Get item availability an increment by one for checkin
+//     })
+// }
 
 
-//     sql.connect(config).then(function () {
-//         var req = new sql.Request();
-
-//         var querystring = require('querystring');
-//         var data = querystring.parse(postData);
-
-
-//         var ElectronicsSerialNumber = data.SerialNumber;
-//         var Electronic_Name = data.Electronic_Name;   
-//         var ElectronicsDollar_Value = data.Dollar_Value;
-//         var Electronicavailability = data.availability;
-//         var ElectronicItem_Status = data.Item_Status;
-        
-      
-        
-
-//         console.log("Serial_No: " + ElectronicsSerialNumber);
-//         console.log("Electronics_Name: " + Electronic_Name);
-//         console.log("Dollar_Value: " + ElectronicsDollar_Value);
-//         console.log("Available: " + Electronicavailability);
-//         console.log("Item_Status: " + ElectronicItem_Status);
-      
-
-//         var query = "UPDATE dbo.Electronics SET Electronics_Name = '" + Electronic_Name + "', Dollar_Value = '" + ElectronicsDollar_Value + "', Available = '" + Electronicavailability + "', Item_Status = '" + ElectronicItem_Status + "' WHERE Serial_No = '" + ElectronicsSerialNumber + "';";
-//         var secondquery = "UPDATE dbo.Electronics SET Serial_No = '" + ElectronicsSerialNumber + "' WHERE Electronics_Name = '" + Electronic_Name + "' AND Dollar_Value = '" + ElectronicsDollar_Value + "' AND Available = '" + Electronicavailability + "' AND Item_Status = '" + ElectronicItem_Status + "';";
-
-
-
-//         req.query(query).then(function(recordset) {
-//             console.log("First query executed");
-//             req.query(secondquery).then(function(recordset) {
-//             response.write("Electronics Modified");
-//             response.end();}
-//         )});
-
-
-
-// })}
 
 
 exports.login = login;
@@ -1521,6 +1614,7 @@ exports.ElectronicsEntry = ElectronicsEntry;
 exports.MediaEntry = MediaEntry;
 exports.ObjectEntry = ObjectEntry;
 exports.TransactionEntry = TransactionEntry;
+exports.Checkin = Checkin;
 exports.StudentEntry = StudentEntry;
 exports.GuestEntry = GuestEntry;
 exports.FacultyEntry = FacultyEntry;
@@ -1554,4 +1648,4 @@ exports.addItem = addItem;
 exports.insertTransaction = insertTransaction;
 exports.pullReservation = pullReservation;
 exports.pullTransactions = pullTransactions;
-exports.Checkin = Checkin;
+exports.checkInItem = checkInItem;

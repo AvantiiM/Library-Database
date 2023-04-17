@@ -142,8 +142,6 @@
                         <th>Electronics ID</th>
                         <th>Media ID</th>
                         <th>Hold position</th>
-                        <th>Active/Void Status</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="ReservationTableBody">
@@ -226,20 +224,7 @@
                             Media_ID.innerText = Reservation.Media_ID;
                             const holdPosition = row.insertCell();
                             holdPosition.innerText = Reservation.holdPosition;
-                            const Active_Void_Status = row.insertCell();
-                            Active_Void_Status.innerText = Reservation.Active_Void_Status;
 
-                            // Create the cell for the edit and delete buttons
-                            const actionsCell = row.insertCell();
-
-                            // Create the edit button
-                            const checkInButton = document.createElement("button");
-                            checkInButton.innerText = "Check In";
-                            checkInButton.className = "CheckIn-btn"
-                            // addButton.addEventListener("click", () => {
-                            //     console.log("WIP");
-                            // });
-                            actionsCell.appendChild(checkInButton);
                             table.appendChild(row);
                         }); 
                     } else {
