@@ -87,7 +87,7 @@
     </head>
     <body>
         <h1>Check In</h1>
-        <!-- <div style="overflow-x: auto;">
+        <div style="overflow-x: auto;">
             <form onsubmit="tSearchManager(event)" id="loadTransaction">
                 <label for="BID">Borrower ID:</label>
                 <input type="text" id="BID" name="BID" placeholder="Enter an ID..." required>
@@ -117,12 +117,12 @@
                 </tbody>
             </table>
             <br><br>
-        </div> -->
+        </div>
         
         <div style="overflow-x: auto;">
             <!-- Create another form that will be revealed after the first one is submitted. Request for the item ID and the type of item -->
-            <form action="/checkInItem" id="itemCheckin">
-                <input id="BIDCopy" name="BIDCopy" required>
+            <form action="/checkInItem" method="post" id="itemCheckin">
+                <input hidden id="BIDCopy" name="BIDCopy">
                 <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
                 <select id="damages" name="damages">
                     <option value="0">False</option>
@@ -148,9 +148,9 @@
                 const xhr = new XMLHttpRequest();
 
                 // This will give me the BID from the previous form!
-                // for(const value of formData.values()) {
-                //     document.getElementById("BIDCopy").value = value;
-                // }
+                for(const value of formData.values()) {
+                    document.getElementById("BIDCopy").value = value;
+                }
 
                 xhr.open('POST', 'pullTransactions');
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
