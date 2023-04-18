@@ -1485,8 +1485,6 @@ function checkInItem(response, postData) {
         var damageQuery = "SELECT Dollar_Value FROM ";
         var availQuery = "SELECT ";
 
-        // Next, go back to insertTransaction and finish the item update query
-        // Come back and write the item update query for that
         // Finally, write some code to calculate late fees
 
         switch (itemType) {
@@ -1722,17 +1720,121 @@ function pullReservation(response, postData) {
     })
 }
 
-// function rTot(response, postData) {
-//     var conn = new sql.ConnectionPool(config);
-//     sql.connect(config).then(function () {
-//         var req = new sql.Request();
+function rTot(response, postData) {
+    var conn = new sql.ConnectionPool(config);
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
 
-//         var querystring = require('querystring');
-//         var params = querystring.parse(postData);
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
 
-//         // Get item availability an increment by one for checkin
-//     })
-// }
+        // grab data from reservation table and convert into a transaction while also closing reservation. ez
+        var BID = params['BIDCopy'];
+        var itemID = params['itemID'];
+        var itemType = params['itemType'];
+
+        req.input('itemID', sql.NVarChar, itemID);
+        req.input('BID', sql.NVarChar, BID);
+
+        const DAYSOFWEEK = 7;
+        let returnDate = new Date();
+
+        insertQuery = "INSERT INTO Transactions (";
+        updateQuery = "UPDATE Reservation SET Active_Void_Status=0 WHERE "
+        switch (BID.charAt(0)) {
+            case 'G':
+                insertQuery += "GuestID, ";
+                itemLimit = 2;
+                switch (itemType) {
+                    case 'Book':
+                        returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                        insertQuery += "Book_ID, ";
+                        updateQuery += "Book_ID=@itemID AND Guest_ID=@BID;";
+                        break;
+                    case 'Media':
+                        returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                        insertQuery += "Media_ID, ";
+                        updateQuery += "Media_ID=@itemID AND Guest_ID=@BID;";
+                        break;
+                }
+                break;
+            case 'S':
+                insertQuery += "StudentID, ";
+                switch (itemType) {
+                    case 'Book':
+                        returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
+                        insertQuery += "Book_ID, ";
+                        updateQuery += "Book_ID=@itemID AND Student_ID=@BID;";
+                        itemLimit = 5;
+                        break;
+                    case 'Electronics':
+                        returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                        insertQuery += "Electronics_ID, ";
+                        updateQuery += "Electronics_ID=@itemID AND Student_ID=@BID;";
+                        itemLimit = 1;
+                        break;
+                    case 'Media':
+                        returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                        insertQuery += "Media_ID, ";
+                        updateQuery += "Media_ID=@itemID AND Student_ID=@BID;";
+                        itemLimit = 5;
+                        break;
+                }
+                break;
+            case 'F':
+                insertQuery += "Faculty_ID, ";
+                switch (itemType) {
+                    case 'Book':
+                        returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
+                        insertQuery += "Book_ID, ";
+                        updateQuery += "Book_ID=@itemID AND Faculty_ID=@BID;";
+                        itemLimit = 30;
+                        break;
+                    case 'Electronics':
+                        returnDate.setDate(new Date().getDate() + 4 * DAYSOFWEEK);
+                        insertQuery += "Electronics_ID, ";
+                        updateQuery += "Electronics_ID=@itemID AND Faculty_ID=@BID;";
+                        itemLimit = 5;
+                        break;
+                    case 'Media':
+                        returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
+                        insertQuery += "Media_ID, ";
+                        updateQuery += "Media_ID=@itemID AND Faculty_ID=@BID;";
+                        itemLimit = 30;
+                        break;
+                }
+                break;
+        }
+
+        req.input('returnDate', sql.Date, returnDate);
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+
+        console.log(BID, itemType, itemID);
+        console.log(insertQuery);
+        console.log(updateQuery);
+        // use insertQuery to insert transaction
+        req.query(insertQuery).then(function(recordset) {
+            console.log("Converting Reservation to Transaction.");
+        }).catch(function(err) {
+            console.error("error");
+            console.log(err);
+        });
+
+        // use updateQuery to update/close reservation
+        req.query(updateQuery).then(function(recordset) {
+            console.log("Closing Reservation.");
+        }).catch(function(err) {
+            console.error("error");
+            console.log(err);
+        });
+        console.log("Check out Successful");
+        response.write("Check out Successful");
+        response.end();
+    }).catch(function(err) {
+        console.error("Unable to get a DB connection");
+        console.log(err);
+    });
+}
 
 
 
@@ -1784,3 +1886,4 @@ exports.insertTransaction = insertTransaction;
 exports.pullReservation = pullReservation;
 exports.pullTransactions = pullTransactions;
 exports.checkInItem = checkInItem;
+exports.rTot = rTot;

@@ -84,6 +84,7 @@ handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http:/
 handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
 handle["/pullTransactions"] = requestHandlers.pullTransactions; //http://localhost:3000/pullTransactions
 handle["/checkInItem"] = requestHandlers.checkInItem; //http://localhost:3000/checkIn
+handle["/rTot"] = requestHandlers.rTot; //http://localhost:3000/rTot
 
 handle["/pullReservation"] = requestHandlers.pullReservation; //http://localhost:3000/pullReservations
 handle["/SearchReservations"] = EditrequestHandlers.SearchReservations; //http://localhost:3000/SearchReservations
