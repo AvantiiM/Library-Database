@@ -1184,10 +1184,10 @@ function insertTransaction(response, postData) {
         // req.input('userId', sql.NVarChar, sessionData.logginId);
         // Implement sessions in a bit
 
-        // reservations count too, update item value, hold positions (look into it)
-        // When permissions are available; change recieptNum system, and change DamageFees to a bit
+        // update item value, hold positions (look into it)
+        // When permissions are available; change DamageFees to a bit
 
-        var insertQuery = "INSERT INTO Transactions (Reciept_Num, ";
+        var insertQuery = "INSERT INTO Transactions (";
         var availQuery = "SELECT ";
         var limitQueryOne = "SELECT count(*) as Count FROM Transactions, ";
         var limitQueryTwo = "SELECT count(*) as Count FROM Reservation, ";
@@ -1302,82 +1302,107 @@ function insertTransaction(response, postData) {
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000010', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
 
 
-        var available = 0;
         req.query(availQuery).then(function (recordset) {
+            var available = 0;
             if (itemType === "Electronics") {
                 available = recordset.recordsets[0][0].Available;
             } else {
                 available = recordset.recordsets[0][0].Num_of_Copies;
             }
 
-            if (available === 0) {
-                    console.log("This item is currently not available");
-                    response.write("This item is currently not available");
-                    response.end();
-            } else {
+            if (available > 0) {
                 available -= 1;
 
                 // Get amount of active transactions/reservations for item type
-                var borrowed = 0;
-                var reserved = 0;
-                req.query(limitQueryOne).then(function (recordset) {
-                    borrowed = recordset.recordsets[0][0].Count;
-                    req.query(limitQueryTwo).then(function (recordset) {
-                        reserved = recordset.recordsets[0][0].Count;
+                var updateItemQuery = "UPDATE ";
+                switch (itemType) {
+                    case 'Book':
+                        req.input('availCopies', sql.Int, available);
+                        updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
 
-                        console.log("Borrowed / Reserved out of Limit: " + borrowed + " / " + reserved + " out of " + itemLimit);
+                        console.log(updateItemQuery);
+                        req.query(updateItemQuery).then(function(recordset) {
+                            console.log("Inventory successfully updated.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+                        break;
+                    case 'Electronics':
+                        req.input('availCopies', sql.Bit, available);
+                        updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
 
-                        var total = borrowed + reserved;
-                        if (total < itemLimit) {
-                            req.query(insertQuery).then(function (recordset) {
-                                console.log("Item Successfully checked out.");
-                            }).catch(function (err) {
-                                console.error("error");
-                                console.log(err);
-                            });
+                        req.query(updateItemQuery).then(function(recordset) {
+                            console.log("Inventory successfully updated.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+                        break;
+                    case 'Media':
+                        req.input('availCopies', sql.Int, available);
+                        updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
 
-                            // var updateItemQuery = "UPDATE ";
-                            // switch (itemType) {
-                            //     case 'Book':
-                            //         req.input('availCopies', sql.Int, available);
-                            //         updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
-                            //         break;
-                            //     case 'Electronics':
-                            //         req.input('availCopies', sql.Bit, available);
-                            //         updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
-                            //         break;
-                            //     case 'Media':
-                            //         req.input('availCopies', sql.Int, available);
-                            //         updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
-                            //         break;
-                            //     case 'Object':
-                            //         req.input('availCopies', sql.Int, available);
-                            //         updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
-                            //         break;
-                            // }
+                        req.query(updateItemQuery).then(function(recordset) {
+                            console.log("Inventory successfully updated.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+                        break;
+                    case 'Object':
+                        req.input('availCopies', sql.Int, available);
+                        updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
 
-                            console.log(updateItemQuery);
-                            req.input(updateItemQuery).then(function(recordset) {
-                                console.log("items updated.");
-                            }).catch(function(err) {
-                                console.error("error");
-                                console.log(err);
-                            })
-                            
-                            console.log("Transaction Completed.");
-                            response.write("Transaction Completed.");
-                            response.end();
-                        } else {
-                            console.log("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
-                            response.write("The user has reached the max item limit for " + itemType + ": " + borrowed + " out of " + itemLimit);
-                            response.end();
-                        }
-                    });
-                });
+                        req.query(updateItemQuery).then(function(recordset) {
+                            console.log("Inventory successfully updated.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+                        break;
+                }
+                
+            } else {
+                
+                console.log("This item is currently not available");
+                response.write("This item is currently not available");
+                response.end();
             }
+            var borrowed = 0;
+            var reserved = 0;
+            req.query(limitQueryOne).then(function (recordset) {
+                borrowed = recordset.recordsets[0][0].Count;
+                req.query(limitQueryTwo).then(function (recordset) {
+                    reserved = recordset.recordsets[0][0].Count;
+
+                    console.log("Borrowed / Reserved out of Limit: " + borrowed + " / " + reserved + " out of " + itemLimit);
+
+                    var total = borrowed + reserved;
+                    if (total < itemLimit) {
+                        req.query(insertQuery).then(function (recordset) {
+                            console.log("Item Successfully checked out.");
+                        }).catch(function (err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+
+                        
+
+                        
+                        console.log("Transaction Completed.");
+                        response.write("Transaction Completed.");
+                        response.end();
+                    } else {
+                        console.log("The user has reached the max item limit for " + itemType + ": " + total + " out of " + itemLimit);
+                        response.write("The user has reached the max item limit for " + itemType + ": " + total + " out of " + itemLimit);
+                        response.end();
+                    }
+                });
+            });
         });  
 	}).catch(function(err) {
         console.error("Unable to get a DB connection");
@@ -1458,11 +1483,8 @@ function checkInItem(response, postData) {
 
         var checkInQuery = "UPDATE Transactions SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE ";
         var damageQuery = "SELECT Dollar_Value FROM ";
-        // var feeQuery = "UPDATE table SET Balance=oldBalance+damages WHERE id=@BID;";
         var availQuery = "SELECT ";
 
-        // Write a query to update specific transaction record so it is complete    UPDATE Table SET Actual_Return_Date=date, Active_Void_Status=0, Late_Fees=latefees, Damage_Fees=damages WHERE bid=BID
-        // Then, write the query to charge an account for damages
         // Next, go back to insertTransaction and finish the item update query
         // Come back and write the item update query for that
         // Finally, write some code to calculate late fees
@@ -1530,51 +1552,71 @@ function checkInItem(response, postData) {
                 break;
         }
 
-        // req.query(availQuery).then(function(recordset) {
-        //     var available = 0;
-        //     if (itemType === 'Electronics') {
-        //         available = recordset.recordsets[0][0].Available;
-        //     } else {
-        //         available = recordset.recordsets[0][0].Num_of_Copies;
-        //     }
-        //     available += 1;
+        req.query(availQuery).then(function(recordset) {
+            var available = 0;
+            if (itemType === 'Electronics') {
+                available = recordset.recordsets[0][0].Available;
+            } else {
+                available = recordset.recordsets[0][0].Num_of_Copies;
+            }
+            available += 1;
 
-        //     var updateItemQuery = "UPDATE ";
-        //     switch (itemType) {
-        //         case 'Book':
-        //             req.input('availCopies', sql.Int, available);
-        //             updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
-        //             break;
-        //         case 'Electronics':
-        //             req.input('availCopies', sql.Bit, available);
-        //             updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
-        //             break;
-        //         case 'Media':
-        //             req.input('availCopies', sql.Int, available);
-        //             updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
-        //             break;
-        //         case 'Object':
-        //             req.input('availCopies', sql.Int, available);
-        //             updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
-        //             break;
-        //     }
-            
-        //     req.query(updateItemQuery).then(function(recordset) {
-        //         console.log("Inventory successfully updated.");
-        //     }).catch(function(err) {
-        //         console.error("error");
-        //         console.log(err);
-        //     });
-        // }).catch(function(err) {
-        //     console.error("error");
-        //     console.log(err);
-        // });
+            var updateItemQuery = "UPDATE ";
+            switch (itemType) {
+                case 'Book':
+                    req.input('availCopies', sql.Int, available);
+                    updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
+
+                    req.query(updateItemQuery).then(function(recordset) {
+                        console.log("Inventory successfully updated.");
+                    }).catch(function(err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                    break;
+                case 'Electronics':
+                    req.input('availCopies', sql.Bit, available);
+                    updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
+
+                    req.query(updateItemQuery).then(function(recordset) {
+                        console.log("Inventory successfully updated.");
+                    }).catch(function(err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                    break;
+                case 'Media':
+                    req.input('availCopies', sql.Int, available);
+                    updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
+
+                    req.query(updateItemQuery).then(function(recordset) {
+                        console.log("Inventory successfully updated.");
+                    }).catch(function(err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                    break;
+                case 'Object':
+                    req.input('availCopies', sql.Int, available);
+                    updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+
+                    req.query(updateItemQuery).then(function(recordset) {
+                        console.log("Inventory successfully updated.");
+                    }).catch(function(err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                    break;
+            }
+        }).catch(function(err) {
+            console.error("error");
+            console.log(err);
+        });
 
 
         if (damages === "1") {
             req.query(damageQuery).then(function(recordset) {
                 var cost = recordset.recordsets[0][0].Dollar_Value;
-                console.log(cost);
 
                 var chargeQuery = "";
                 var oldBalQuery = "SELECT Balance FROM "
