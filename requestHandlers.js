@@ -1208,7 +1208,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
                     limitQueryOne += "Book WHERE GuestID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE GuestID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
-                    updateItemQuery += "Book SET Num_of_Copies=@available WHERE ISBN=@itemID;";
                     break;
                 case 'Media':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
@@ -1216,7 +1215,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryTwo += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
-                    updateItemQuery += "Media SET Num_of_Copies=@available WHERE Media_ID=@itemID;";
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
@@ -1224,7 +1222,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryTwo += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
-                    updateItemQuery += "[Object] SET Num_of_Copies=@available WHERE Object_ID=@itemID;";
                     break;
             }
             break;
@@ -1237,7 +1234,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
                     limitQueryOne += "Book WHERE StudentID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE StudentID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
-                    updateItemQuery += "Book SET Num_of_Copies=";
                     itemLimit = 5;
                     break;
                 case 'Electronics':
@@ -1246,7 +1242,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Available FROM Electronics WHERE @itemID=Serial_No;";
                     limitQueryOne += "Electronics WHERE StudentID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
                     limitQueryTwo += "Electronics WHERE StudentID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
-                    updateItemQuery += "Electronics SET Available=";
                     itemLimit = 1;
                     break;
                 case 'Media':
@@ -1255,7 +1250,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryOne += "Media WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
-                    updateItemQuery += "Media SET Num_of_Copies=";
                     itemLimit = 5;
                     break;
                 case 'Object':
@@ -1264,7 +1258,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryOne += "[Object] WHERE StudentID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
-                    updateItemQuery += "[Object] SET Num_of_Copies=@available WHERE Object_ID=@itemID;";
                     itemLimit = 2;
                     break;
             }
@@ -1278,7 +1271,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
                     limitQueryOne += "Book WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
-                    updateItemQuery += "Book SET Num_of_Copies=";
                     itemLimit = 30;
                     break;
                 case 'Electronics':
@@ -1287,7 +1279,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Available FROM Electronics WHERE @itemID=Serial_No;";
                     limitQueryOne += "Electronics WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
                     limitQueryTwo += "Electronics WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Electronics_ID=Serial_No;";
-                    updateItemQuery += "Electronics SET Available=";
                     itemLimit = 5;
                     break;
                 case 'Media':
@@ -1296,7 +1287,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
                     limitQueryOne += "Media WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryTwo += "Media WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
-                    updateItemQuery += "Media SET Num_of_Copies=";
                     itemLimit = 30;
                     break;
                 case 'Object':
@@ -1305,7 +1295,6 @@ function insertTransaction(response, postData) {
                     availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
                     limitQueryOne += "[Object] WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryTwo += "[Object] WHERE Faculty_ID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
-                    updateItemQuery += "[Object] SET Num_of_Copies=@available WHERE Object_ID=@itemID;";
                     itemLimit = 10;
                     break;
             }
@@ -1350,26 +1339,27 @@ function insertTransaction(response, postData) {
                                 console.log(err);
                             });
 
-                            var updateItemQuery = "UPDATE ";
-                            switch (itemType) {
-                                case 'Book':
-                                    req.input('availCopies', sql.Int, available);
-                                    updateItemQuery += "Book SET Num_of_Copies=@available WHERE ISBN=@itemID;";
-                                    break;
-                                case 'Electronics':
-                                    req.input('availCopies', sql.Bit, available);
-                                    updateItemQuery += "Electronics SET available=@available WHERE Serial_No=@itemID;";
-                                    break;
-                                case 'Media':
-                                    req.input('availCopies', sql.Int, available);
-                                    updateItemQuery += "Media SET Num_of_Copies=@available WHERE Media_ID=@itemID;";
-                                    break;
-                                case 'Object':
-                                    req.input('availCopies', sql.Int, available);
-                                    updateItemQuery += "[Object] SET Num_of_Copies=@available WHERE Object_ID=@itemID;";
-                                    break;
-                            }
+                            // var updateItemQuery = "UPDATE ";
+                            // switch (itemType) {
+                            //     case 'Book':
+                            //         req.input('availCopies', sql.Int, available);
+                            //         updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
+                            //         break;
+                            //     case 'Electronics':
+                            //         req.input('availCopies', sql.Bit, available);
+                            //         updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
+                            //         break;
+                            //     case 'Media':
+                            //         req.input('availCopies', sql.Int, available);
+                            //         updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
+                            //         break;
+                            //     case 'Object':
+                            //         req.input('availCopies', sql.Int, available);
+                            //         updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+                            //         break;
+                            // }
 
+                            console.log(updateItemQuery);
                             req.input(updateItemQuery).then(function(recordset) {
                                 console.log("items updated.");
                             }).catch(function(err) {
@@ -1540,46 +1530,46 @@ function checkInItem(response, postData) {
                 break;
         }
 
-        req.query(availQuery).then(function(recordset) {
-            var available = 0;
-            if (itemType === 'Electronics') {
-                available = recordset.recordsets[0][0].Available;
-            } else {
-                available = recordset.recordsets[0][0].Num_of_Copies;
-            }
-            available += 1;
+        // req.query(availQuery).then(function(recordset) {
+        //     var available = 0;
+        //     if (itemType === 'Electronics') {
+        //         available = recordset.recordsets[0][0].Available;
+        //     } else {
+        //         available = recordset.recordsets[0][0].Num_of_Copies;
+        //     }
+        //     available += 1;
 
-            var updateItemQuery = "UPDATE ";
-            switch (itemType) {
-                case 'Book':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Book SET Num_of_Copies=@available WHERE ISBN=@itemID;";
-                    break;
-                case 'Electronics':
-                    req.input('availCopies', sql.Bit, available);
-                    updateItemQuery += "Electronics SET available=@available WHERE Serial_No=@itemID;";
-                    break;
-                case 'Media':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Media SET Num_of_Copies=@available WHERE Media_ID=@itemID;";
-                    break;
-                case 'Object':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "[Object] SET Num_of_Copies=@available WHERE Object_ID=@itemID;";
-                    break;
-            }
+        //     var updateItemQuery = "UPDATE ";
+        //     switch (itemType) {
+        //         case 'Book':
+        //             req.input('availCopies', sql.Int, available);
+        //             updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
+        //             break;
+        //         case 'Electronics':
+        //             req.input('availCopies', sql.Bit, available);
+        //             updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
+        //             break;
+        //         case 'Media':
+        //             req.input('availCopies', sql.Int, available);
+        //             updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
+        //             break;
+        //         case 'Object':
+        //             req.input('availCopies', sql.Int, available);
+        //             updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+        //             break;
+        //     }
             
-            req.query(updateItemQuery).then(function(recordset) {
-                console.log("Inventory successfully updated.");
-            }).catch(function(err) {
-                console.error("error");
-                console.log(err);
-            });
-        }).catch(function(err) {
-            console.error("error");
-            console.log(err);
-        });
-        
+        //     req.query(updateItemQuery).then(function(recordset) {
+        //         console.log("Inventory successfully updated.");
+        //     }).catch(function(err) {
+        //         console.error("error");
+        //         console.log(err);
+        //     });
+        // }).catch(function(err) {
+        //     console.error("error");
+        //     console.log(err);
+        // });
+
 
         if (damages === "1") {
             req.query(damageQuery).then(function(recordset) {
