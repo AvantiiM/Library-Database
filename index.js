@@ -39,6 +39,7 @@ handle["/ElectronicsEntry"] = requestHandlers.ElectronicsEntry; //http://localho
 handle["/MediaEntry"] = requestHandlers.MediaEntry; //http://localhost:3000/MediaEntry
 handle["/ObjectEntry"] = requestHandlers.ObjectEntry; //http://localhost:3000/ObjectEntry
 handle["/TransactionEntry"] = requestHandlers.TransactionEntry; //http://localhost:3000/TransactionEntry
+handle["/Checkin"] = requestHandlers.Checkin; //http://localhost:3000/Checkin
 
 handle["/BookEdit"] = requestHandlers.BookEdit; //http://localhost:3000/BookEdit
 handle["/ElectronicsEdit"] = requestHandlers.ElectronicsEdit; //http://localhost:3000/ElectronicsEdit
@@ -81,7 +82,11 @@ handle["/insertTransaction"] = requestHandlers.insertTransaction; //http://local
 handle["/SearchTransactions"] = EditrequestHandlers.SearchTransactions; //http://localhost:3000/SearchTransactions
 handle["/UpdateTransactions"] = EditrequestHandlers.UpdateTransactions; //http://localhost:3000/UpdateTransactions
 handle["/DeleteTransactions"] = EditrequestHandlers.DeleteTransactions; //http://localhost:3000/DeleteTransactions
+handle["/pullTransactions"] = requestHandlers.pullTransactions; //http://localhost:3000/pullTransactions
+handle["/checkInItem"] = requestHandlers.checkInItem; //http://localhost:3000/checkIn
+handle["/rTot"] = requestHandlers.rTot; //http://localhost:3000/rTot
 
+handle["/pullReservation"] = requestHandlers.pullReservation; //http://localhost:3000/pullReservations
 handle["/SearchReservations"] = EditrequestHandlers.SearchReservations; //http://localhost:3000/SearchReservations
 handle["/UpdateReservations"] = EditrequestHandlers.UpdateReservations; //http://localhost:3000/UpdateReservations
 handle["/DeleteReservations"] = EditrequestHandlers.DeleteReservations; //http://localhost:3000/DeleteReservations

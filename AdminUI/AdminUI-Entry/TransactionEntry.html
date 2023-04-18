@@ -3,14 +3,24 @@
     <head>
         <title>Transactions Entry</title>
         <style>
-            table {
+            body{
+			background-image: url("/public/test11.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			}
+			table {
                 border-collapse: collapse;
                 border: 2px solid #75443c;
                 width: 50%;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				margin:auto;
+    
             }
     
             th, td {
                 text-align: center;
+				margin:auto;
                 padding-top: 4px;
                 padding-bottom: 4px;
                 border-bottom: 2px solid #75443c;
@@ -26,12 +36,60 @@
                 background-color: #ce796b;
                 color: white
             }
-            select {
+            select,input{
                 background-color: #ecc8af;
                 color: black;
                 border: 1px #ecc8af;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				text-align: center;
             }
+			input[type="submit"]{
+				background-color: #ce796b;
+				color: white;
+				border: 2px solid #75443c;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				border-radius: 20px;
+				cursor: pointer;
+				margin:auto;
+				font-size: 22px;
+			}
+			h1{
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+			}
+			fieldset{
+				border: none;
+			}
+			legend{
+				font-size: 1.2em;
+				font-weight: bold;
+				color: white;
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 100;
+				font-size: 50px;
+			}
+			form{
+				text-align: center;
+			}
+			td[type = "head"]{
+				text-align: center;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                border-bottom: 2px solid #75443c;
+                border-right: 2px solid #75443c;
+                background-color: #ce796b;
+				color: white;
+			}
+			input::placeholder {
+			text-align: center;
+			}
             .oldReservation {
+                display: none;
+            }
+            .requireBID {
                 display: none;
             }
         </style>
@@ -41,35 +99,81 @@
         <h1>Transaction Entry Form</h1>
 
         <div class="newTransaction">
-            <button onclick="pullReservation()">Search from Reservations</button>
+            <button type="button" onclick="pullReservation()">Search from Reservations</button>
         </div>
         <div class="oldReservation">
-            <button onclick="createTransaction()">Create new Transaction</button>
+            <button type="button" onclick="createTransaction()">Create new Transaction</button>
         </div>
         
         <br><br><br><br>
 
         <div class="newTransaction">
             <form action="/insertTransaction" method="post" id="transactionForm">
-                <input type="submit" value="submit" form="transactionForm">
+                <input type="submit" value="Submit" form="transactionForm">
                 <br>
+                <label for="BID">Borrower ID:</label><br>  
                 <input type="text" id="BID" name="BID" placeholder="Enter the Borrower's ID..." required>
                 <br>
                 <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
-                <input type="text" id="itemType" name="itemType" placeholder="Enter the Item Type..." required>
-                <input type="text" id="itemName" name="itemName" placeholder="Enter the Item Name..." required>
+                <select id="itemType" name="itemType" required>
+                    <option value="Book">Book</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Media">Media</option>
+                    <option value="Object">Object</option>
+                </select>
             </form>
         </div>
 
         <div class="oldReservation">
-            <!-- <form action="/addItem" method="post" form="searchReservations">
+            <form onsubmit="rSearchManager(event)" method="post" id="searchReservations">
                 <input type="submit" value="Submit" form="searchReservations"><br><br>
                 <label for="BID">Borrower ID:</label><br>            
                 <input type="text" id="BID" name="BID" placeholder="Enter Reserver's ID..."><br><br>
-            </form> -->
+            </form>
+            <table id="ReservationTable">
+                <thead>
+                    <tr>
+                        <th>Reservation Num</th>
+                        <th>Creation Date</th>
+                        <th>Expiration Date</th>
+                        <th>Created By</th>
+                        <th>Updated By</th>
+                        <th>Faculty ID</th>
+                        <th>Student ID</th>
+                        <th>Guest ID</th>
+                        <th>Book ID</th>
+                        <th>Electronics ID</th>
+                        <th>Media ID</th>
+                        <th>Hold position</th>
+                    </tr>
+                </thead>
+                <tbody id="ReservationTableBody">
+                </tbody>
+            </table>
+
+            <div class="requireBID">
+                <form action="/rTot" method="post" id="itemCheckin">
+                    <input hidden id="BIDCopy" name="BIDCopy">
+                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
+                    <select id="damages" name="damages">
+                        <option value="0">False</option>
+                        <option value="1">True</option>
+                    </select>
+                    <select id="itemType" name="itemType" required>
+                        <option value="Book">Book</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Media">Media</option>
+                        <option value="Object">Object</option>
+                    </select>
+                    <input type="submit" value="submit" form="itemCheckin">
+                </form>
+            </div>
+            
         </div>
 
-        <!-- <script>
+        
+
+        <script>
             // Hide all elements that create a transaction from scratch...
             // ...reveal all elements that create a transaction from a reservation!
             function pullReservation() {
@@ -94,6 +198,71 @@
                     y[i].style.display = "none";
                 }
             }
-        </script> -->
+        </script>
+        <script type="text/javascript">
+            function rSearchManager(event) {
+                event.preventDefault(); // prevent the default form submission behavior
+
+                const form = document.getElementById('searchReservations');
+                const formData = new FormData(form);
+                const xhr = new XMLHttpRequest();
+
+                for(const value of formData.values()) {
+                    document.getElementById("BIDCopy").value = value;
+                }
+
+                xhr.open('POST', 'pullReservation');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(new URLSearchParams(formData).toString());
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('Form submission successful!');
+                        let responseData = [];
+                        responseData = JSON.parse(xhr.responseText);
+                        console.log(responseData);
+                        const table = document.getElementById("ReservationTableBody");
+                        
+                        responseData.forEach(Reservation => {
+                            console.log(Reservation);
+                            const row = table.insertRow();
+                            const ReservationNum = row.insertCell();
+                            ReservationNum.innerText = Reservation.Reservation_Num;
+                            const Creation_Date = row.insertCell();
+                            Creation_Date.innerText = Reservation.Creation_Date;
+                            const Expiration_Date = row.insertCell();
+                            Expiration_Date.innerText = Reservation.Expiration_Date;
+                            const Created_By = row.insertCell();
+                            Created_By.innerText = Reservation.Created_By;
+                            const Updated_By = row.insertCell();
+                            Updated_By.innerText = Reservation.Updated_By;
+                            const Faculty_ID = row.insertCell();
+                            Faculty_ID.innerText = Reservation.Faculty_ID;
+                            const StudentID = row.insertCell();
+                            StudentID.innerText = Reservation.StudentID;
+                            const GuestID = row.insertCell();
+                            GuestID.innerText = Reservation.GuestID;
+                            const Book_ID = row.insertCell();
+                            Book_ID.innerText = Reservation.Book_ID;
+                            const Electronics_ID = row.insertCell();
+                            Electronics_ID.innerText = Reservation.Electronics_ID;
+                            const Media_ID = row.insertCell();
+                            Media_ID.innerText = Reservation.Media_ID;
+                            const holdPosition = row.insertCell();
+                            holdPosition.innerText = Reservation.holdPosition;
+
+                            table.appendChild(row);
+                        }); 
+                    } else {
+                        console.error('Form submission failed.');
+                    }
+                    
+                };
+                var x = document.getElementsByClassName("requireBID");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "Block";
+                }
+            }
+        </script>
     </body>
 </html>
