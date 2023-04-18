@@ -1314,7 +1314,7 @@ function insertTransaction(response, postData) {
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000004', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES ('00000000010', @BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
 
 
         var available = 0;
@@ -1440,7 +1440,7 @@ function checkInItem(response, postData) {
         req.input('dateReturned', sql.Date, dateReturned);        
 
         var checkInQuery = "UPDATE Transactions SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE ";
-        var damageQuery = "SELECT Dollar_Value FROM table WHERE id=@itemID;"; // Assign this to a variable if damages=1
+        var damageQuery = "SELECT Dollar_Value FROM ";
         // var feeQuery = "UPDATE table SET Balance=oldBalance+damages WHERE id=@BID;";
         var availQuery = "";
         var updateQuery = "";
@@ -1450,24 +1450,6 @@ function checkInItem(response, postData) {
         // Next, go back to insertTransaction and finish the item update query
         // Come back and write the item update query for that
         // Finally, write some code to calculate late fees
-
-
-        if (damages === 1) {
-            switch (itemType) {
-                case 'Book':
-                    damageQuery += "Book WHERE ISBN=@itemID;";
-                    break;
-                case 'Electronics':
-                    damageQuery += "Electronics WHERE Serial_No=@itemID;";
-                    break;
-                case 'Media':
-                    damageQuery += "Media WHERE Media_ID=@itemID;";
-                    break;
-                case 'Object':
-                    damageQuery += "[Object] WHERE Object_ID=@itemID;";
-                    break;
-            }
-        }
 
         switch (itemType) {
             case 'Book':
@@ -1528,8 +1510,36 @@ function checkInItem(response, postData) {
                 break;
         }
 
-        //send query
-        console.log(checkInQuery);
+        if (damages === "1") {
+            req.query(damageQuery).then(function(recordset) {
+                var cost = recordset.recordsets[0][0].Dollar_Value;
+                console.log(cost);
+                req.input('cost', sql.Int, cost);
+
+                var chargeQuery = "";
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        chargeQuery += "UPDATE Guest SET Balance=@cost WHERE GuestID=@BID;";
+                        break;
+                    case 'S':
+                        chargeQuery += "UPDATE Students SET Balance=@cost WHERE StudentID=@BID;";
+                        break;
+                    case 'F':
+                        chargeQuery += "UPDATE Faculty SET Balance=@cost WHERE Faculty_ID=@BID;";
+                        break;
+                }
+                req.query(chargeQuery).then(function(recordset) {
+                    console.log("Account Charged");
+                }).catch(function(err) {
+                    console.error("error");
+                    console.log(err);
+                });
+            }).catch(function(err) {
+                console.error("error");
+                console.log(err);
+            });
+        }
+
         req.query(checkInQuery).then(function(recordset) {
             console.log("Check In Successful.");
             response.write("Check In Successful.");

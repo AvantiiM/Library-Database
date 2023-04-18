@@ -83,6 +83,9 @@
                 background-color: #ce796b;
 				color: white;
 			}
+            .requireBID{
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -119,7 +122,7 @@
             <br><br>
         </div>
         
-        <div style="overflow-x: auto;">
+        <div class="requireBID" style="overflow-x: auto;">
             <!-- Create another form that will be revealed after the first one is submitted. Request for the item ID and the type of item -->
             <form action="/checkInItem" method="post" id="itemCheckin">
                 <input hidden id="BIDCopy" name="BIDCopy">
@@ -204,6 +207,10 @@
                         console.error('Form submission failed.');
                     }
                 };
+                var x = document.getElementsByClassName("requireBID");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "Block";
+                }
             }
         </script>
     </body>
