@@ -116,6 +116,10 @@ handle["/AdminSGuest"] = requestHandlers.AdminSGuest; //http://localhost:3000/Ad
 handle["/AdminSStudents"] = requestHandlers.AdminSStudents; //http://localhost:3000/AdminSStudents
 
 handle['/TransactionPeriods'] = requestHandlersReport.TransactionPeriods; //http://localhost:3000/TransactionPeriods
+handle['/TransactionStatusBooks'] = requestHandlersReport.TransactionStatusBooks; //http://localhost:3000/TransactionStatusBooks
+handle['/TransactionStatusElectronics'] = requestHandlersReport.TransactionStatusElectronics; //http://localhost:3000/TransactionStatusElectronics
+handle['/TransactionStatusMedia'] = requestHandlersReport.TransactionStatusMedia; //http://localhost:3000/TransactionStatusMedia
+handle['/TransactionStatusObjects'] = requestHandlersReport.TransactionStatusObjects; //http://localhost:3000/TransactionStatusObjects
 handle['/TransactionPeriodsBalance'] = requestHandlersReport.TransactionPeriodsBalance; //http://localhost:3000/TransactionperiodsBalance
 
 handle['/SuspendedStudents'] = requestHandlersReport.SuspendedStudents; //http://localhost:3000/SuspendedStudents
