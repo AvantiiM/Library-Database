@@ -1809,8 +1809,8 @@ try{
         console.log("New admin user entry will be viewed in the database.");
         
         if(recordset.recordsets.length > 0) {
-            console.log("Found " + recordset.recordsets.length + " records");
-            console.log(recordset);
+            // console.log("Found " + recordset.recordsets.length + " records");
+            // console.log(recordset);
             const resultArray = recordset.recordsets[0];     
             response.writeHead(200, {"Content-Type": "application/json"});
             response.write(JSON.stringify(resultArray));

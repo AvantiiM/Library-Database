@@ -126,7 +126,8 @@ function getInfo(response, postData, sessionData){
 
     // send the response back to the client
     response.writeHead(200, {"Content-Type": "text/html"});
-    response.write("<p>User ID: " + userId + "</p>");
+    // response.write("<p>User ID: " + userId + "</p>");
+    response.write(JSON.stringify(userId));
     response.end();
     // let firstN;
     // let lastN;
