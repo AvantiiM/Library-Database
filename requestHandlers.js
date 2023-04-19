@@ -1379,7 +1379,7 @@ function insertTransaction(response, postData) {
                 req.query(limitQueryTwo).then(function (recordset) {
                     reserved = recordset.recordsets[0][0].Count;
 
-                    console.log("Borrowed / Reserved out of Limit: " + borrowed + " / " + reserved + " out of " + itemLimit);
+                    console.log("Borrowed / Reserved: " + borrowed + " / " + reserved);
 
                     var total = borrowed + reserved;
                     if (total < itemLimit) {
@@ -1390,9 +1390,6 @@ function insertTransaction(response, postData) {
                             console.log(err);
                         });
 
-                        
-
-                        
                         console.log("Transaction Completed.");
                         response.write("Transaction Completed.");
                         response.end();
@@ -1481,9 +1478,11 @@ function checkInItem(response, postData) {
         req.input('damages', sql.Int, damages);
         req.input('dateReturned', sql.Date, dateReturned);        
 
-        var checkInQuery = "UPDATE Transactions SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=0, Damage_Fees=@damages WHERE ";
+        var checkInOne = "UPDATE Transactions SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=";
+        var checkInTwo = ", Damage_Fees=@damages WHERE Active_Void_Status=1 AND ";
         var damageQuery = "SELECT Dollar_Value FROM ";
         var availQuery = "SELECT ";
+        var lateQuery = "SELECT Return_Due_Date FROM Transactions WHERE Active_Void_Status=1 AND ";
 
         // Finally, write some code to calculate late fees
 
@@ -1491,60 +1490,76 @@ function checkInItem(response, postData) {
             case 'Book':
                 damageQuery += "Book WHERE ISBN=@itemID;";
                 availQuery += "Num_of_Copies FROM Book WHERE ISBN=@itemID;";
+                lateQuery += "Book_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInQuery += "GuestID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Book_ID=@itemID;";
+                        lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInQuery += "StudentID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Book_ID=@itemID;";
+                        lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInQuery += "Faculty_ID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Book_ID=@itemID;";
+                        lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
                 break;
             case 'Electronics':
                 damageQuery += "Electronics WHERE Serial_No=@itemID;";
                 availQuery += "Available FROM Electronics WHERE Serial_No=@itemID;";
+                lateQuery += "Electronics_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInQuery += "GuestID=@BID AND Electronics_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Electronics_ID=@itemID;";
+                        lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInQuery += "StudentID=@BID AND Electronics_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Electronics_ID=@itemID;";
+                        lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInQuery += "Faculty_ID=@BID AND Electronics_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Electronics_ID=@itemID;";
+                        lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
                 break;
             case 'Media':
                 damageQuery += "Media WHERE Media_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM Media WHERE Media_ID=@itemID;";
+                lateQuery += "Media_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInQuery += "GuestID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Media_ID=@itemID;";
+                        lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInQuery += "StudentID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Media_ID=@itemID;";
+                        lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInQuery += "Faculty_ID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Media_ID=@itemID;";
+                        lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
                 break;
             case 'Object':
                 damageQuery += "[Object] WHERE Object_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM [Object] WHERE Object_ID=@itemID;";
+                lateQuery += "Object_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInQuery += "GuestID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Object_ID=@itemID;";
+                        lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInQuery += "StudentID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Object_ID=@itemID;";
+                        lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInQuery += "Faculty_ID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Object_ID=@itemID;";
+                        lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
                 break;
@@ -1653,11 +1668,71 @@ function checkInItem(response, postData) {
             });
         }
 
+        req.query(lateQuery).then(function(recordset) {
+            var dueDate = recordset.recordsets[0][0].Return_Due_Date;
+            if (dateReturned > dueDate) {
+                const _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-        req.query(checkInQuery).then(function(recordset) {
-            console.log("Check In Successful.");
-            response.write("Check In Successful.");
-            response.end();
+                var daysLate = Math.floor((dateReturned - dueDate) / _MS_PER_DAY);
+
+                req.input('lateFee', sql.Int, daysLate);
+                var checkInQuery = checkInOne + "@lateFee" + checkInTwo;
+                
+                req.query(checkInQuery).then(function(recordset) {
+                    console.log("Check In Successful.");
+                    response.write("Check In Successful.");
+                    response.end();
+                }).catch(function(err) {
+                    console.error("error");
+                    console.log(err);
+                });
+
+                // Charge account
+                var chargeQuery = "";
+                var oldBalQuery = "SELECT Balance FROM "
+                switch (BID.charAt(0)) {
+                    case 'G':
+                        chargeQuery += "UPDATE Guest SET Balance=@cost WHERE GuestID=@BID;";
+                        oldBalQuery += "Guest WHERE GuestID=@BID;";
+                        break;
+                    case 'S':
+                        chargeQuery += "UPDATE Students SET Balance=@cost WHERE StudentID=@BID;";
+                        oldBalQuery += "Students WHERE StudentID=@BID;";
+                        break;
+                    case 'F':
+                        chargeQuery += "UPDATE Faculty SET Balance=@cost WHERE Faculty_ID=@BID;";
+                        oldBalQuery += "Faculty WHERE Faculty_ID=@BID;";
+                        break;
+                }
+                req.query(oldBalQuery).then(function(recordset) {
+                    var oldBalance = recordset.recordsets[0][0].Balance;
+                    console.log("Old Balance: " + oldBalance);
+
+                    var cost = oldBalance + daysLate;
+                    req.input('cost', sql.Int, cost);
+                    
+                    req.query(chargeQuery).then(function(recordset) {
+                        console.log("Account Charged");
+                    }).catch(function(err) {
+                        console.error("error");
+                        console.log(err);
+                    });
+                }).catch(function(err) {
+                    console.error("error");
+                    console.log(err);
+                });
+            } else {
+                var checkInQuery = checkInOne + "0" + checkInTwo;
+
+                req.query(checkInQuery).then(function(recordset) {
+                    console.log("Check In Successful.");
+                    response.write("Check In Successful.");
+                    response.end();
+                }).catch(function(err) {
+                    console.error("error");
+                    console.log(err);
+                });
+            }
         }).catch(function(err) {
             console.error("error");
             console.log(err);
@@ -1728,7 +1803,6 @@ function rTot(response, postData) {
         var querystring = require('querystring');
         var params = querystring.parse(postData);
 
-        // grab data from reservation table and convert into a transaction while also closing reservation. ez
         var BID = params['BIDCopy'];
         var itemID = params['itemID'];
         var itemType = params['itemType'];
@@ -1812,6 +1886,7 @@ function rTot(response, postData) {
         console.log(BID, itemType, itemID);
         console.log(insertQuery);
         console.log(updateQuery);
+
         // use insertQuery to insert transaction
         req.query(insertQuery).then(function(recordset) {
             console.log("Converting Reservation to Transaction.");
