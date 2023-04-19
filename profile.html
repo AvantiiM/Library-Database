@@ -34,12 +34,26 @@
 
 <!-- <body  onload="infoGetter()"> -->
     <body onload="loadData()">
-        <script src="requestHandlers.js"></script>
+        <script src="requestHandlers.js"> type="text/javascript"</script>
         <script>
             function loadData() {
-                var infoString = getInfo();
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/getInfo', true);
+                xhr.onload = function () {
+                if (xhr.status === 200) {
+                    document.getElementById("insert").innerHTML = xhr.responseText;
+                } else {
+                    console.error(xhr.statusText);
+                }
+                };
+                xhr.onerror = function () {
+                console.error('An error occurred while making the request.');
+                };
+                xhr.send();
+
                 // var infoString = "2106674"
-                document.getElementById("insert").innerHTML = infoString;
+                // document.getElementById("insert").innerHTML = infoString;
             }
 
             fetch("memberUI")
