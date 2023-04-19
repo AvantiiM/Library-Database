@@ -130,6 +130,7 @@ function getInfo(response, postData, sessionData){
     let balance;
     console.log(sessionData.logginId)
     sql.connect(config).then(function() {
+        return sessionData.logginId;
       var username = sessionData.logginId;
       var req = new sql.Request();
       req.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
@@ -140,6 +141,8 @@ function getInfo(response, postData, sessionData){
           var guest = recordset.recordsets[0][0].GuestID;
         }
         if(faculty != null){
+            console.log("This is the Faculty ID called: " + faculty)
+            return faculty;
             req.query("SELECT FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
             
             if (recordset.recordsets[0].length > 0) { 
@@ -166,6 +169,7 @@ function getInfo(response, postData, sessionData){
             }
           })
         }else if(stud != null){
+            return stud;
             req.query("SELECT FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
                 firstN = recordset.recordsets[0][0].FirstN;
@@ -191,6 +195,7 @@ function getInfo(response, postData, sessionData){
           })
         }
         else if(guest != null){
+            return guest;
             req.query("SELECT FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
             // console.log(result);
             if (recordset.recordsets[0].length > 0) { 

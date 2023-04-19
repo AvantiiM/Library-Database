@@ -7,7 +7,7 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <style>
 
-            label 
+            .label 
             {
                 font-size: 27px;
                 display: block;
@@ -19,7 +19,7 @@
 
             }
 
-            label-2{
+            .label-2{
                 display: block;
                 width: 700px;
                 border-collapse: separate;
@@ -32,23 +32,33 @@
         </style>
 </head>
 
-<body onload="getInfo()">
-    <script>
-        fetch("memberUI")
-            .then(response => {
-                return response.text()
-            })
-            .then(data => {
-                document.querySelector("header").innerHTML = data;
-            });    
-    </script>
-    <header></header>
+<!-- <body  onload="infoGetter()"> -->
+    <body onload="loadData()">
+        <script src="requestHandlers.js"></script>
+        <script>
+            function loadData() {
+                var infoString = getInfo();
+                // var infoString = "2106674"
+                document.getElementById("insert").innerHTML = infoString;
+            }
 
-    <div style="position: relative; margin-top: 200px; border-radius: 5px; padding: 15px 30%;">
-        <h1>
-            <center>User Profile</center>
-        </h1>
-    </div>
+            fetch("memberUI")
+                .then(response => {
+                    return response.text()
+                })
+                .then(data => {
+                    document.querySelector("header").innerHTML = data;
+                });
+
+        </script>
+
+        <header></header>
+
+        <div style="position: relative; margin-top: 200px; border-radius: 5px; padding: 15px 30%;">
+            <h1>
+                <center>User Profile</center>
+            </h1>
+        </div>
             <!-- <thead>
                 <h3 style="color: rgb(61, 11, 241)">
                     <center><b><u>Book Reservations</u></b></center>
@@ -63,52 +73,57 @@
                     <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
                 </tr>
             </thead> -->
-    <div style="padding: 15px 5%;">
-        <table class="table table-striped">
-                <label-2>             
-                    <label for="fullname"> Fullname: Brendan Timberlake<span id="fullName"></span></label> 
-                    <label for="email"> Email: Brendanskyt@gmail.com<span id="email"></span> </label> 
-                    <label for="id"> ID: 2107764<span id="ID"></span> </label> 
-                    <label for="major"> Major: Computer Science<span id="dep"></span> </label> 
-                    <label for="balance"> Balance: $1.57<span id="balance"></span> </label> 
-                </label-2>  
-            <tbody id="bookTable"></tbody>
-            
-            <script>
-                var myArray;
-                function getBookReservations(btn, isbn) {
-                    $.ajax({
-                        url: '/bookReservations',
-                        success: function (response) {
-                            console.log(response)
-                            myArray = response
-                            console.log(myArray)
-                            buildBookTable(response)
-                        },
-                        error: function (xhr, status, error) {
-                            console.log(xhr.responseText);
-                        }
-                    });
-                }
-                function buildBookTable(data) {
-                    var tbody = $('#bookTable');
-                    tbody.empty();
-                    $.each(data, function (index, row) {
-                        var tr = $('<tr>');
-                        tr.append('<td>' + row.Reservation_Num + '</td>');
-                        tr.append('<td>' + row.Book_Name + '</td>');
-                        tr.append('<td>' + row.Author + '</td>');
-                        tr.append('<td>' + row.Book_ID + '</td>');
-                        tr.append('<td>' + row.Creation_Date + '</td>');
-                        tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBookReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
-                        tbody.append(tr);
-                    });
-                }
-            </script>
+        <div style="padding: 15px 5%;">
+            <table class="table table-striped">
+                    <div class="label-2">
+                        <div class="label">Test: <span id="insert"></span></div>            
+                        <!-- <label for="fullname"> Fullname: Brendan Timberlake<span id="fullName"></span></label> 
+                        <label for="email"> Email: Brendanskyt@gmail.com<span id="email"></span> </label> 
+                        <label for="id"> ID: 2107764<span id="ID"></span> </label> 
+                        <label for="major"> Major: Computer Science<span id="dep"></span> </label> 
+                        <label for="balance"> Balance: $1.57<span id="balance"></span> </label>  -->
+                        </div>  
+                <tbody id="bookTable"></tbody>
+                
+                <script src="requestHandlers.js" type="text/javascript">
+                    // function infoGetter(){
+                        // var infoString = getInfo();
+                        
+                        // var myArray;
+                        // function getBookReservations(btn, isbn) {
+                        //     $.ajax({
+                        //         url: '/bookReservations',
+                        //         success: function (response) {
+                        //             console.log(response)
+                        //             myArray = response
+                        //             console.log(myArray)
+                        //             buildBookTable(response)
+                        //         },
+                        //         error: function (xhr, status, error) {
+                        //             console.log(xhr.responseText);
+                        //         }
+                        //     });
+                        // }
+                        // function buildBookTable(data) {
+                        //     var tbody = $('#bookTable');
+                        //     tbody.empty();
+                        //     $.each(data, function (index, row) {
+                        //         var tr = $('<tr>');
+                        //         tr.append('<td>' + row.Reservation_Num + '</td>');
+                        //         tr.append('<td>' + row.Book_Name + '</td>');
+                        //         tr.append('<td>' + row.Author + '</td>');
+                        //         tr.append('<td>' + row.Book_ID + '</td>');
+                        //         tr.append('<td>' + row.Creation_Date + '</td>');
+                        //         tr.append('<td>' + row.holdPosition + '</td>');
+                        //         tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBookReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        //         tbody.append(tr);
+                        //     });
+                        // }
+                    // }
+                </script>
 
-        </table>
-    </div>
-</body>
+            </table>
+        </div>
+    </body>
 
 </html>
