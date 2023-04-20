@@ -42,6 +42,38 @@
                 xhr.open('GET', '/getInfo', true);
                 xhr.onload = function () {
                 if (xhr.status === 200) {
+                    const valArray = JSON.parse(xhr.responseText);
+                    var middleN = "";
+                    if(valArray[0].MiddleN.length > 0){
+                        middleN = valArray[0].MiddleN + " "
+                    }
+                    var fullName = valArray[0].FirstN + " " + middleN + valArray[0].LastN;
+                    var email;
+                    if(valArray[0].Email.length > 0){
+                        email = "Email: " + valArray[0].Email;
+                    }
+                    
+                    var ident = valArray[0].Faculty_ID;
+
+                    var department;
+                    if(ident.charAt(0) === 'F'){
+                        department = "Department: " + valArray[0].Department;
+                    }
+                    else if(ident.charAt(0) === 'S'){
+                        department = "Major: " + valArray[0].Major;
+                    }
+                    else{
+                        department = "";
+                    }
+                    var balance = "$" + valArray[0].Balance + ".00";
+                    
+                    console.log("This is the fullname: " + fullName)
+                    document.getElementById("fullName").innerHTML = fullName;
+                    document.getElementById("email").innerHTML = email;
+                    document.getElementById("ID").innerHTML = ident;
+                    document.getElementById("dep").innerHTML = department;
+                    document.getElementById("balance").innerHTML = balance;
+
                     document.getElementById("insert").innerHTML = xhr.responseText;
                 } else {
                     console.error(xhr.statusText);
@@ -89,55 +121,14 @@
             </thead> -->
         <div style="padding: 15px 5%;">
             <table class="table table-striped">
-                    <div class="label-2">
-                        <div class="label">Test: <span id="insert"></span></div>            
-                        <!-- <label for="fullname"> Fullname: Brendan Timberlake<span id="fullName"></span></label> 
-                        <label for="email"> Email: Brendanskyt@gmail.com<span id="email"></span> </label> 
-                        <label for="id"> ID: 2107764<span id="ID"></span> </label> 
-                        <label for="major"> Major: Computer Science<span id="dep"></span> </label> 
-                        <label for="balance"> Balance: $1.57<span id="balance"></span> </label>  -->
-                        </div>  
-                <tbody id="bookTable"></tbody>
-                
-                <script src="requestHandlers.js" type="text/javascript">
-                    // function infoGetter(){
-                        // var infoString = getInfo();
-                        
-                        // var myArray;
-                        // function getBookReservations(btn, isbn) {
-                        //     $.ajax({
-                        //         url: '/bookReservations',
-                        //         success: function (response) {
-                        //             console.log(response)
-                        //             myArray = response
-                        //             console.log(myArray)
-                        //             buildBookTable(response)
-                        //         },
-                        //         error: function (xhr, status, error) {
-                        //             console.log(xhr.responseText);
-                        //         }
-                        //     });
-                        // }
-                        // function buildBookTable(data) {
-                        //     var tbody = $('#bookTable');
-                        //     tbody.empty();
-                        //     $.each(data, function (index, row) {
-                        //         var tr = $('<tr>');
-                        //         tr.append('<td>' + row.Reservation_Num + '</td>');
-                        //         tr.append('<td>' + row.Book_Name + '</td>');
-                        //         tr.append('<td>' + row.Author + '</td>');
-                        //         tr.append('<td>' + row.Book_ID + '</td>');
-                        //         tr.append('<td>' + row.Creation_Date + '</td>');
-                        //         tr.append('<td>' + row.holdPosition + '</td>');
-                        //         tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBookReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
-                        //         tbody.append(tr);
-                        //     });
-                        // }
-                    // }
-                </script>
-
+                <div class="label-2">            
+                    <div class="label" for="fullname"> Fullname: <span id="fullName"></span></div> 
+                    <div class="label" for="email"><span id="email"></span> </div> 
+                    <div class="label" for="id"> ID: <span id="ID"></span> </div> 
+                    <div class="label" for="major"><span id="dep"></span> </div> 
+                    <div class="label" for="balance"> Balance: <span id="balance"></span> </div> 
+                </div>    
             </table>
         </div>
     </body>
-
 </html>
