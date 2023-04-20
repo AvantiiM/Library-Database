@@ -53,16 +53,19 @@
                         email = "Email: " + valArray[0].Email;
                     }
                     
-                    var ident = valArray[0].Faculty_ID;
-
+                    
+                    var ident;
                     var department;
                     if(ident.charAt(0) === 'F'){
+                        ident = valArray[0].Faculty_ID;
                         department = "Department: " + valArray[0].Department;
                     }
                     else if(ident.charAt(0) === 'S'){
+                        ident = valArray[0].StudentID;
                         department = "Major: " + valArray[0].Major;
                     }
                     else{
+                        ident = valArray[0].GuestID;
                         department = "";
                     }
                     var balance = "$" + valArray[0].Balance + ".00";

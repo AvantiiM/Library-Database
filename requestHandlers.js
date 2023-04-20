@@ -195,7 +195,7 @@ function getInfo(response, postData, sessionData){
           })
         }
         else if(guest != null){
-            req.query("SELECT Guest_ID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
+            req.query("SELECT GuestID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
             // console.log(result);
             if (recordset.recordsets[0].length > 0) { 
 
