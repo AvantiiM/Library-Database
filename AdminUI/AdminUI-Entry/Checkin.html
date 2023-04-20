@@ -83,6 +83,9 @@
                 background-color: #ce796b;
 				color: white;
 			}
+            .requireBID{
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -96,7 +99,7 @@
             <table id="TransactionTable">
                 <thead>
                     <tr>
-                        <th>Receipt Num</th>
+                        <th>Reciept Num</th>
                         <th>Creation Date</th>
                         <th>Due Date</th>
                         <th>Date Returned</th>
@@ -111,23 +114,28 @@
                         <th>Electronics ID</th>
                         <th>Media ID</th>
                         <th>Active/Void Status</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="TransactionTableBody">
                 </tbody>
             </table>
             <br><br>
-            <p id="demo"></p>
-            
-            <!-- Create another form that will be revealed after the first one is submitted.
-                 Request for the item ID and the type of item -->
-            <form id="itemCheckin">
-                <input hidden id="BIDCopy" name="BID">
+        </div>
+        
+        <div class="requireBID" style="overflow-x: auto;">
+            <!-- Create another form that will be revealed after the first one is submitted. Request for the item ID and the type of item -->
+            <form action="/checkInItem" method="post" id="itemCheckin">
+                <input hidden id="BIDCopy" name="BIDCopy">
                 <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
-                <select id="Damages" name="Damages">
+                <select id="damages" name="damages">
                     <option value="0">False</option>
                     <option value="1">True</option>
+                </select>
+                <select id="itemType" name="itemType" required>
+                    <option value="Book">Book</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Media">Media</option>
+                    <option value="Object">Object</option>
                 </select>
                 <input type="submit" value="submit" form="itemCheckin">
             </form>
@@ -142,7 +150,7 @@
                 const formData = new FormData(form);
                 const xhr = new XMLHttpRequest();
 
-                // This will give me the BID from the previous form!!!!!!
+                // This will give me the BID from the previous form!
                 for(const value of formData.values()) {
                     document.getElementById("BIDCopy").value = value;
                 }
@@ -159,57 +167,50 @@
                         console.log(responseData);
                         const table = document.getElementById("TransactionTableBody");
                         
-                        responseData.forEach(Reservation => {
-                            console.log(Reservation);
+                        responseData.forEach(Transaction => {
+                            console.log(Transaction);
                             const row = table.insertRow();
-                            const Receipt_Num = row.insertCell();
-                            Receipt_Num.innerText = Reservation.Receipt_Num;
+                            const Reciept_Num = row.insertCell();
+                            Reciept_Num.innerText = Transaction.Reciept_Num;
                             const Creation_Date = row.insertCell();
-                            Creation_Date.innerText = Reservation.Creation_Date;
+                            Creation_Date.innerText = Transaction.Creation_Date;
                             const Return_Due_Date = row.insertCell();
-                            Return_Due_Date.innerText = Reservation.Return_Due_Date;
+                            Return_Due_Date.innerText = Transaction.Return_Due_Date;
                             const Actual_Return_Date = row.insertCell();
-                            Actual_Return_Date.innerText = Reservation.Actual_Return_Date;
+                            Actual_Return_Date.innerText = Transaction.Actual_Return_Date;
                             const Late_Fees = row.insertCell();
-                            Late_Fees.innerText = Reservation.Late_Fees;
+                            Late_Fees.innerText = Transaction.Late_Fees;
                             const Damage_Fees = row.insertCell();
-                            Damage_Fees.innerText = Reservation.Damage_Fees;
+                            Damage_Fees.innerText = Transaction.Damage_Fees;
                             const Created_By = row.insertCell();
-                            Created_By.innerText = Reservation.Created_By;
+                            Created_By.innerText = Transaction.Created_By;
                             const Updated_By = row.insertCell();
-                            Updated_By.innerText = Reservation.Updated_By;
+                            Updated_By.innerText = Transaction.Updated_By;
                             const Faculty_ID = row.insertCell();
-                            Faculty_ID.innerText = Reservation.Faculty_ID;
+                            Faculty_ID.innerText = Transaction.Faculty_ID;
                             const StudentID = row.insertCell();
-                            StudentID.innerText = Reservation.StudentID;
+                            StudentID.innerText = Transaction.StudentID;
                             const GuestID = row.insertCell();
-                            GuestID.innerText = Reservation.GuestID;
+                            GuestID.innerText = Transaction.GuestID;
                             const Book_ID = row.insertCell();
-                            Book_ID.innerText = Reservation.Book_ID;
+                            Book_ID.innerText = Transaction.Book_ID;
                             const Electronics_ID = row.insertCell();
-                            Electronics_ID.innerText = Reservation.Electronics_ID;
+                            Electronics_ID.innerText = Transaction.Electronics_ID;
                             const Media_ID = row.insertCell();
-                            Media_ID.innerText = Reservation.Media_ID;
+                            Media_ID.innerText = Transaction.Media_ID;
                             const Active_Void_Status = row.insertCell();
-                            Active_Void_Status.innerText = Reservation.Active_Void_Status;
+                            Active_Void_Status.innerText = Transaction.Active_Void_Status;
 
-                            // Create the cell for the edit and delete buttons
-                            const actionsCell = row.insertCell();
-
-                            // Create the edit button
-                            const checkInButton = document.createElement("button");
-                            checkInButton.innerText = "Check In";
-                            checkInButton.className = "CheckIn-btn"
-                            // addButton.addEventListener("click", () => {
-                            //     console.log("WIP");
-                            // });
-                            actionsCell.appendChild(checkInButton);
                             table.appendChild(row);
                         }); 
                     } else {
                         console.error('Form submission failed.');
                     }
                 };
+                var x = document.getElementsByClassName("requireBID");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "Block";
+                }
             }
         </script>
     </body>

@@ -89,6 +89,9 @@
             .oldReservation {
                 display: none;
             }
+            .requireBID {
+                display: none;
+            }
         </style>
     </head>
 
@@ -142,13 +145,30 @@
                         <th>Electronics ID</th>
                         <th>Media ID</th>
                         <th>Hold position</th>
-                        <th>Active/Void Status</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="ReservationTableBody">
                 </tbody>
             </table>
+
+            <div class="requireBID">
+                <form action="/rTot" method="post" id="itemCheckin">
+                    <input hidden id="BIDCopy" name="BIDCopy">
+                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
+                    <select id="damages" name="damages">
+                        <option value="0">False</option>
+                        <option value="1">True</option>
+                    </select>
+                    <select id="itemType" name="itemType" required>
+                        <option value="Book">Book</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Media">Media</option>
+                        <option value="Object">Object</option>
+                    </select>
+                    <input type="submit" value="submit" form="itemCheckin">
+                </form>
+            </div>
+            
         </div>
 
         
@@ -186,6 +206,10 @@
                 const form = document.getElementById('searchReservations');
                 const formData = new FormData(form);
                 const xhr = new XMLHttpRequest();
+
+                for(const value of formData.values()) {
+                    document.getElementById("BIDCopy").value = value;
+                }
 
                 xhr.open('POST', 'pullReservation');
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -226,26 +250,18 @@
                             Media_ID.innerText = Reservation.Media_ID;
                             const holdPosition = row.insertCell();
                             holdPosition.innerText = Reservation.holdPosition;
-                            const Active_Void_Status = row.insertCell();
-                            Active_Void_Status.innerText = Reservation.Active_Void_Status;
 
-                            // Create the cell for the edit and delete buttons
-                            const actionsCell = row.insertCell();
-
-                            // Create the edit button
-                            const checkInButton = document.createElement("button");
-                            checkInButton.innerText = "Check In";
-                            checkInButton.className = "CheckIn-btn"
-                            // addButton.addEventListener("click", () => {
-                            //     console.log("WIP");
-                            // });
-                            actionsCell.appendChild(checkInButton);
                             table.appendChild(row);
                         }); 
                     } else {
                         console.error('Form submission failed.');
                     }
+                    
                 };
+                var x = document.getElementsByClassName("requireBID");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "Block";
+                }
             }
         </script>
     </body>

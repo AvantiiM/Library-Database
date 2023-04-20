@@ -87,6 +87,13 @@
 			display: block;
 			width: 99%;
 		}
+		.form-group input[type=month] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			margin: 0 auto;
+		}
 		.save-btn{
 			font-family: 'Open Sans', sans-serif;
 			font-weight: 100;
@@ -140,33 +147,312 @@
 		cursor: pointer;
 		outline: inherit;
 		}
+		label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+			text-align: center;
+		}
 	</style>
 	<script type = "text/javascript">
 		function ModificationManager(event) {
 			event.preventDefault(); // prevent the default form submission behavior
-
-
 			// get form from data
 			const form = document.getElementById('searchForm');
 			const formData = new FormData(form);
-		
-			const monthField = formData.get('Month').trim();
-				if (!monthField) {
-					formData.set('Month', '4');
+			const xhr = new XMLHttpRequest();
+			xhr.open('POST', 'TransactionStatusBooks');
+			const totaltable = document.getElementById('TotalsTable');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(new URLSearchParams(formData).toString());	
+			const bookIDs = new Set();
+			const distinctBooks = document.getElementById("DistinctBooks");
+			const DLBooks = new Set();
+			const dlBooks = document.getElementById("DamagedLostBooks");
+			var CBooks = 0;
+			const CostBooks = document.getElementById("CostBooks");
+			distinctBooks.textContent = 0;
+			dlBooks.textContent = 0;
+			CostBooks.textContent = 0;
+			xhr.onload = function(){
+				if (xhr.status === 200){
+					let responseData = [];
+					responseData = JSON.parse(xhr.responseText);
+					//console.log(responseData[0].Reciept_num);
+					const table = document.getElementById('TransactionsTableBook');
+					responseData.forEach(function(record) {
+						const row = document.createElement('tr');
+						const itemIDCell = document.createElement('td');
+						const itemNameCell = document.createElement('td');
+						const transactionIDCell = document.createElement('td');
+						const costCell = document.createElement('td');
+						const dateCell = document.createElement('td');
+						itemIDCell.textContent = record.Book_ID;
+						itemNameCell.textContent = record.Book_Name;
+						transactionIDCell.textContent = record.Reciept_num;
+						costCell.textContent = record.Dollar_Value;
+						dateCell.textContent = record.Creation_Date;
+
+						bookIDs.add(record.Book_ID);
+						distinctBooks.textContent = bookIDs.size;
+						DLBooks.add(record.Reciept_num);
+						dlBooks.textContent = DLBooks.size;
+						CBooks = CBooks + record.Dollar_Value;
+						CostBooks.textContent = CBooks;
+
+						row.appendChild(itemIDCell);
+						row.appendChild(itemNameCell);
+						row.appendChild(transactionIDCell);
+						row.appendChild(costCell);
+						row.appendChild(dateCell);
+						table.appendChild(row);
+					});
 				}
+			}
+			const xhr2 = new XMLHttpRequest();
+			xhr2.open('POST', 'TransactionStatusObjects');
+			xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr2.send(new URLSearchParams(formData).toString());
+			const objectIDs = new Set();
+			const distinctObjects = document.getElementById("DistinctObjects");
+			const DLObjects = new Set();
+			const dlObjects = document.getElementById("DamagedLostObjects");
+			var CObjects = 0;
+			const CostObjects = document.getElementById("CostObjects");
+			distinctObjects.textContent = 0;
+			dlObjects.textContent = 0;
+			CostObjects.textContent = 0;
+			xhr2.onload = function(){
+					if (xhr2.status === 200){
+						let responseData = [];
+						responseData = JSON.parse(xhr2.responseText);
+						//console.log(responseData[0].Reciept_num);
+						const table = document.getElementById('TransactionsTableObject');
+						responseData.forEach(function(record) {
+							const row = document.createElement('tr');
+							const itemIDCell = document.createElement('td');
+							const itemNameCell = document.createElement('td');
+							const transactionIDCell = document.createElement('td');
+							const costCell = document.createElement('td');
+							const dateCell = document.createElement('td');
+
+							itemIDCell.textContent = record.Object_ID;
+							itemNameCell.textContent = record.Object_Name;
+							transactionIDCell.textContent = record.Reciept_num;
+							costCell.textContent = record.Dollar_Value;
+							dateCell.textContent = record.Creation_Date;
+
+							objectIDs.add(record.Object_ID);
+							distinctObjects.textContent = objectIDs.size;
+							DLObjects.add(record.Reciept_num);
+							dlObjects.textContent = DLObjects.size;
+							CObjects = CObjects + record.Dollar_Value;
+							CostObjects.textContent = CObjects;
+
+							row.appendChild(itemIDCell);
+							row.appendChild(itemNameCell);
+							row.appendChild(transactionIDCell);
+							row.appendChild(costCell);
+							row.appendChild(dateCell);
+							table.appendChild(row);
+						});
+					}
+			}
+			const xhr3 = new XMLHttpRequest();
+			xhr3.open('POST', 'TransactionStatusElectronics');
+			xhr3.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr3.send(new URLSearchParams(formData).toString());
+			const electronicsIDs = new Set();
+			const distinctElectronics = document.getElementById("DistinctElectronics");
+			const DLElectronics = new Set();
+			const dlElectronics = document.getElementById("DamagedLostElectronics");
+			var CElectronics = 0;
+			const CostElectronics = document.getElementById("CostElectronics");
+			distinctElectronics.textContent = 0;
+			dlElectronics.textContent = 0;
+			CostElectronics.textContent = 0;
+			xhr3.onload = function(){
+					if (xhr3.status === 200){
+						let responseData = [];
+						responseData = JSON.parse(xhr3.responseText);
+						//console.log(responseData[0].Reciept_num);
+						const table = document.getElementById('TransactionsTableElectronics');
+						responseData.forEach(function(record) {
+							const row = document.createElement('tr');
+							const itemIDCell = document.createElement('td');
+							const itemNameCell = document.createElement('td');
+							const transactionIDCell = document.createElement('td');
+							const costCell = document.createElement('td');
+							const dateCell = document.createElement('td');
+
+							itemIDCell.textContent = record.Electronics_ID;
+							itemNameCell.textContent = record.Electronics_Name;
+							transactionIDCell.textContent = record.Reciept_num;
+							costCell.textContent = record.Dollar_Value;
+							dateCell.textContent = record.Creation_Date;
+
+							electronicsIDs.add(record.Electronics_ID);
+							distinctElectronics.textContent = electronicsIDs.size;
+							DLElectronics.add(record.Reciept_num);
+							dlElectronics.textContent = DLElectronics.size;
+							CElectronics = CElectronics + record.Dollar_Value;
+							CostElectronics.textContent = CElectronics;
+
+							row.appendChild(itemIDCell);
+							row.appendChild(itemNameCell);
+							row.appendChild(transactionIDCell);
+							row.appendChild(costCell);
+							row.appendChild(dateCell);
+							table.appendChild(row);
+						});
+					}
+			}
+			xhr4 = new XMLHttpRequest();
+			xhr4.open('POST', 'TransactionStatusMedia');
+			xhr4.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr4.send(new URLSearchParams(formData).toString());
+			const mediaIDs = new Set();
+			const distinctMedia = document.getElementById("DistinctMedia");
+			const DLMedia = new Set();
+			const dlMedia = document.getElementById("DamagedLostMedia");
+			var CMedia = 0;
+			const CostMedia = document.getElementById("CostMedia");
+			distinctMedia.textContent = 0;
+			dlMedia.textContent = 0;
+			CostMedia.textContent = 0;
+			xhr4.onload = function(){
+					if (xhr4.status === 200){
+						let responseData = [];
+						responseData = JSON.parse(xhr4.responseText);
+						//console.log(responseData[0].Reciept_num);
+						const table = document.getElementById('TransactionsTableMedia');
+						responseData.forEach(function(record) {
+							const row = document.createElement('tr');
+							const itemIDCell = document.createElement('td');
+							const itemNameCell = document.createElement('td');
+							const transactionIDCell = document.createElement('td');
+							const costCell = document.createElement('td');
+							const dateCell = document.createElement('td');
+
+							itemIDCell.textContent = record.Media_ID;
+							itemNameCell.textContent = record.Media_Name;
+							transactionIDCell.textContent = record.Reciept_num;
+							costCell.textContent = record.Dollar_Value;
+							dateCell.textContent = record.Creation_Date;
+
+							mediaIDs.add(record.Media_ID);
+							distinctMedia.textContent = mediaIDs.size;
+							DLMedia.add(record.Reciept_num);
+							dlMedia.textContent = DLMedia.size;
+							CMedia = CMedia + record.Dollar_Value;
+							CostMedia.textContent = CMedia;
+
+							row.appendChild(itemIDCell);
+							row.appendChild(itemNameCell);
+							row.appendChild(transactionIDCell);
+							row.appendChild(costCell);
+							row.appendChild(dateCell);
+							table.appendChild(row);
+						});
+					}
+			}
 		}
 	</script>
     <body>
 		<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
-			<div class="form-group">
+			<label for ="temp">This is a Report for all Transactions with items that have been damaged or lost</label>
+			<div class="form-group" id = "temp">
 				<label for="Month">Month:</label>
-				<input type="text" id="Month" name="Month" placeholder="Enter Month number...">
-			</div>
-			<div class="form-group">
-				<label for="Year">Year:</label>
-				<input type="text" id="Year" name="Year" placeholder="Enter Year...">
+				<input type="month" id="Month" name="Month" required>
 			</div>
 			<input type="submit" value="Generate Report" id="searchBtn">
 		</form>
+		<br></br>
+		<label for = "TransactionsTableBook">Book Transactions Table</label>
+		<table id="TransactionsTableBook">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<label for = "TransactionsTableObject">Object Transactions Table</label>
+		<table id="TransactionsTableObject">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<label for = "TransactionsTableElectronics">Electronics Transactions Table</label>
+		<table id="TransactionsTableElectronics">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<label for = "TransactionsTableMedia">Media Transactions Table</label>
+		<table id="TransactionsTableMedia">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<table id = "TotalsTable">
+			<thead>
+				<th>Total</th>
+				<th>Distinct Books</th>
+				<th>Damaged/Lost Books</th>
+				<th>Cost of Books</th>
+				<th>Distinct Objects</th>
+				<th>Damaged/Lost Objects</th>
+				<th>Cost of Objects</th>
+				<th>Distinct Electronics</th>
+				<th>Damaged/Lost Electronics</th>
+				<th>Cost of Electronics</th>
+				<th>Distinct Media</th>
+				<th>Damaged/Lost Media</th>
+				<th>Cost of Media</th>
+			</thead>
+			<tr>
+				<td id = "Total"></td>
+				<td id = "DistinctBooks"></td>
+				<td id = "DamagedLostBooks"></td>
+				<td id = "CostBooks"></td>
+				<td id = "DistinctObjects"></td>
+				<td id = "DamagedLostObjects"></td>
+				<td id = "CostObjects"></td>
+				<td id = "DistinctElectronics"></td>
+				<td id = "DamagedLostElectronics"></td>
+				<td id = "CostElectronics"></td>
+				<td id = "DistinctMedia"></td>
+				<td id = "DamagedLostMedia"></td>
+				<td id = "CostMedia"></td>
+			</tr>
+		</table>
     </body>
 </html>
