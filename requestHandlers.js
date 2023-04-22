@@ -1833,14 +1833,14 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Guest_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                     case 'Media':
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Guest_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                 }
@@ -1852,7 +1852,7 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Student_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 5;
                         break;
@@ -1868,7 +1868,7 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Student_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 5;
                         break;
