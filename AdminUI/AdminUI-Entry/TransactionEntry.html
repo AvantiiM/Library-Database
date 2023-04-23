@@ -152,20 +152,15 @@
                 <br>
                 <form action="/rTot" method="post" id="itemCheckin">
                     <input hidden id="BIDCopy" name="BIDCopy">
-                    <label for="itemID">Item ID:</label>
-                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required><br>
-                    <label for="damages">Lost/Damaged:</label>
-                    <select id="damages" name="damages">
-                        <option value="0">False</option>
-                        <option value="1">True</option>
-                    </select>
                     <label for="itemType">Type of item:</label>
                     <select id="itemType" name="itemType" required>
                         <option value="Book">Book</option>
                         <option value="Electronics">Electronics</option>
                         <option value="Media">Media</option>
                         <option value="Object">Object</option>
-                    </select> <br>
+                    </select>
+                    <label for="itemID">Item ID:</label>
+                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required><br>
                     <input type="submit" value="submit" form="itemCheckin">
                 </form>
             </div>
