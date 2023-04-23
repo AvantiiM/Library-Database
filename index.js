@@ -135,6 +135,9 @@ handle['/SuspendedStudents'] = requestHandlersReport.SuspendedStudents; //http:/
 handle['/SuspendedFaculty'] = requestHandlersReport.SuspendedFaculty; //http://localhost:3000/SuspendedFaculty
 handle['/SuspendedGuests'] = requestHandlersReport.SuspendedGuests; //http://localhost:3000/SuspendedGuests
 
+handle['/AdminReportLateFee'] = requestHandlers.AdminReportLateFee; //http://localhost:3000/AdminReportLateFees
+handle['/TransactionStatusLate'] = requestHandlersReport.TransactionStatusLate; //http://localhost:3000/TransactionStatusLate
+
 server.start(router.route, handle);
 
 

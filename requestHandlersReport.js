@@ -218,31 +218,6 @@ function MaxReportSum(response, postData) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Available BOOKS ###################################################################################################################################################################################################################################################
 
 
@@ -565,6 +540,46 @@ function TransactionStatusBooks(response, postData) {
 }
 )};
 
+function TransactionStatusLate(response, postData) {
+    sql.connect(config).then(function() {
+        var req = new sql.Request();
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var answer = params['Month'];
+        var year = answer.substring(0, 4);
+        var month = answer.substring(5, 7);
+        console.log(year);
+        console.log(month);
+
+        query1 = `       
+            SELECT *
+            FROM Transactions t 
+            LEFT JOIN Students s ON t.StudentID = s.StudentID
+            LEFT JOIN Faculty f ON t.Faculty_ID = f.Faculty_ID
+            LEFT JOIN Guest g ON t.GuestID = g.GuestID
+            WHERE t.Late_Fees > 0 AND MONTH(Creation_Date) = ${month} AND YEAR(Creation_Date) = ${year};`
+
+        req.query(query1).then(function (recordset){
+            console.log("Late Fee transaction Found")
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                console.log(recordset);
+                const resultArray = recordset.recordsets[0]; // concatenate the two arrays
+                response.writeHead(200, { "Content-Type": "application/json" });
+                response.write(JSON.stringify(resultArray));
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        })
+    }
+)};
+
 function TransactionStatusObjects(response, postData) {
     sql.connect(config).then(function() {
       var req = new sql.Request();
@@ -716,3 +731,4 @@ function TransactionStatusMedia(response, postData) {
     exports.TransactionStatusElectronics = TransactionStatusElectronics;
     exports.TransactionStatusMedia = TransactionStatusMedia;
     exports.TransactionStatusObjects = TransactionStatusObjects;
+    exports.TransactionStatusLate = TransactionStatusLate;
