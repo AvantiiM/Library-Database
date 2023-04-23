@@ -121,17 +121,8 @@ function sendEJSFile(response, filename, msgtxt) {
 function getInfo(response, postData, sessionData){
     var req = new sql.Request();
     req.input('userId', sql.NVarChar, sessionData.logginId);
-
-    let firstN;
-    let lastN;
-    let middleN;
-    let fullName;
-    let email;
-    let dep;
-    let balance;
     console.log(sessionData.logginId)
     sql.connect(config).then(function() {
-    
       var username = sessionData.logginId;
       var req = new sql.Request();
       req.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
@@ -145,7 +136,6 @@ function getInfo(response, postData, sessionData){
             console.log("This is the Faculty ID called: " + faculty)
             req.query("SELECT Faculty_ID, FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -155,23 +145,12 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = recordset.recordsets[0][0].MiddleN;
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // dep = recordset.recordsets[0][0].Department;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
         }else if(stud != null){
-            
             req.query("SELECT Student_ID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -181,15 +160,6 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // major = recordset.recordsets[0][0].Major;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
@@ -198,7 +168,6 @@ function getInfo(response, postData, sessionData){
             req.query("SELECT GuestID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
             // console.log(result);
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -208,14 +177,6 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
@@ -224,7 +185,6 @@ function getInfo(response, postData, sessionData){
             console.log('Error');
             return;
         }
-      
         })
     });
 }
