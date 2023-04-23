@@ -168,7 +168,6 @@
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xhr.send(new URLSearchParams(formData).toString());	
 			const objectIDs = new Set();
-			const distinctBooks = document.getElementById("DistinctBooks");
 			const DLItems = new Set();
 			const dlBooks = document.getElementById("DamagedLostBooks");
 			const CostBooks = document.getElementById("CostBooks");
@@ -183,6 +182,7 @@
 					const table = document.getElementById('TransactionsTableFee');
 					responseData.forEach(function(record) {
 						const row = document.createElement('tr');
+
 						const member_ID = document.createElement('td');
 						const fullName = document.createElement('td');
 						const Transaction_ID = document.createElement('td');
@@ -191,6 +191,7 @@
             const Balance = document.createElement('td');
             const Creation_Date = document.createElement('td');
             const Return_Date = document.createElement('td');
+
             if(record.MiddleN.length > 0){
               middleN = record.MiddleN + " "
             }
@@ -235,12 +236,7 @@
 		<label for = "TransactionsTableFee">Members with late Fees</label>
 		<table id="TransactionsTableFee">
 			<thead>
-				<tr>
-          // member ID, transactions ID, Item ID, and the Late Fee
-          // and then u can create a Totals table at the bottom
-          // add a column for creation date and maybe the expected return date as well
-          
-          
+				<tr>         
 					<th>member_ID</th>
           <th>fullName</th>
 					<th>Transaction_ID</th>

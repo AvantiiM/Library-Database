@@ -557,12 +557,6 @@ function TransactionStatusLate(response, postData) {
 
         req.query(query1).then(function (result, recordset){
             console.log("Late Fee transaction Found")
-            if (recordset && recordset.recordsets && recordset.recordsets.length > 0) {
-                console.log("Found " + recordset.recordsets.length + " records");
-                console.log(recordset);
-        
-                // rest of the code
-
             if (recordset.recordsets.length > 0) {
                 console.log("Found " + recordset.recordsets.length + " records");
                 console.log(recordset);
@@ -609,8 +603,6 @@ function TransactionStatusLate(response, postData) {
                 console.log("No records found")
                 response.write("No records found");
             }
-        }
-        
         }).catch(function (err) {
             console.error("error");
             console.log(err);
