@@ -381,7 +381,7 @@ function addItem(response, postData, sessionData) {
             });
               break;
             case 'Book':
-              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre) VALUES (@itemID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre)";
+              queryStr = "INSERT INTO Book (ISBN, Book_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Author, Publisher_Name, Published_Date, Num_of_Copies, Language, Genre, Total_Num_of_Copies) VALUES (@itemID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @Author, @Publisher, @PDate, @NCopies, @Language, @Genre, @NCopies)";
               req.query(queryStr).then(function(recordset) {
                 console.log("Book entry inserted into database.");
                 var fdata = fs.readFileSync('AdminUI/AdminUI-Entry/BookEntry.html');
@@ -409,7 +409,7 @@ function addItem(response, postData, sessionData) {
             case 'Media':
                 function insertMediaQuery(req, tempMID) {
                     req.input('tempMID', sql.NVarChar, tempMID);
-                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @MType, @Author, @Publisher, @PDate, @NCopies)";
+                    queryStr = "INSERT INTO Media (Media_ID, Media_Name, Updated_Date, Created_By, Created_Date, Updated_By, Dollar_Value, Media_Type, Author, Publisher_Name, Published_Date, Num_of_Copies, Total_Num_of_Copies) VALUES (@tempMID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @MType, @Author, @Publisher, @PDate, @NCopies, @NCopies)";
                     req.query(queryStr).then(function (recordset) {
                         console.log("Media entry inserted into database.");
                         var edata = fs.readFileSync('AdminUI/AdminUI-Entry/MediaEntry.html');
@@ -439,7 +439,7 @@ function addItem(response, postData, sessionData) {
             case 'Object':
                     function insertObjectQuery(req, tempOID){
                         req.input('tempOID', sql.NVarChar, tempOID);
-                        queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @NCopies)"
+                        queryStr = "INSERT INTO Object (Object_ID, Object_Name, Last_Updated, Created_BY, Created_date, Updated_BY, Dollar_Value, Num_of_Copies, Total_Num_of_Copies) VALUES (@tempOID, @itemName, getdate(), @userID, getdate(), @userID, @DValue, @NCopies, @NCopies)";
                         req.query(queryStr).then(function(recordset) {
                             console.log("Object entry inserted into database.");
                             var edata = fs.readFileSync('AdminUI/AdminUI-Entry/ObjectEntry.html');
@@ -1492,8 +1492,6 @@ function checkInItem(response, postData) {
         var availQuery = "SELECT ";
         var lateQuery = "SELECT Return_Due_Date FROM Transactions WHERE Active_Void_Status=1 AND ";
 
-        // Finally, write some code to calculate late fees
-
         switch (itemType) {
             case 'Book':
                 damageQuery += "Book WHERE ISBN=@itemID;";
@@ -1767,10 +1765,10 @@ function pullReservation(response, postData) {
 
         switch (BID.charAt(0)) {
             case 'G':
-                query += "GuestID=";
+                query += "Guest_ID=";
                 break;
             case 'S':
-                query += "StudentID=";
+                query += "Student_ID=";
                 break;
             case 'F':
                 query += "Faculty_ID=";
@@ -1821,8 +1819,11 @@ function rTot(response, postData) {
         const DAYSOFWEEK = 7;
         let returnDate = new Date();
 
-        insertQuery = "INSERT INTO Transactions (";
-        updateQuery = "UPDATE Reservation SET Active_Void_Status=0 WHERE "
+        var insertQuery = "INSERT INTO Transactions (";
+        var updateQuery = "UPDATE Reservation SET Active_Void_Status=0 WHERE "
+        var holdQuery = "";
+        var positionQuery = "SELECT Reservation_Num FROM Reservation WHERE ";
+
         switch (BID.charAt(0)) {
             case 'G':
                 insertQuery += "GuestID, ";
@@ -1832,11 +1833,15 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Guest_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                     case 'Media':
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Guest_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                 }
                 break;
@@ -1847,18 +1852,24 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Student_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 5;
                         break;
                     case 'Electronics':
                         returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
                         insertQuery += "Electronics_ID, ";
                         updateQuery += "Electronics_ID=@itemID AND Student_ID=@BID;";
+                        holdQuery += "SELECT TOP 1 Reservation_Num FROM Reservation WHERE Electronics_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Electronics_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 1;
                         break;
                     case 'Media':
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Student_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 5;
                         break;
                 }
@@ -1870,18 +1881,24 @@ function rTot(response, postData) {
                         returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Faculty_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;
                     case 'Electronics':
                         returnDate.setDate(new Date().getDate() + 4 * DAYSOFWEEK);
                         insertQuery += "Electronics_ID, ";
                         updateQuery += "Electronics_ID=@itemID AND Faculty_ID=@BID;";
+                        holdQuery += "SELECT TOP 1 Reservation_Num FROM Reservation WHERE Electronics_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Electronics_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 5;
                         break;
                     case 'Media':
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Faculty_ID=@BID;";
+                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;
                 }
@@ -1891,25 +1908,47 @@ function rTot(response, postData) {
         req.input('returnDate', sql.Date, returnDate);
         insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
 
-        console.log(BID, itemType, itemID);
-        console.log(insertQuery);
-        console.log(updateQuery);
-
-        // use insertQuery to insert transaction
-        req.query(insertQuery).then(function(recordset) {
+        req.query(holdQuery).then(function(recordset) {
             console.log("Converting Reservation to Transaction.");
+            req.query(positionQuery).then(function(rs) {
+
+                console.log(recordset.recordsets[0]);
+                console.log(rs.recordsets[0][0]);
+
+                var holdPosition = rs.recordsets[0][0].Reservation_Num;
+
+                for (var i = 0; i < recordset.recordsets[0].length; i++) {
+                    console.log(recordset.recordsets[0][i])
+                    if (recordset.recordsets[0][i].Reservation_Num === holdPosition) {
+
+                        // use insertQuery to insert transaction
+                        req.query(insertQuery).then(function(recordset) {
+                            console.log("Converting Reservation to Transaction.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+
+                        // use updateQuery to update/close reservation
+                        req.query(updateQuery).then(function(recordset) {
+                            console.log("Closing Reservation.");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        });
+                        break;
+                    }
+                }
+
+            }).catch(function(err) {
+                console.error("error");
+                console.log(err);
+            });
         }).catch(function(err) {
             console.error("error");
             console.log(err);
         });
 
-        // use updateQuery to update/close reservation
-        req.query(updateQuery).then(function(recordset) {
-            console.log("Closing Reservation.");
-        }).catch(function(err) {
-            console.error("error");
-            console.log(err);
-        });
         console.log("Check out Successful");
         response.write("Check out Successful");
         response.end();
