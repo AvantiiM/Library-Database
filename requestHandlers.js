@@ -1209,21 +1209,21 @@ function insertTransaction(response, postData, sessionData) {
                 case 'Book':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                     insertQuery += "Book_ID, ";
-                    availQuery += "Num_of_Copies FROM Book WHERE @itemID=ISBN;";
+                    availQuery += "Num_of_Copies FROM Book WHERE ISBN=@itemID;";
                     limitQueryOne += "Book WHERE GuestID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     limitQueryTwo += "Book WHERE GuestID=@BID AND Active_Void_Status=1 AND Book_ID=ISBN;";
                     break;
                 case 'Media':
                     returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                     insertQuery += "Media_ID, ";
-                    availQuery += "Num_of_Copies FROM Media WHERE @itemID=Media_ID;";
+                    availQuery += "Num_of_Copies FROM Media WHERE Media_ID=@itemID;";
                     limitQueryOne += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     limitQueryTwo += "Media WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Media_ID=Media.Media_ID;";
                     break;
                 case 'Object':
                     returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
                     insertQuery += "Object_ID, ";
-                    availQuery += "Num_of_Copies FROM [Object] WHERE @itemID=Object_ID;";
+                    availQuery += "Num_of_Copies FROM [Object] WHERE Object_ID=@itemID;";
                     limitQueryOne += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     limitQueryTwo += "[Object] WHERE GuestID=@BID AND Active_Void_Status=1 AND Transactions.Object_ID=Object.Object_ID;";
                     break;
@@ -1496,15 +1496,15 @@ function checkInItem(response, postData, sessionData) {
                 lateQuery += "Book_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInTwo += "GuestID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Book_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Book_ID=@itemID AND GuestID=@BID);";
                         lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInTwo += "StudentID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Book_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Book_ID=@itemID AND StudentID=@BID);";
                         lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInTwo += "Faculty_ID=@BID AND Book_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Book_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Book_ID=@itemID AND Faculty_ID=@BID);";
                         lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
@@ -1534,15 +1534,15 @@ function checkInItem(response, postData, sessionData) {
                 lateQuery += "Media_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInTwo += "GuestID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Media_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Media_ID=@itemID AND GuestID=@BID);";
                         lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInTwo += "StudentID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Media_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Media_ID=@itemID AND StudentID=@BID);;";
                         lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInTwo += "Faculty_ID=@BID AND Media_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Media_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Media_ID=@itemID AND Faculty_ID=@BID);;";
                         lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
@@ -1553,15 +1553,15 @@ function checkInItem(response, postData, sessionData) {
                 lateQuery += "Object_ID=@itemID AND ";
                 switch (BID.charAt(0)) {
                     case 'G':
-                        checkInTwo += "GuestID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "GuestID=@BID AND Object_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Object_ID=@itemID AND GuestID=@BID);;";
                         lateQuery += "GuestID=@BID;";
                         break;
                     case 'S':
-                        checkInTwo += "StudentID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "StudentID=@BID AND Object_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Object_ID=@itemID AND StudentID=@BID);;";
                         lateQuery += "StudentID=@BID;";
                         break;
                     case 'F':
-                        checkInTwo += "Faculty_ID=@BID AND Object_ID=@itemID;";
+                        checkInTwo += "Faculty_ID=@BID AND Object_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Object_ID=@itemID AND Faculty_ID=@BID);;";
                         lateQuery += "Faculty_ID=@BID;";
                         break;
                 }
@@ -1810,6 +1810,12 @@ function rTot(response, postData, sessionData) {
         var itemID = params['itemID'];
         var itemType = params['itemType'];
 
+        console.log(BID);
+
+        if (itemID !== undefined) {
+            itemID = itemID.trim();
+        }
+
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
         req.input('userId', sql.NVarChar, sessionData.logginId);
@@ -1851,7 +1857,7 @@ function rTot(response, postData, sessionData) {
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Student_ID=@BID;";
                         holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
-                        positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
+                        positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 5;
                         break;
                     case 'Electronics':
@@ -1904,10 +1910,11 @@ function rTot(response, postData, sessionData) {
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, @userId, @userId);";
 
         req.query(holdQuery).then(function(recordset) {
             console.log("Converting Reservation to Transaction.");
+            console.log(positionQuery);
             req.query(positionQuery).then(function(rs) {
 
                 console.log(recordset.recordsets[0]);
@@ -1922,6 +1929,9 @@ function rTot(response, postData, sessionData) {
                         // use insertQuery to insert transaction
                         req.query(insertQuery).then(function(recordset) {
                             console.log("Converting Reservation to Transaction.");
+                            console.log("Check out Successful");
+                            response.write("Check out Successful");
+                            response.end();
                         }).catch(function(err) {
                             console.error("error");
                             console.log(err);
@@ -1947,9 +1957,6 @@ function rTot(response, postData, sessionData) {
             console.log(err);
         });
 
-        console.log("Check out Successful");
-        response.write("Check out Successful");
-        response.end();
     }).catch(function(err) {
         console.error("Unable to get a DB connection");
         console.log(err);

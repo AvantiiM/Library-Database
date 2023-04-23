@@ -253,7 +253,7 @@ function AvailableBooks(response, postData) {
     sql.connect(config).then(function () {
         var req = new sql.Request();
         try {
-            const query = "SELECT * FROM dbo.book WHERE  Num_of_copies > 1;";
+            const query = "SELECT B.*, STUFF(( SELECT ', ' + CAST(Reciept_num AS VARCHAR(10)) FROM Transactions T WHERE T.Book_ID = B.ISBN AND T.Actual_Return_Date IS NULL FOR XML PATH('')), 1, 2, '') AS Receipt_Numbers FROM Book B WHERE B.Num_of_Copies > 0;";
 
             req.query(query).then(function (recordset) {
                 console.log("New admin user entry will be viewed in the database.");
