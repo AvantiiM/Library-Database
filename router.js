@@ -12,6 +12,9 @@ function route(handle, pathname, response, postData, userData) {
         case '/electronicReserve':
         case '/addLogin':
         case '/getInfo':
+        case '/insertTransaction':
+        case '/checkInItem':
+        case '/rTot':
         case '/UpdateBook':
         case '/bookTransactions': 
         case '/mediaTransactions':
