@@ -183,15 +183,6 @@
 					const table = document.getElementById('TransactionsTableFee');
 					responseData.forEach(function(record) {
 						const row = document.createElement('tr');
-
-          // <th>member_ID</th>
-          // <th>fullName</th>
-					// <th>Transaction_ID</th>
-					// <th>Item_ID</th>
-					// <th>Late_Fee</th>
-					// <th>Balance</th>
-          // <th>Creation_Date</th>
-          // <th>Return_Date</th>
 						const member_ID = document.createElement('td');
 						const fullName = document.createElement('td');
 						const Transaction_ID = document.createElement('td');
@@ -203,9 +194,8 @@
             if(record.MiddleN.length > 0){
               middleN = record.MiddleN + " "
             }
-            member_ID.textContent = record.Faculty_ID || record.StudentID || record.GuestID;
             fullName.textContent = record.FirstN + " " + middleN + record.LastN;
-
+            member_ID.textContent = record.Faculty_ID || record.StudentID || record.GuestID;
 						Transaction_ID.textContent = record.Reciept_num;
 						Item_ID.textContent = record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID;
 						Late_Fee.textContent = record.Late_Fees;
@@ -263,76 +253,5 @@
 			</thead>
 		</table>
 		<br></br>
-		<!-- <label for = "TransactionsTableObject">Object Transactions Table</label>
-		<table id="TransactionsTableObject">
-			<thead>
-				<tr>
-					<th>Item_ID</th>
-					<th>Item_Name</th>
-					<th>Transaction_ID</th>
-					<th>Cost of Damaged/Lost Item</th>
-					<th>Creation_Date</th>
-				</tr>
-			</thead>
-		</table>
-		<br></br>
-		<label for = "TransactionsTableElectronics">Electronics Transactions Table</label>
-		<table id="TransactionsTableElectronics">
-			<thead>
-				<tr>
-					<th>Item_ID</th>
-					<th>Item_Name</th>
-					<th>Transaction_ID</th>
-					<th>Cost of Damaged/Lost Item</th>
-					<th>Creation_Date</th>
-				</tr>
-			</thead>
-		</table>
-		<br></br>
-		<label for = "TransactionsTableMedia">Media Transactions Table</label>
-		<table id="TransactionsTableMedia">
-			<thead>
-				<tr>
-					<th>Item_ID</th>
-					<th>Item_Name</th>
-					<th>Transaction_ID</th>
-					<th>Cost of Damaged/Lost Item</th>
-					<th>Creation_Date</th>
-				</tr>
-			</thead> -->
-		<!-- </table> -->
-		<!-- <br></br>
-		<table id = "TotalsTable">
-			<thead>
-				<th>Total</th>
-				<th>Distinct Books</th>
-				<th>Damaged/Lost Books</th>
-				<th>Cost of Books</th>
-				<th>Distinct Objects</th>
-				<th>Damaged/Lost Objects</th>
-				<th>Cost of Objects</th>
-				<th>Distinct Electronics</th>
-				<th>Damaged/Lost Electronics</th>
-				<th>Cost of Electronics</th>
-				<th>Distinct Media</th>
-				<th>Damaged/Lost Media</th>
-				<th>Cost of Media</th>
-			</thead>
-			<tr>
-				<td id = "Total"></td>
-				<td id = "DistinctBooks"></td>
-				<td id = "DamagedLostBooks"></td>
-				<td id = "CostBooks"></td>
-				<td id = "DistinctObjects"></td>
-				<td id = "DamagedLostObjects"></td>
-				<td id = "CostObjects"></td>
-				<td id = "DistinctElectronics"></td>
-				<td id = "DamagedLostElectronics"></td>
-				<td id = "CostElectronics"></td>
-				<td id = "DistinctMedia"></td>
-				<td id = "DamagedLostMedia"></td>
-				<td id = "CostMedia"></td>
-			</tr>
-		</table> -->
     </body>
 </html>
