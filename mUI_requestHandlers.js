@@ -238,7 +238,7 @@ function bookReserve(response, postData, sessionData) {
                                     console.log("Available Copies: " + availCopies);
                                     if (availCopies > 0) {
 
-                                        queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Expiration_Date, Up Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
+                                        queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Expiration_Date, Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
                                         switch (firstChar) {
                                             case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @isbn, 0, 1, @userId)"; break;
                                             case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @isbn, 0, 1, @userId)"; break;
