@@ -47,14 +47,14 @@
                     if(valArray[0].MiddleN.length > 0){
                         middleN = valArray[0].MiddleN + " "
                     }
-                    var fullName = valArray[0].FirstN + " " + middleN + valArray[0].LastN;
+                    var fullName = "Fullname: " + valArray[0].FirstN + " " + middleN + valArray[0].LastN;
                     var email;
                     if(valArray[0].Email.length > 0){
                         email = "Email: " + valArray[0].Email;
                     }
                     
                     
-                    var ident = valArray[0].Faculty_ID || valArray[0].StudentID || valArray[0].GuestID;
+                    var ident = "ID: " + valArray[0].Faculty_ID || valArray[0].StudentID || valArray[0].GuestID;
                     var department;
                     if(ident.charAt(0) === 'F'){
                         department = "Department: " + valArray[0].Department;
@@ -65,7 +65,7 @@
                     else{
                         department = "";
                     }
-                    var balance = "$" + valArray[0].Balance + ".00";
+                    var balance = "Balance: $" + valArray[0].Balance + ".00";
                     
                     console.log("This is the fullname: " + fullName)
                     document.getElementById("fullName").innerHTML = fullName;
@@ -119,11 +119,11 @@
         <div style="padding: 15px 5%;">
             <table class="table table-striped">
                 <div class="label-2">            
-                    <div class="label" for="fullname"> Fullname: <span id="fullName"></span></div> 
+                    <div class="label" for="fullname"><span id="fullName"></span></div> 
                     <div class="label" for="email"><span id="email"></span> </div> 
-                    <div class="label" for="id"> ID: <span id="ID"></span> </div> 
+                    <div class="label" for="id"><span id="ID"></span> </div> 
                     <div class="label" for="major"><span id="dep"></span> </div> 
-                    <div class="label" for="balance"> Balance: <span id="balance"></span> </div> 
+                    <div class="label" for="balance"><span id="balance"></span> </div> 
                 </div>    
             </table>
         </div>
