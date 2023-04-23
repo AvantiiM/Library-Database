@@ -1457,12 +1457,14 @@ function checkInItem(response, postData, sessionData) {
         var damageQuery = "SELECT Dollar_Value FROM ";
         var availQuery = "SELECT ";
         var lateQuery = "SELECT Return_Due_Date FROM Transactions WHERE Active_Void_Status=1 AND ";
+        var holdQuery = "SELECT holdPosition FROM Reservation WHERE holdPosition>0 AND Active_Void_Status=1 AND ";
 
         switch (itemType) {
             case 'Book':
                 damageQuery += "Book WHERE ISBN=@itemID;";
                 availQuery += "Num_of_Copies FROM Book WHERE ISBN=@itemID;";
                 lateQuery += "Book_ID=@itemID AND ";
+                holdQuery += "Book_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Book_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Book_ID=@itemID AND GuestID=@BID);";
@@ -1501,6 +1503,7 @@ function checkInItem(response, postData, sessionData) {
                 damageQuery += "Media WHERE Media_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM Media WHERE Media_ID=@itemID;";
                 lateQuery += "Media_ID=@itemID AND ";
+                holdQuery += "Media_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Media_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Media_ID=@itemID AND GuestID=@BID);";
@@ -1520,6 +1523,7 @@ function checkInItem(response, postData, sessionData) {
                 damageQuery += "[Object] WHERE Object_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM [Object] WHERE Object_ID=@itemID;";
                 lateQuery += "Object_ID=@itemID AND ";
+                holdQuery += "Object_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Object_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Object_ID=@itemID AND GuestID=@BID);;";
@@ -1544,55 +1548,77 @@ function checkInItem(response, postData, sessionData) {
             } else {
                 available = recordset.recordsets[0][0].Num_of_Copies;
             }
-            available += 1;
 
-            var updateItemQuery = "UPDATE ";
-            switch (itemType) {
-                case 'Book':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
+            req.query(holdQuery).then(function(rs) {
+                console.log(rs.recordsets[0][0]);
+                if (rs.recordsets[0][0] === undefined) {
+                    console.log("Add to inventory");
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Electronics':
-                    req.input('availCopies', sql.Bit, available);
-                    updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
+                    available += 1;
+                    var updateItemQuery = "UPDATE ";
+                    switch (itemType) {
+                        case 'Book':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Media':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Electronics':
+                            req.input('availCopies', sql.Bit, available);
+                            updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Object':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Media':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-            }
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Object':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                    }
+                } else {
+                    console.log("Update Queue");
+                    console.log(rs.recordsets[0].length);
+
+                    for (var i = 0; i < rs.recordsets[0].length; i++) {
+                        req.query("UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + " WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;").then(function(recordset) {
+                            console.log("voodoo magic");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        }); 
+                    }
+                }
+            }).catch(function(err) {
+                console.error("error");
+                console.log(err);
+            });            
         }).catch(function(err) {
             console.error("error");
             console.log(err);
@@ -1854,7 +1880,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Faculty_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;
@@ -1870,7 +1896,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Faculty_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;

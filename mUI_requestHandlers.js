@@ -158,7 +158,7 @@ function bookReserve(response, postData, sessionData) {
                 break;
             case 'G':
                 queryOne = "SELECT count(*) as Count FROM Reservation WHERE Guest_ID=@userID AND Active_Void_Status = 1 AND Book_ID IS NOT NULL";
-                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE Guest_ID=@userID AND Active_Void_Status = 1 AND Book_ID IS NOT NULL";
+                queryTwo = "SELECT count(*) as Count FROM Transactions WHERE GuestID=@userID AND Active_Void_Status = 1 AND Book_ID IS NOT NULL";
                 break;
             case 'F':
                 queryOne = "SELECT count(*) as Count FROM Reservation WHERE Faculty_ID=@userID AND Active_Void_Status = 1 AND Book_ID IS NOT NULL";
