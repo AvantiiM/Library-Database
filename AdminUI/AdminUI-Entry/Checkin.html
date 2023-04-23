@@ -142,6 +142,13 @@
             function tSearchManager(event) {
                 event.preventDefault();
 
+                // Delete old table
+                var length = document.getElementById("TransactionTableBody").rows.length;
+                console.log(length);
+                for (var i = 0; i < length; i++) {
+                    document.getElementById("TransactionTableBody").deleteRow(0);
+                }
+
                 const form = document.getElementById('loadTransaction');
                 const formData = new FormData(form);
                 const xhr = new XMLHttpRequest();

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Late Fees</title>
+	<style>
+
+		body{background-color: #f1dbbf;}
+		h1{font-family: 'Open Sans', sans-serif;
+		text-align: center;
+			font-weight: 100;}
+		table {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			text-align: center;
+			background-color: #698269;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		input[type=text] {
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			padding: 8px;
+			border: 1px solid black;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		input[type=submit] {
+			border-radius: 25px;
+			position: relative;
+			left: 45%;
+			width : 10%;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+			color: white;
+			padding: 8px;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		input[type=submit]:hover {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			background-color: #698269;
+		}
+		.form-group {
+			margin-left: auto;
+			margin-right: auto;
+			width: 30%;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+			margin-bottom: 20px;
+			display: block;
+			clear: both;
+		}
+		.form-group label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.form-group input[type=text] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			width: 99%;
+		}
+		.form-group input[type=month] {
+			background-color: #F9F5E7;
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 50;
+			display: block;
+			margin: 0 auto;
+		}
+		.save-btn{
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: green; /* Green */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+
+		}
+		.edit-btn  {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #4e6e81; 
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0px;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+
+		.delete-btn {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 100;
+		background-color: #aa5656; /* Red */
+		border: none;
+		border-radius: 25px;
+		color: white;
+		padding: 10px 20px;
+		position: relative;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+		cursor: pointer;
+		outline: inherit;
+		}
+		label {
+			font-family: 'Open Sans', sans-serif;
+			font-weight: 20;
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+			text-align: center;
+		}
+	</style>
+	<script type = "text/javascript">
+		function ModificationManager(event) {
+			event.preventDefault(); // prevent the default form submission behavior
+			// get form from data
+			const form = document.getElementById('searchForm');
+			const formData = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open('POST', 'TransactionStatusLate');
+			const totaltable = document.getElementById('TotalsTable');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(new URLSearchParams(formData).toString());	
+			const objectIDs = new Set();
+			const distinctBooks = document.getElementById("DistinctBooks");
+			const DLItems = new Set();
+			const dlBooks = document.getElementById("DamagedLostBooks");
+			const CostBooks = document.getElementById("CostBooks");
+			distinctItems.textContent = 0;
+			dlBooks.textContent = 0;
+			CostBooks.textContent = 0;
+			xhr.onload = function(){
+				if (xhr.status === 200){
+					let responseData = [];
+					responseData = JSON.parse(xhr.responseText);
+					//console.log(responseData[0].Reciept_num);
+					const table = document.getElementById('TransactionsTableFee');
+					responseData.forEach(function(record) {
+						const row = document.createElement('tr');
+
+          // <th>member_ID</th>
+          // <th>fullName</th>
+					// <th>Transaction_ID</th>
+					// <th>Item_ID</th>
+					// <th>Late_Fee</th>
+					// <th>Balance</th>
+          // <th>Creation_Date</th>
+          // <th>Return_Date</th>
+						const member_ID = document.createElement('td');
+						const fullName = document.createElement('td');
+						const Transaction_ID = document.createElement('td');
+						const Item_ID = document.createElement('td');
+						const Late_Fee = document.createElement('td');
+            const Balance = document.createElement('td');
+            const Creation_Date = document.createElement('td');
+            const Return_Date = document.createElement('td');
+            if(record.MiddleN.length > 0){
+              middleN = record.MiddleN + " "
+            }
+            member_ID.textContent = record.Faculty_ID || record.StudentID || record.GuestID;
+            fullName.textContent = record.FirstN + " " + middleN + record.LastN;
+
+						Transaction_ID.textContent = record.Reciept_num;
+						Item_ID.textContent = record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID;
+						Late_Fee.textContent = record.Late_Fees;
+            Balance.textContent = record.Balance;
+            Creation_Date.textContent = record.Creation_Date;
+            Return_Date.textContent = record.Return_Due_Date;
+
+						objectIDs.add(record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID);
+						distinctItems.textContent = objectIDs.size;
+						DLItems.add(record.Reciept_num);
+						dlBooks.textContent = DLItems.size;
+
+						row.appendChild(member_ID);
+						row.appendChild(fullName);
+						row.appendChild(Transaction_ID);
+						row.appendChild(Item_ID);
+						row.appendChild(Late_Fee);
+            row.appendChild(Balance);
+            row.appendChild(Creation_Date);
+            row.appendChild(Return_Date);
+						table.appendChild(row);
+					});
+				}
+			}
+		}
+	</script>
+    <body>
+		<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
+			<label for ="temp">This is a Report for all late fees</label>
+			<div class="form-group" id = "temp">
+				<label for="Month">Month:</label>
+				<input type="month" id="Month" name="Month" required>
+			</div>
+			<input type="submit" value="Generate Report" id="searchBtn">
+		</form>
+		<br></br>
+		<label for = "TransactionsTableFee">Members with late Fees</label>
+		<table id="TransactionsTableFee">
+			<thead>
+				<tr>
+          // member ID, transactions ID, Item ID, and the Late Fee
+          // and then u can create a Totals table at the bottom
+          // add a column for creation date and maybe the expected return date as well
+          
+          
+					<th>member_ID</th>
+          <th>fullName</th>
+					<th>Transaction_ID</th>
+					<th>Item_ID</th>
+					<th>Late_Fee</th>
+					<th>Balance</th>
+          <th>Creation_Date</th>
+          <th>Return_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<!-- <label for = "TransactionsTableObject">Object Transactions Table</label>
+		<table id="TransactionsTableObject">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<label for = "TransactionsTableElectronics">Electronics Transactions Table</label>
+		<table id="TransactionsTableElectronics">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead>
+		</table>
+		<br></br>
+		<label for = "TransactionsTableMedia">Media Transactions Table</label>
+		<table id="TransactionsTableMedia">
+			<thead>
+				<tr>
+					<th>Item_ID</th>
+					<th>Item_Name</th>
+					<th>Transaction_ID</th>
+					<th>Cost of Damaged/Lost Item</th>
+					<th>Creation_Date</th>
+				</tr>
+			</thead> -->
+		<!-- </table> -->
+		<!-- <br></br>
+		<table id = "TotalsTable">
+			<thead>
+				<th>Total</th>
+				<th>Distinct Books</th>
+				<th>Damaged/Lost Books</th>
+				<th>Cost of Books</th>
+				<th>Distinct Objects</th>
+				<th>Damaged/Lost Objects</th>
+				<th>Cost of Objects</th>
+				<th>Distinct Electronics</th>
+				<th>Damaged/Lost Electronics</th>
+				<th>Cost of Electronics</th>
+				<th>Distinct Media</th>
+				<th>Damaged/Lost Media</th>
+				<th>Cost of Media</th>
+			</thead>
+			<tr>
+				<td id = "Total"></td>
+				<td id = "DistinctBooks"></td>
+				<td id = "DamagedLostBooks"></td>
+				<td id = "CostBooks"></td>
+				<td id = "DistinctObjects"></td>
+				<td id = "DamagedLostObjects"></td>
+				<td id = "CostObjects"></td>
+				<td id = "DistinctElectronics"></td>
+				<td id = "DamagedLostElectronics"></td>
+				<td id = "CostElectronics"></td>
+				<td id = "DistinctMedia"></td>
+				<td id = "DamagedLostMedia"></td>
+				<td id = "CostMedia"></td>
+			</tr>
+		</table> -->
+    </body>
+</html>
