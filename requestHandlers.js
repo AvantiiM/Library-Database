@@ -234,8 +234,6 @@ function PasswordChanger(response, postData) {
     var params = querystring.parse(postData);
     var NewPassword = params['newPassword'];
     var username = params["username"];
-    console.log("New Password: " + NewPassword);
-    console.log("Username:" + username);
     bcrypt.hash(NewPassword, 10, function (err, hash) {
         if (err) {
             console.log(err);
@@ -245,7 +243,6 @@ function PasswordChanger(response, postData) {
             req.input('hashedPassword', sql.NVarChar, hash);
             req.input('username', sql.NVarChar, username);
             req.query(cquery).then(function (recordset) {
-                console.log("Password Changed");
                 response.writeHead(302, { "Location": "/login" });
                 response.end();
             }).catch(function (err) {
