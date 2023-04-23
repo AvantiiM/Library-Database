@@ -218,31 +218,6 @@ function MaxReportSum(response, postData) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Available BOOKS ###################################################################################################################################################################################################################################################
 
 
@@ -584,6 +559,7 @@ function TransactionStatusLate(response, postData) {
 
         req.query(query1).then(function (result, recordset){
             console.log("Late Fee transaction Found")
+            console.log(recordset);
             if (recordset.recordsets.length > 0) {
                 console.log("Found " + recordset.recordsets.length + " records");
                 console.log(recordset);
@@ -622,7 +598,6 @@ function TransactionStatusLate(response, postData) {
                 }
 
                 const resultArray = recordset.recordsets[0].concat(userID); // concatenate the two arrays
-
                 response.writeHead(200, { "Content-Type": "application/json" });
                 response.write(JSON.stringify(resultArray));
                 response.end();
