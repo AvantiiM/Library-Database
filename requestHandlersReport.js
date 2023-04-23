@@ -555,43 +555,43 @@ function TransactionStatusLate(response, postData) {
 
         query1 = `SELECT Return_Due_Date, Creation_Date, Reciept_num, Late_Fees, Faculty_ID, StudentID, GuestID, Book_ID, Object_ID, Electronics_ID, Media_ID FROM Transactions WHERE Late_Fees > 0 AND MONTH(Creation_Date) = ${month} AND YEAR(Creation_Date) = ${year};`
 
-        req.query(query1).then(function (result, recordset){
+        req.query(query1).then(function (recordset){
             console.log("Late Fee transaction Found")
             if (recordset.recordsets.length > 0) {
                 console.log("Found " + recordset.recordsets.length + " records");
                 console.log(recordset);
 
-                if (recordset.recordsets[0].length > 0) { 
-                    var faculty = recordset.recordsets[0][0].Faculty_ID;
-                    var stud = recordset.recordsets[0][0].StudentID;
-                    var guest = recordset.recordsets[0][0].GuestID;
-                }
+                for (let i = 0; i < recordset.recordsets[0].length; i++) {
+                    const faculty = recordset.recordsets[0][i].Faculty_ID;
+                    const stud = recordset.recordsets[0][i].StudentID;
+                    const guest = recordset.recordsets[0][i].GuestID;
 
-                if(faculty != null){
-                    console.log("This is the Faculty ID called: " + faculty)
-                    req.query("SELECT Faculty_ID, FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
-                        if (recordset.recordsets[0].length > 0) { 
-                            const userId = recordset.recordsets[0]
-                            console.log("User information pulled: " + userId);
-                            userID.push(userId); // push userId into the array
-                        }
-                    })
-                }
-                else if(stud != null){                
-                    req.query("SELECT StudentID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
-                        if (recordset.recordsets[0].length > 0) { 
-                            const userId = recordset.recordsets[0]
-                            userID.push(userId); // push userId into the array
-                        }
-                    })
-                }
-                else if(guest != null){
-                    req.query("SELECT GuestID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
-                        if (recordset.recordsets[0].length > 0) { 
-                            const userId = recordset.recordsets[0]
-                            userID.push(userId); // push userId into the array
-                        }
-                    })
+                    if(faculty != null){
+                        console.log("This is the Faculty ID called: " + faculty)
+                        req.query("SELECT Faculty_ID, FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
+                            if (recordset.recordsets[0].length > 0) { 
+                                const userId = recordset.recordsets[0]
+                                console.log("User information pulled: " + userId);
+                                userID.push(userId); // push userId into the array
+                            }
+                        })
+                    }
+                    else if(stud != null){                
+                        req.query("SELECT StudentID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
+                            if (recordset.recordsets[0].length > 0) { 
+                                const userId = recordset.recordsets[0]
+                                userID.push(userId); // push userId into the array
+                            }
+                        })
+                    }
+                    else if(guest != null){
+                        req.query("SELECT GuestID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
+                            if (recordset.recordsets[0].length > 0) { 
+                                const userId = recordset.recordsets[0]
+                                userID.push(userId); // push userId into the array
+                            }
+                        })
+                    }
                 }
 
                 const resultArray = recordset.recordsets[0].concat(userID); // concatenate the two arrays
