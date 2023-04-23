@@ -12,6 +12,9 @@ function route(handle, pathname, response, postData, userData) {
         case '/electronicReserve':
         case '/addLogin':
         case '/getInfo':
+        case '/insertTransaction':
+        case '/checkInItem':
+        case '/rTot':
         case '/UpdateBook':handle[pathname](response, postData, userData); break;
         default:
             if (typeof handle[pathname] === 'function') {

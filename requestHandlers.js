@@ -1170,7 +1170,7 @@ function UpdateBook(response, postData,sessionData) {
     })
 }
 
-function insertTransaction(response, postData) {
+function insertTransaction(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function() {
         var req = new sql.Request();
@@ -1189,11 +1189,7 @@ function insertTransaction(response, postData) {
         
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
-        // req.input('userId', sql.NVarChar, sessionData.logginId);
-        // Implement sessions in a bit
-
-        // update item value, hold positions (look into it)
-        // When permissions are available; change DamageFees to a bit
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
         var insertQuery = "INSERT INTO Transactions (";
         var availQuery = "SELECT ";
@@ -1310,7 +1306,7 @@ function insertTransaction(response, postData) {
         }
 
         req.input('returnDate', sql.Date, returnDate);
-        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, 'F111122223', 'F111122223');";
+        insertQuery += "Active_Void_Status, Creation_Date, Return_Due_Date, Created_BY, Updated_BY) VALUES (@BID, @itemID, 1, getDate(), @returnDate, @userId, @userId);";
 
 
         req.query(availQuery).then(function (recordset) {
@@ -1375,11 +1371,11 @@ function insertTransaction(response, postData) {
                 }
                 
             } else {
-                
                 console.log("This item is currently not available");
                 response.write("This item is currently not available");
                 response.end();
             }
+
             var borrowed = 0;
             var reserved = 0;
             req.query(limitQueryOne).then(function (recordset) {
@@ -1466,7 +1462,7 @@ function pullTransactions(response, postData){
     })
 }
 
-function checkInItem(response, postData) {
+function checkInItem(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function() {
         var req = new sql.Request();
@@ -1484,10 +1480,11 @@ function checkInItem(response, postData) {
         req.input('BID', sql.NVarChar, BID);
         req.input('itemID', sql.NVarChar, itemID);
         req.input('damages', sql.Int, damages);
-        req.input('dateReturned', sql.Date, dateReturned);        
+        req.input('dateReturned', sql.Date, dateReturned);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
         var checkInOne = "UPDATE Transactions SET Actual_Return_Date=@dateReturned, Active_Void_Status=0, Late_Fees=";
-        var checkInTwo = ", Damage_Fees=@damages WHERE Active_Void_Status=1 AND ";
+        var checkInTwo = ", Damage_Fees=@damages, Updated_BY=@userId WHERE Active_Void_Status=1 AND ";
         var damageQuery = "SELECT Dollar_Value FROM ";
         var availQuery = "SELECT ";
         var lateQuery = "SELECT Return_Due_Date FROM Transactions WHERE Active_Void_Status=1 AND ";
@@ -1801,7 +1798,7 @@ function pullReservation(response, postData) {
     })
 }
 
-function rTot(response, postData) {
+function rTot(response, postData, sessionData) {
     var conn = new sql.ConnectionPool(config);
     sql.connect(config).then(function () {
         var req = new sql.Request();
@@ -1815,12 +1812,13 @@ function rTot(response, postData) {
 
         req.input('itemID', sql.NVarChar, itemID);
         req.input('BID', sql.NVarChar, BID);
+        req.input('userId', sql.NVarChar, sessionData.logginId);
 
         const DAYSOFWEEK = 7;
         let returnDate = new Date();
 
         var insertQuery = "INSERT INTO Transactions (";
-        var updateQuery = "UPDATE Reservation SET Active_Void_Status=0 WHERE "
+        var updateQuery = "UPDATE Reservation SET Active_Void_Status=0, Updated_By=@userId WHERE "
         var holdQuery = "";
         var positionQuery = "SELECT Reservation_Num FROM Reservation WHERE ";
 

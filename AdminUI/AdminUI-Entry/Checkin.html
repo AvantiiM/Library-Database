@@ -94,49 +94,45 @@
             <form onsubmit="tSearchManager(event)" id="loadTransaction">
                 <label for="BID">Borrower ID:</label>
                 <input type="text" id="BID" name="BID" placeholder="Enter an ID..." required>
-                <input type="submit" value="submit" form="loadTransaction">
+                <input type="submit" value="submit" form="loadTransaction"><br><br>
             </form>
             <table id="TransactionTable">
                 <thead>
                     <tr>
                         <th>Reciept Num</th>
+                        <th>Item Type</th>
+                        <th>Item ID</th>
+                        <th>User ID</th>
                         <th>Creation Date</th>
                         <th>Due Date</th>
-                        <th>Date Returned</th>
-                        <th>Late Fees</th>
-                        <th>Damage Fees</th>
                         <th>Created By</th>
                         <th>Updated By</th>
-                        <th>Faculty ID</th>
-                        <th>Student ID</th>
-                        <th>Guest ID</th>
-                        <th>Book ID</th>
-                        <th>Electronics ID</th>
-                        <th>Media ID</th>
-                        <th>Active/Void Status</th>
                     </tr>
                 </thead>
                 <tbody id="TransactionTableBody">
                 </tbody>
             </table>
-            <br><br>
         </div>
         
         <div class="requireBID" style="overflow-x: auto;">
+            <br>
             <!-- Create another form that will be revealed after the first one is submitted. Request for the item ID and the type of item -->
             <form action="/checkInItem" method="post" id="itemCheckin">
                 <input hidden id="BIDCopy" name="BIDCopy">
-                <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
+                <label for="itemID">Item ID:</label>
+                <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required><br>
+                <label for="damages">Lost/Damaged:</label>
                 <select id="damages" name="damages">
                     <option value="0">False</option>
                     <option value="1">True</option>
                 </select>
+                <label for="itemType">Type of item:</label>
                 <select id="itemType" name="itemType" required>
                     <option value="Book">Book</option>
                     <option value="Electronics">Electronics</option>
                     <option value="Media">Media</option>
                     <option value="Object">Object</option>
-                </select>
+                </select> <br>
                 <input type="submit" value="submit" form="itemCheckin">
             </form>
         </div>
@@ -171,35 +167,38 @@
                             console.log(Transaction);
                             const row = table.insertRow();
                             const Reciept_Num = row.insertCell();
-                            Reciept_Num.innerText = Transaction.Reciept_Num;
+                            Reciept_Num.innerText = Transaction.Reciept_num;
+                            const Item_Type = row.insertCell();
+                            const Item_ID = row.insertCell();
+                            if (Transaction.Book_ID != null) {
+                                Item_ID.innerText = Transaction.Book_ID;
+                                Item_Type.innerText = "Book";
+                            } else if (Transaction.Electronics_ID != null) {
+                                Item_ID.innerText = Transaction.Electronics_ID;
+                                Item_Type.innerText = "Electronics";
+                            } else if (Transaction.Media_ID != null){
+                                Item_ID.innerText = Transaction.Media_ID;
+                                Item_Type.innerText = "Media";
+                            } else {
+                                Item_ID.innerText = Transaction.Object_ID;
+                                Item_Type.innerText = "Object";
+                            }
+                            const User_ID = row.insertCell();
+                            if (Transaction.Faculty_ID != null) {
+                                User_ID.innerText = Transaction.Faculty_ID;
+                            } else if (Transaction.Student_ID != null) {
+                                User_ID.innerText = Transaction.StudentID;
+                            } else {
+                                User_ID.innerText = Transaction.GuestID;
+                            }
                             const Creation_Date = row.insertCell();
                             Creation_Date.innerText = Transaction.Creation_Date;
                             const Return_Due_Date = row.insertCell();
                             Return_Due_Date.innerText = Transaction.Return_Due_Date;
-                            const Actual_Return_Date = row.insertCell();
-                            Actual_Return_Date.innerText = Transaction.Actual_Return_Date;
-                            const Late_Fees = row.insertCell();
-                            Late_Fees.innerText = Transaction.Late_Fees;
-                            const Damage_Fees = row.insertCell();
-                            Damage_Fees.innerText = Transaction.Damage_Fees;
                             const Created_By = row.insertCell();
-                            Created_By.innerText = Transaction.Created_By;
+                            Created_By.innerText = Transaction.Created_BY;
                             const Updated_By = row.insertCell();
-                            Updated_By.innerText = Transaction.Updated_By;
-                            const Faculty_ID = row.insertCell();
-                            Faculty_ID.innerText = Transaction.Faculty_ID;
-                            const StudentID = row.insertCell();
-                            StudentID.innerText = Transaction.StudentID;
-                            const GuestID = row.insertCell();
-                            GuestID.innerText = Transaction.GuestID;
-                            const Book_ID = row.insertCell();
-                            Book_ID.innerText = Transaction.Book_ID;
-                            const Electronics_ID = row.insertCell();
-                            Electronics_ID.innerText = Transaction.Electronics_ID;
-                            const Media_ID = row.insertCell();
-                            Media_ID.innerText = Transaction.Media_ID;
-                            const Active_Void_Status = row.insertCell();
-                            Active_Void_Status.innerText = Transaction.Active_Void_Status;
+                            Updated_By.innerText = Transaction.Updated_BY;
 
                             table.appendChild(row);
                         }); 

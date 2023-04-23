@@ -102,24 +102,21 @@
 
         <div class="oldReservation">
             <form onsubmit="rSearchManager(event)" method="post" id="searchReservations">
+                <label for="BID">Borrower ID:</label>
+                <input type="text" id="BID" name="BID" placeholder="Enter Reserver's ID...">
                 <input type="submit" value="Submit" form="searchReservations"><br><br>
-                <label for="BID">Borrower ID:</label><br>            
-                <input type="text" id="BID" name="BID" placeholder="Enter Reserver's ID..."><br><br>
             </form>
             <table id="ReservationTable">
                 <thead>
                     <tr>
                         <th>Reservation Num</th>
+                        <th>Item Type</th>
+                        <th>Item ID</th>
+                        <th>User ID</th>
                         <th>Creation Date</th>
                         <th>Expiration Date</th>
                         <th>Created By</th>
                         <th>Updated By</th>
-                        <th>Faculty ID</th>
-                        <th>Student ID</th>
-                        <th>Guest ID</th>
-                        <th>Book ID</th>
-                        <th>Electronics ID</th>
-                        <th>Media ID</th>
                         <th>Hold position</th>
                     </tr>
                 </thead>
@@ -128,28 +125,63 @@
             </table>
 
             <div class="requireBID">
-                <form action="/rTot" method="post" id="itemCheckin">
+                <br>
+                <!-- maybe try to call different reserve functions based on the itemType -->
+                <form method="post" id="itemCheckin">
                     <input hidden id="BIDCopy" name="BIDCopy">
-                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required>
-                    <select id="damages" name="damages">
-                        <option value="0">False</option>
-                        <option value="1">True</option>
-                    </select>
+                    <label for="itemID">Item ID:</label>
+                    <input type="text" id="itemID" name="itemID" placeholder="Enter the Item ID..." required><br>
+                    <label for="itemType">Type of item:</label>
                     <select id="itemType" name="itemType" required>
                         <option value="Book">Book</option>
                         <option value="Electronics">Electronics</option>
                         <option value="Media">Media</option>
                         <option value="Object">Object</option>
-                    </select>
+                    </select> <br>
                     <input type="submit" value="submit" form="itemCheckin">
                 </form>
             </div>
             
         </div>
 
+        
+
+        <script>
+            // Hide all elements that create a transaction from scratch...
+            // ...reveal all elements that create a transaction from a reservation!
+            function pullReservation() {
+                var x = document.getElementsByClassName("newTransaction");
+                var y = document.getElementsByClassName("oldReservation");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                for (var i = 0; i < y.length; i++) {
+                    y[i].style.display = "block";
+                }
+            }
+
+            // Vice versa
+            function createTransaction() {
+                var x = document.getElementsByClassName("newTransaction");
+                var y = document.getElementsByClassName("oldReservation");
+                for (var i = 0; i < x.length; i++) {
+                    x[i].style.display = "block";
+                }
+                for (var i = 0; i < y.length; i++) {
+                    y[i].style.display = "none";
+                }
+            }
+        </script>
         <script type="text/javascript">
             function rSearchManager(event) {
                 event.preventDefault(); // prevent the default form submission behavior
+
+                // Delete old table
+                var length = document.getElementById("ReservationTableBody").rows.length;
+                console.log(length);
+                for (var i = 0; i < length; i++) {
+                    document.getElementById("ReservationTableBody").deleteRow(0);
+                }
 
                 const form = document.getElementById('searchReservations');
                 const formData = new FormData(form);
@@ -174,8 +206,28 @@
                         responseData.forEach(Reservation => {
                             console.log(Reservation);
                             const row = table.insertRow();
-                            const ReservationNum = row.insertCell();
-                            ReservationNum.innerText = Reservation.Reservation_Num;
+                            const Reservation_Num = row.insertCell();
+                            Reservation_Num.innerText = Reservation.Reservation_Num;
+                            const Item_Type = row.insertCell();
+                            const Item_ID = row.insertCell();
+                            if (Reservation.Book_ID != null) {
+                                Item_ID.innerText = Reservation.Book_ID;
+                                Item_Type.innerText = "Book";
+                            } else if (Reservation.Electronics_ID != null) {
+                                Item_ID.innerText = Reservation.Electronics_ID;
+                                Item_Type.innerText = "Electronics";
+                            } else {
+                                Item_ID.innerText = Reservation.Media_ID;
+                                Item_Type.innerText = "Media";
+                            }
+                            const User_ID = row.insertCell();
+                            if (Reservation.Faculty_ID != null) {
+                                User_ID.innerText = Reservation.Faculty_ID;
+                            } else if (Reservation.Student_ID != null) {
+                                User_ID.innerText = Reservation.Student_ID;
+                            } else {
+                                User_ID.innerText = Reservation.Guest_ID;
+                            }
                             const Creation_Date = row.insertCell();
                             Creation_Date.innerText = Reservation.Creation_Date;
                             const Expiration_Date = row.insertCell();
@@ -184,18 +236,6 @@
                             Created_By.innerText = Reservation.Created_By;
                             const Updated_By = row.insertCell();
                             Updated_By.innerText = Reservation.Updated_By;
-                            const Faculty_ID = row.insertCell();
-                            Faculty_ID.innerText = Reservation.Faculty_ID;
-                            const StudentID = row.insertCell();
-                            StudentID.innerText = Reservation.StudentID;
-                            const GuestID = row.insertCell();
-                            GuestID.innerText = Reservation.GuestID;
-                            const Book_ID = row.insertCell();
-                            Book_ID.innerText = Reservation.Book_ID;
-                            const Electronics_ID = row.insertCell();
-                            Electronics_ID.innerText = Reservation.Electronics_ID;
-                            const Media_ID = row.insertCell();
-                            Media_ID.innerText = Reservation.Media_ID;
                             const holdPosition = row.insertCell();
                             holdPosition.innerText = Reservation.holdPosition;
 
