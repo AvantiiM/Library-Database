@@ -894,6 +894,15 @@ function AdminReportBookSearch(response){
     response.end();
 }
 
+function AdminReportLateFee(response){
+    console.log("Request handler 'AdminReportLateFee' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportLateFee.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+
 
 function SearchBooks(response, postData) {
 
@@ -1964,6 +1973,7 @@ exports.AdminSStudents = AdminSStudents;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
+exports.AdminReportLateFee = AdminReportLateFee;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

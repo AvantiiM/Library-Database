@@ -578,9 +578,7 @@ function TransactionStatusLate(response, postData) {
 
         var userID = []; // declare empty userID array
 
-        query1 = `SELECT Return_Due_Date, Creation_Date, Reciept_num, Late_Fees, Faculty_ID, StudentID, GuestID, Book_ID, Object_ID, Electronics_ID, Media_ID 
-        FROM Transactions 
-        WHERE Late_Fees > 0 AND MONTH(Creation_Date) = ${month} AND YEAR(Creation_Date) = ${year};`
+        query1 = `SELECT Return_Due_Date, Creation_Date, Reciept_num, Late_Fees, Faculty_ID, StudentID, GuestID, Book_ID, Object_ID, Electronics_ID, Media_ID FROM Transactions WHERE Late_Fees > 0 AND MONTH(Creation_Date) = ${month} AND YEAR(Creation_Date) = ${year};`
 
         req.query(query1).then(function (result, recordset){
             console.log("Late Fee transaction Found")
