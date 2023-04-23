@@ -5,10 +5,10 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
 </head>
 
-<body onload="getBookReservations(); getMediaReservations(); getElectronicReservations(); getBorrowedBooks();">
+<body
+    onload="getBookReservations(); getMediaReservations(); getElectronicReservations(); getBorrowedBooks(); getBorrowedMedia(); getBorrowedElectronics();">
     <script>
         fetch("memberUI")
             .then(response => {
@@ -27,24 +27,28 @@
     </div>
 
     <div style="padding: 15px 5%;">
+
+        <!-- Book Reservations -->
         <table class="table table-striped">
             <thead>
                 <h3 style="color: rgb(61, 11, 241)">
                     <center><b><u>Book Reservations</u></b></center>
                 </h3>
                 <tr class="bg-info">
-                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
-                    <th id="title-header" data-colname="Book_Name" data-order="desc">Title &#9650</th>
-                    <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
-                    <th id="bookid-header" data-colname="Book_ID" data-order="desc">Item ID &#9650</th>
-                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
-                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
-                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # 
+                    </th>
+                    <th id="title-header" data-colname="Book_Name" data-order="desc">Title </th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author </th>
+                    <th id="bookid-header" data-colname="Book_ID" data-order="desc">Book ID </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date 
+                    </th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position </th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete </th>
                 </tr>
             </thead>
             <tbody id="bookTable">
             </tbody>
-            
+
             <script>
                 var myArray;
                 function getBookReservations(btn, isbn) {
@@ -61,6 +65,26 @@
                         }
                     });
                 }
+
+                function deleteBookReservation(btn, reservationNum, itemType) {
+                    console.log("reservationNum: " + reservationNum)
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            Reservation_Num: reservationNum,
+                            itemType: itemType,
+                        },
+                        url: '/BookdeleteReservation',
+                        success: function (response) {
+                            console.log(response)
+                            document.getElementById("Bresdiv" + reservationNum).innerHTML = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+
                 function buildBookTable(data) {
                     var tbody = $('#bookTable');
                     tbody.empty();
@@ -72,7 +96,7 @@
                         tr.append('<td>' + row.Book_ID + '</td>');
                         tr.append('<td>' + row.Creation_Date + '</td>');
                         tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBookReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tr.append(`<td><div id="Bresdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="deleteBookReservation(this, '${row.Reservation_Num}', 'Book')" >Delete</button></div></td>'`);
                         tbody.append(tr);
                     });
                 }
@@ -80,24 +104,28 @@
 
         </table>
 
+        <!-- Media Reservations -->
         <table class="table table-striped">
             <thead>
                 <h3 style="color: rgb(61, 11, 241)">
                     <center><b><u>Media Reservations</u></b></center>
                 </h3>
                 <tr class="bg-info">
-                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
-                    <th id="title-header" data-colname="Media_Name" data-order="desc">Title &#9650</th>
-                    <th id="author-header" data-colname="Author" data-order="desc">Author &#9650</th>
-                    <th id="mediaid-header" data-colname="Media_ID" data-order="desc">Item ID &#9650</th>
-                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
-                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
-                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                    <th hidden id='searchBy' value='media'></th>
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # 
+                    </th>
+                    <th id="title-header" data-colname="Media_Name" data-order="desc">Title </th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author </th>
+                    <th id="mediaid-header" data-colname="Media_ID" data-order="desc">Media ID </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date 
+                    </th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position </th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete </th>
                 </tr>
             </thead>
             <tbody id="mediaTable">
             </tbody>
-            
+
             <script>
                 var myArray;
                 function getMediaReservations(btn, isbn) {
@@ -114,6 +142,26 @@
                         }
                     });
                 }
+
+                function deleteMediaReservation(btn, reservationNum, itemType) {
+                    console.log("reservationNum: " + reservationNum)
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            Reservation_Num: reservationNum,
+                            itemType: itemType,
+                        },
+                        url: '/MediadeleteReservation',
+                        success: function (response) {
+                            console.log(response)
+                            document.getElementById("Mresdiv" + reservationNum).innerHTML = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+
                 function buildMediaTable(data) {
                     var tbody = $('#mediaTable');
                     tbody.empty();
@@ -125,30 +173,34 @@
                         tr.append('<td>' + row.Media_ID + '</td>');
                         tr.append('<td>' + row.Creation_Date + '</td>');
                         tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getMediaReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tr.append(`<td><div id="Mresdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="deleteMediaReservation(this, '${row.Reservation_Num}', 'Media')" >Delete</button></div></td>'`);
                         tbody.append(tr);
                     });
                 }
             </script>
-        </table> 
+        </table>
 
+        <!-- Electronic Reservations -->
         <table class="table table-striped">
             <thead>
                 <h3 style="color: rgb(61, 11, 241)">
                     <center><b><u>Electronic Reservations</u></b></center>
                 </h3>
                 <tr class="bg-info">
-                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
-                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title &#9650</th>
-                    <th id="mediaid-header" data-colname="Electronics_ID" data-order="desc">Item ID &#9650</th>
-                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
-                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
-                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                    <th hidden id='searchBy' value='electronic'></th>
+                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # 
+                    </th>
+                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title </th>
+                    <th id="mediaid-header" data-colname="Electronics_ID" data-order="desc">Serial No. </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date 
+                    </th>
+                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position </th>
+                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete </th>
                 </tr>
             </thead>
             <tbody id="electronicTable">
             </tbody>
-            
+
             <script>
                 var myArray;
                 function getElectronicReservations(btn, isbn) {
@@ -165,6 +217,26 @@
                         }
                     });
                 }
+
+                function deleteElectronicReservation(btn, reservationNum, itemType) {
+                    console.log("reservationNum: " + reservationNum)
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            Reservation_Num: reservationNum,
+                            itemType: itemType,
+                        },
+                        url: '/ElectronicdeleteReservation',
+                        success: function (response) {
+                            console.log(response)
+                            document.getElementById("Eresdiv" + reservationNum).innerHTML = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+
                 function buildElectronicTable(data) {
                     var tbody = $('#electronicTable');
                     tbody.empty();
@@ -175,35 +247,37 @@
                         tr.append('<td>' + row.Electronics_ID + '</td>');
                         tr.append('<td>' + row.Creation_Date + '</td>');
                         tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getElectronicReservations(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tr.append(`<td><div id="Eresdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="deleteElectronicReservation(this, '${row.Reservation_Num}', 'Electronic')" >Delete</button></div></td>'`);
                         tbody.append(tr);
                     });
                 }
             </script>
-        </table> 
+        </table>
 
+        <!-- Borrowed Books -->
         <table class="table table-striped">
             <thead>
                 <h3 style="color: rgb(61, 11, 241)">
                     <center><b><u>Borrowed Books</u></b></center>
                 </h3>
                 <tr class="bg-info">
-                    <th id="reservationnum-header" data-colname="Reservation_Num" data-order="desc">Reservation # &#9650</th>
-                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title &#9650</th>
-                    <th id="mediaid-header" data-colname="Electronics_ID" data-order="desc">Item ID &#9650</th>
-                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date &#9650</th>
-                    <th id="holdposition-header" data-colname="holdPosition" data-order="desc">Hold Position &#9650</th>
-                    <th id="delete-header" data-colname="Delete" data-order="desc">Delete &#9650</th>
+                    <th id="transactionnum-header" data-colname="Reciept_Num" data-order="desc">Transaction # </th>
+                    <th id="title-header" data-colname="Book_Name" data-order="desc">Title </th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author </th>
+                    <th id="bookid-header" data-colname="Book_ID" data-order="desc">Book ID </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date 
+                    </th>
+                    <th id="duedate-header" data-colname="Return_Due_Date" data-order="desc">Due Date </th>
                 </tr>
             </thead>
             <tbody id="borrowedBooksTable">
             </tbody>
-            
+
             <script>
                 var myArray;
                 function getBorrowedBooks(btn, isbn) {
                     $.ajax({
-                        url: '/electronicReservations',
+                        url: '/bookTransactions',
                         success: function (response) {
                             console.log(response)
                             myArray = response
@@ -220,18 +294,118 @@
                     tbody.empty();
                     $.each(data, function (index, row) {
                         var tr = $('<tr>');
-                        tr.append('<td>' + row.Reservation_Num + '</td>');
-                        tr.append('<td>' + row.Electronics_Name + '</td>');
-                        tr.append('<td>' + row.Electronics_ID + '</td>');
+                        tr.append('<td>' + row.Reciept_num + '</td>');
+                        tr.append('<td>' + row.Book_Name + '</td>');
+                        tr.append('<td>' + row.Author + '</td>');
+                        tr.append('<td>' + row.Book_ID + '</td>');
                         tr.append('<td>' + row.Creation_Date + '</td>');
-                        tr.append('<td>' + row.holdPosition + '</td>');
-                        tr.append(`<td><div id="bdiv${row.Reservation_Num}"> <button class="btn btn-primary" onclick="getBorrowedBooks(this, '${row.Reservation_Num}')">Delete</button></div></td>'`);
+                        tr.append('<td>' + row.Return_Due_Date + '</td>');
                         tbody.append(tr);
                     });
                 }
             </script>
-        </table> 
+        </table>
 
+        <!-- Borrowed Media -->
+        <table class="table table-striped">
+            <thead>
+                <h3 style="color: rgb(61, 11, 241)">
+                    <center><b><u>Borrowed Media</u></b></center>
+                </h3>
+                <tr class="bg-info">
+                    <th id="transactionnum-header" data-colname="Reciept_Num" data-order="desc">Transaction # </th>
+                    <th id="title-header" data-colname="Media_Name" data-order="desc">Title </th>
+                    <th id="author-header" data-colname="Author" data-order="desc">Author </th>
+                    <th id="mediaid-header" data-colname="Media_ID" data-order="desc">Media ID </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date 
+                    </th>
+                    <th id="duedate-header" data-colname="Return_Due_Date" data-order="desc">Due Date </th>
+                </tr>
+            </thead>
+            <tbody id="borrowedMediaTable">
+            </tbody>
+
+            <script>
+                var myArray;
+                function getBorrowedMedia(btn, isbn) {
+                    $.ajax({
+                        url: '/mediaTransactions',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildBMediaTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+                function buildBMediaTable(data) {
+                    var tbody = $('#borrowedMediaTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Reciept_num + '</td>');
+                        tr.append('<td>' + row.Media_Name + '</td>');
+                        tr.append('<td>' + row.Author + '</td>');
+                        tr.append('<td>' + row.Media_ID + '</td>');
+                        tr.append('<td>' + row.Creation_Date + '</td>');
+                        tr.append('<td>' + row.Return_Due_Date + '</td>');
+                        tbody.append(tr);
+                    });
+                }
+            </script>
+        </table>
+
+        <!-- Borrowed Electronics -->
+        <table class="table table-striped">
+            <thead>
+                <h3 style="color: rgb(61, 11, 241)">
+                    <center><b><u>Borrowed Electronics</u></b></center>
+                </h3>
+                <tr class="bg-info">
+                    <th id="transactionnum-header" data-colname="Reciept_Num" data-order="desc">Transaction # </th>
+                    <th id="title-header" data-colname="Electronics_Name" data-order="desc">Title </th>
+                    <th id="mediaid-header" data-colname="Serial_No" data-order="desc">Serial No. </th>
+                    <th id="creationdate-header" data-colname="Creation_Date" data-order="desc">Creation Date </th>
+                    <th id="duedate-header" data-colname="Return_Due_Date" data-order="desc">Due Date </th>
+                </tr>
+            </thead>
+            <tbody id="borrowedElectronicTable">
+            </tbody>
+
+            <script>
+                var myArray;
+                function getBorrowedElectronics(btn, isbn) {
+                    $.ajax({
+                        url: '/electronicTransactions',
+                        success: function (response) {
+                            console.log(response)
+                            myArray = response
+                            console.log(myArray)
+                            buildBElectronicTable(response)
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+                function buildBElectronicTable(data) {
+                    var tbody = $('#borrowedElectronicTable');
+                    tbody.empty();
+                    $.each(data, function (index, row) {
+                        var tr = $('<tr>');
+                        tr.append('<td>' + row.Reciept_num + '</td>');
+                        tr.append('<td>' + row.Electronics_Name + '</td>');
+                        tr.append('<td>' + row.Electronics_ID + '</td>');
+                        tr.append('<td>' + row.Creation_Date + '</td>');
+                        tr.append('<td>' + row.Return_Due_Date + '</td>');
+                        tbody.append(tr);
+                    });
+                }
+            </script>
+        </table>
 
     </div>
 </body>

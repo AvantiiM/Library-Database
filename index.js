@@ -10,20 +10,29 @@ handle["/"] = requestHandlers.login; //http://localhost:3000/login
 handle["/login"] = requestHandlers.login; //http://localhost:3000/login
 handle["/loginverify"] = requestHandlers.loginverify; //not an actual page
 handle["/PasswordChanger"] = requestHandlers.PasswordChanger; //http://localhost:3000/PasswordChanger
+
 handle["/memberUI"] = mUI_requestHandlers.memberUI; //http://localhost:3000/memberUI
 handle["/bookSearch"] = mUI_requestHandlers.bookSearch; //http://localhost:3000/bookSearch
 handle["/mediaSearch"] = mUI_requestHandlers.mediaSearch; //http://localhost:3000/mediaSearch
 handle["/electronicSearch"] = mUI_requestHandlers.electronicSearch; //http://localhost:3000/electronicSearch
 handle["/borrowHolds"] = mUI_requestHandlers.borrowHolds; //http://localhost:3000/borrowHolds
+
 handle["/librarySearch"] = mUI_requestHandlers.librarySearch; //http://localhost:3000/librarySearch
 handle["/bookReserve"] = mUI_requestHandlers.bookReserve; 
 handle["/mediaReserve"] = mUI_requestHandlers.mediaReserve; 
 handle["/electronicReserve"] = mUI_requestHandlers.electronicReserve; 
+
 handle["/bookReservations"] = mUI_requestHandlers.bookReservations; 
 handle["/mediaReservations"] = mUI_requestHandlers.mediaReservations; 
 handle["/electronicReservations"] = mUI_requestHandlers.electronicReservations; 
 
+handle["/bookTransactions"] = mUI_requestHandlers.bookTransactions; 
+handle["/mediaTransactions"] = mUI_requestHandlers.mediaTransactions; 
+handle["/electronicTransactions"] = mUI_requestHandlers.electronicTransactions; 
 
+handle["/BookdeleteReservation"] = mUI_requestHandlers.BookdeleteReservation; 
+handle["/MediadeleteReservation"] = mUI_requestHandlers.MediadeleteReservation; 
+handle["/ElectronicdeleteReservation"] = mUI_requestHandlers.ElectronicdeleteReservation; 
 
 handle["/profile"] = mUI_requestHandlers.profile; //http://localhost:3000/profile
 
