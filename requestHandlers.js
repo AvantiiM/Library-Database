@@ -234,10 +234,13 @@ function PasswordChanger(response, postData) {
     var params = querystring.parse(postData);
     var NewPassword = params['newPassword'];
     var username = params["username"];
+    console.log("New Password: " + NewPassword);
+    console.log("Username:" + username);
     bcrypt.hash(NewPassword, 10, function (err, hash) {
         if (err) {
             console.log(err);
         } else {
+            console.log("in else updating password");
             let cquery = "UPDATE Login SET HashedPassword = @hashedPassword, TemporaryPassword = 0 WHERE username = @username"
             req.input('hashedPassword', sql.NVarChar, hash);
             req.input('username', sql.NVarChar, username);

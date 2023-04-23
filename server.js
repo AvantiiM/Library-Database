@@ -100,7 +100,7 @@ function start(route, handle) {
     }
     else {
       request.setEncoding("utf8"); //new
-      if (!usession.loggedDT || login_req) {
+      if ((!usession.loggedDT || login_req) && pathname !== "/PasswordChanger") {
         //pathname = "/login";
         if (pathname !== "/" && pathname !== "/login" && pathname !== "/loginverify") {
           console.log("Routing to login verification");
