@@ -147,7 +147,7 @@ function librarySearch(response, postData) {
 function bookReserve(response, postData, sessionData) {
     var queryOne = "";
     var queryTwo = "";
-    var queryThree ="";
+    var queryThree = "";
     var firstChar = sessionData.logginId.charAt(0);
     sql.connect(config).then(function () {
 
@@ -203,7 +203,7 @@ function bookReserve(response, postData, sessionData) {
         }
 
         req.query(queryThree).then(function (recordset) {
-            if (recordset.recordsets[0].length > 0) { 
+            if (recordset.recordsets[0].length > 0) {
                 console.log("Already reserved: " + ISBN);
                 response.write("Item has already been reserved. Cannot reserve again");
                 response.end();
@@ -226,16 +226,23 @@ function bookReserve(response, postData, sessionData) {
                             var firstChar = sessionData.logginId.charAt(0);
 
                             req.query("SELECT ISBN, Num_of_Copies FROM Book WHERE ISBN=@isbn").then(function (recordset) {
+
+                                const DAYSOFWEEK = 7;
+                                let returnDate = new Date();
+                                
+                                returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                                req.input('returnDate', sql.Date, returnDate);
+
                                 if (recordset.recordsets[0].length > 0) {
                                     var availCopies = recordset.recordsets[0][0].Num_of_Copies;
                                     console.log("Available Copies: " + availCopies);
                                     if (availCopies > 0) {
 
-                                        queryStr = "INSERT INTO Reservation (Creation_Date, Expiration_Date, Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
+                                        queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Expiration_Date, Up Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
                                         switch (firstChar) {
-                                            case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @userId, @userId, @isbn, 0, 1, @userId)"; break;
-                                            case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @userId, @userId, @isbn, 0, 1, @userId)"; break;
-                                            case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @userId, @userId, @isbn, 0, 1, @userId)"; break;
+                                            case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @isbn, 0, 1, @userId)"; break;
+                                            case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @isbn, 0, 1, @userId)"; break;
+                                            case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @isbn, 0, 1, @userId)"; break;
 
                                         }
                                         availCopies = availCopies - 1;
@@ -264,7 +271,7 @@ function bookReserve(response, postData, sessionData) {
                                             }
                                             console.log("Returned hold: " + holdPosition);
                                             req.input('holdPosition', holdPosition);
-                                            queryStr = "INSERT INTO Reservation (Creation_Date, Expiration_Date, Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
+                                            queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Created_By, Updated_By, Book_ID, holdPosition, Active_Void_Status,";
                                             switch (firstChar) {
                                                 case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @userId, @userId, @isbn, @holdPosition, 1, @userId)"; break;
                                                 case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @userId, @userId, @isbn, @holdPosition, 1, @userId)"; break;
@@ -335,7 +342,7 @@ function bookReserve(response, postData, sessionData) {
 function mediaReserve(response, postData, sessionData) {
     var queryOne = "";
     var queryTwo = "";
-    var queryThree ="";
+    var queryThree = "";
     var firstChar = sessionData.logginId.charAt(0);
     sql.connect(config).then(function () {
 
@@ -391,7 +398,7 @@ function mediaReserve(response, postData, sessionData) {
         }
 
         req.query(queryThree).then(function (recordset) {
-            if (recordset.recordsets[0].length > 0) { 
+            if (recordset.recordsets[0].length > 0) {
                 console.log("Already reserved: " + MediaID);
                 response.write("Media has already been reserved. Cannot reserve again");
                 response.end();
@@ -418,13 +425,20 @@ function mediaReserve(response, postData, sessionData) {
                                 if (recordset.recordsets[0].length > 0) {
                                     var availCopies = recordset.recordsets[0][0].Num_of_Copies;
                                     console.log("Available Copies: " + availCopies);
+
+                                    const DAYSOFWEEK = 7;
+                                    let returnDate = new Date();
+                                    
+                                    returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                                    req.input('returnDate', sql.Date, returnDate);
+
                                     if (availCopies > 0) {
 
-                                        queryStr = "INSERT INTO Reservation (Creation_Date, Expiration_Date, Created_By, Updated_By, Media_ID, holdPosition, Active_Void_Status,";
+                                        queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Expiration_Date, Created_By, Updated_By, Media_ID, holdPosition, Active_Void_Status,";
                                         switch (firstChar) {
-                                            case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @userId, @userId, @mediaid, 0, 1, @userId)"; break;
-                                            case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @userId, @userId, @mediaid, 0, 1, @userId)"; break;
-                                            case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @userId, @userId, @mediaid, 0, 1, @userId)"; break;
+                                            case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @mediaid, 0, 1, @userId)"; break;
+                                            case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @mediaid, 0, 1, @userId)"; break;
+                                            case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @mediaid, 0, 1, @userId)"; break;
 
                                         }
                                         availCopies = availCopies - 1;
@@ -453,7 +467,7 @@ function mediaReserve(response, postData, sessionData) {
                                             }
                                             console.log("Returned hold: " + holdPosition);
                                             req.input('holdPosition', holdPosition);
-                                            queryStr = "INSERT INTO Reservation (Creation_Date, Expiration_Date, Created_By, Updated_By, Media_ID, holdPosition, Active_Void_Status,";
+                                            queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Created_By, Updated_By, Media_ID, holdPosition, Active_Void_Status,";
                                             switch (firstChar) {
                                                 case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @userId, @userId, @mediaid, @holdPosition, 1, @userId)"; break;
                                                 case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @userId, @userId, @mediaid, @holdPosition, 1, @userId)"; break;
@@ -604,7 +618,7 @@ function mediaReserve_old(response, postData, sessionData) {
 function electronicReserve(response, postData, sessionData) {
     var queryOne = "";
     var queryTwo = "";
-    var queryThree ="";
+    var queryThree = "";
     var firstChar = sessionData.logginId.charAt(0);
     sql.connect(config).then(function () {
 
@@ -666,82 +680,89 @@ function electronicReserve(response, postData, sessionData) {
         //         response.end();
         //     } else {
 
-                req.query(queryOne).then(function (recordset) {
-                    reserved = recordset.recordsets[0][0].Count;
-                    console.log("revered ------------------------: " + reserved);
-                    req.query(queryTwo).then(function (rs) {
-                        borrowed = rs.recordsets[0][0].Count;
-                        console.log("reserved: " + reserved + " borrowed: " + borrowed)
-                        var total = reserved + borrowed;
-                        if (total < electronicLimit) {
+        req.query(queryOne).then(function (recordset) {
+            reserved = recordset.recordsets[0][0].Count;
+            console.log("revered ------------------------: " + reserved);
+            req.query(queryTwo).then(function (rs) {
+                borrowed = rs.recordsets[0][0].Count;
+                console.log("reserved: " + reserved + " borrowed: " + borrowed)
+                var total = reserved + borrowed;
+                if (total < electronicLimit) {
 
-                            console.log("SerialNo-" + SerialNo + "-");
+                    console.log("SerialNo-" + SerialNo + "-");
 
-                            var queryStr = "";
-                            var queryAvailable = "";
+                    var queryStr = "";
+                    var queryAvailable = "";
 
-                            var firstChar = sessionData.logginId.charAt(0);
+                    var firstChar = sessionData.logginId.charAt(0);
 
-                            req.query("SELECT Serial_No, Available FROM ELectronics WHERE Serial_No=@serialno").then(function (recordset) {
-                                if (recordset.recordsets[0].length > 0) {
-                                    var available = recordset.recordsets[0][0].Available;
-                                    console.log("Available: " + available);
-                                    if (available === true) {
+                    req.query("SELECT Serial_No, Available FROM ELectronics WHERE Serial_No=@serialno").then(function (recordset) {
+                        if (recordset.recordsets[0].length > 0) {
+                            var available = recordset.recordsets[0][0].Available;
+                            console.log("Available: " + available);
 
-                                        queryStr = "INSERT INTO Reservation (Creation_Date, Expiration_Date, Created_By, Updated_By, Electronics_ID, holdPosition, Active_Void_Status,";
-                                        switch (firstChar) {
-                                            case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @userId, @userId, @serialno, 0, 1, @userId)"; break;
-                                            case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @userId, @userId, @serialno, 0, 1, @userId)"; break;
-                                            case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @userId, @userId, @serialno, 0, 1, @userId)"; break;
+                            const DAYSOFWEEK = 7;
+                            let returnDate = new Date();
+                            
+                            returnDate.setDate(new Date().getDate() + DAYSOFWEEK);
+                            req.input('returnDate', sql.Date, returnDate);
 
-                                        }
-                                        available = false;
-                                        queryAvailable = "UPDATE Electronics SET Available = '" + available + "' WHERE Serial_No = '" + SerialNo + "';";
-                                        console.log("Query to be executed with id: " + sessionData.logginId);
-                                        console.log(queryStr);
-                                        req.query(queryStr).then(function (recordset) {
-                                            console.log("Reservation added Electronic");
-                                            req.query(queryAvailable).then(function (recordset) {
-                                                console.log("Electronic Availability: " + available);
-                                                response.write("Reservation successful");
-                                                response.end();
-                                            })
-                                        });
+                            if (available === true) {
 
-                                    } else {
-                                        response.write(err);
-                                        response.end();
-                                        return;
-                                    }
+                                queryStr = "INSERT INTO Reservation (Creation_Date, Last_Updated, Expiration_Date, Created_By, Updated_By, Electronics_ID, holdPosition, Active_Void_Status,";
+                                switch (firstChar) {
+                                    case 'S': queryStr += "Student_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @serialno, 0, 1, @userId)"; break;
+                                    case 'F': queryStr += "Faculty_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @serialno, 0, 1, @userId)"; break;
+                                    case 'G': queryStr += "Guest_ID) VALUES (getdate(), getdate(), @returnDate, @userId, @userId, @serialno, 0, 1, @userId)"; break;
 
-                                } else {
-                                    response.write(err);
-                                    response.end();
-                                    return;
                                 }
+                                available = false;
+                                queryAvailable = "UPDATE Electronics SET Available = '" + available + "' WHERE Serial_No = '" + SerialNo + "';";
+                                console.log("Query to be executed with id: " + sessionData.logginId);
+                                console.log(queryStr);
+                                req.query(queryStr).then(function (recordset) {
+                                    console.log("Reservation added Electronic");
+                                    req.query(queryAvailable).then(function (recordset) {
+                                        console.log("Electronic Availability: " + available);
+                                        response.write("Reservation successful");
+                                        response.end();
+                                    })
+                                });
 
-                            }).catch(function (err) {
-                                console.log(err);
+                            } else {
+                                response.write(err);
                                 response.end();
                                 return;
-                            });
+                            }
 
-                        }
-                        else {
-                            console.log("Returning from limitReached: true");
-                            response.write("Electronic borrow limit reached.");
+                        } else {
+                            response.write(err);
                             response.end();
+                            return;
                         }
+
                     }).catch(function (err) {
                         console.log(err);
                         response.end();
                         return;
                     });
-                }).catch(function (err) {
-                    console.log(err);
+
+                }
+                else {
+                    console.log("Returning from limitReached: true");
+                    response.write("Electronic borrow limit reached.");
                     response.end();
-                    return;
-                });
+                }
+            }).catch(function (err) {
+                console.log(err);
+                response.end();
+                return;
+            });
+        }).catch(function (err) {
+            console.log(err);
+            response.end();
+            return;
+        });
 
         //     }
 
@@ -760,7 +781,7 @@ function electronicReserve(response, postData, sessionData) {
 
 
 }
-function profile(response){
+function profile(response) {
     console.log("Request handler 'profile' was called.");
     var data = fs.readFileSync('profile.html');
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -929,17 +950,438 @@ function electronicReservations(response, postData, sessionData) {
     });
 }
 
+function BookdeleteReservation(response, postData, sessionData) {
+    console.log("In My Borrows/Reservations");
+
+    sql.connect(config).then(function () {
+
+        var params = querystring.parse(postData);
+        var Reservation_Num = params['Reservation_Num'];
+        var itemType = params['itemType'];
+
+        var req = new sql.Request();
+        // req.input('userId', sql.NVarChar, sessionData.logginId);
+        req.input('reservnum', sql.NVarChar, Reservation_Num);
+
+        var bookHoldQuery = "";
+        var selectBookCnt = "";
+        var updateBookCnt = "";
+        var updatedateQuery = "";
+
+        selectBookCnt = `select count(*) as cnt from Reservation where 
+        holdPosition = 1 
+        and Book_ID in (SELECT book_id FROM Reservation where Reservation_Num = @reservnum and holdPosition = 0)
+        and Active_Void_Status = 1`;
+
+        updateBookCnt = `Update dbo.book set Num_of_Copies = (Num_of_Copies+1) 
+        where ISBN in (SELECT book_id FROM Reservation where Reservation_Num = @reservnum and holdPosition = 0)
+        and Num_of_Copies < Total_Num_of_Copies`;
+
+        bookHoldQuery = `
+        UPDATE dbo.Reservation set holdPosition = (holdPosition-1), last_updated = getDate()
+        WHERE Book_ID IN (SELECT book_id FROM Reservation where Reservation_Num = @reservnum) 
+        and Reservation_Num != @reservnum
+        and Active_Void_Status = 1
+        and holdPosition > (SELECT holdPosition FROM Reservation where Reservation_Num = @reservnum)
+        and holdPosition > 0`;
+
+        updatedateQuery = `update Reservation set Expiration_Date = GETDATE()+7, last_updated = getDate()
+        where holdPosition = 0
+        and Book_ID in (select Book_ID from Reservation where Reservation_Num = @reservnum)
+        and Active_Void_Status = 1
+        and last_updated = DATETRUNC(day,GETDATE())`;
+
+        if (itemType === 'Book') {
+            deleteRes();
+
+
+            req.query(selectBookCnt).then(function (recordset) {
+
+                var cnt = recordset.recordsets[0][0].cnt;
+
+                if(cnt === 0) {
+                    console.log("No queue found")
+                    req.query(updateBookCnt).then(function (recordset) {
+                        console.log("Updated book count")
+                    }).catch(function (err) {
+                        console.log(err);
+                        response.end();
+                        return;
+                    });
+                } else {
+                    console.log("Queue found so not updating the book count");
+                }
+
+                req.query(bookHoldQuery).then(function (recordset) {
+                    console.log("Updated queue")
+                    req.query(updatedateQuery).then(function (recordset) {
+
+                        console.log("Updated Date and Reservation cancelled")
+                        response.write("Reservation cancelled");
+                        response.end();
+
+                    }).catch(function (err) {
+                        console.log(err);
+                        response.end();
+                        return;
+                    });
+
+                }).catch(function (err) {
+                    console.log(err);
+                    response.end();
+                    return;
+                });
+
+            }).catch(function (err) {
+                console.log(err);
+                response.end();
+                return;
+            });
+
+            function deleteRes() {
+                var delQuery = "";
+                delQuery = "UPDATE Reservation SET Active_Void_Status = 0 WHERE Reservation_Num = '" + Reservation_Num + "';";
+                req.query(delQuery).then(function (recordset) {
+
+                    console.log("Reservation voided for: " + Reservation_Num);
+
+                }).catch(function (err) {
+                    console.log(err);
+                    response.end();
+                    return;
+                });
+            }
+
+        }
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
+
+function MediadeleteReservation(response, postData, sessionData) {
+    console.log("In My Borrows/Reservations");
+
+    sql.connect(config).then(function () {
+
+        var params = querystring.parse(postData);
+        var Reservation_Num = params['Reservation_Num'];
+        var itemType = params['itemType'];
+
+        var req = new sql.Request();
+        // req.input('userId', sql.NVarChar, sessionData.logginId);
+        req.input('reservnum', sql.NVarChar, Reservation_Num);
+
+        var mediaHoldQuery = "";
+        var selectMediaCnt = "";
+        var updateMediaCnt = "";
+        var updatedateQuery = "";
+
+        selectMediaCnt = `select count(*) as cnt from Reservation where 
+        holdPosition = 1 
+        and Media_ID in (SELECT media_id FROM Reservation where Reservation_Num = @reservnum and holdPosition = 0)
+        and Active_Void_Status = 1`;
+
+        updateMediaCnt = `Update dbo.media set Num_of_Copies = (Num_of_Copies+1) 
+        where Media_ID in (SELECT media_id FROM Reservation where Reservation_Num = @reservnum and holdPosition = 0)
+        and Num_of_Copies < Total_Num_of_Copies`;
+
+        mediaHoldQuery = `
+        UPDATE dbo.Reservation set holdPosition = (holdPosition-1) 
+        WHERE Media_ID IN (SELECT media_id FROM Reservation where Reservation_Num = @reservnum) 
+        and Reservation_Num != @reservnum
+        and Active_Void_Status = 1
+        and holdPosition > (SELECT holdPosition FROM Reservation where Reservation_Num = @reservnum)`;
+
+        updatedateQuery = `update Reservation set Expiration_Date = GETDATE()+7, last_updated = getDate()
+        where holdPosition = 0
+        and Media_ID in (select Media_ID from Reservation where Reservation_Num = @reservnum)
+        and Active_Void_Status = 1
+        and last_updated = DATETRUNC(day,GETDATE())`;
+
+        if (itemType === 'Media') {
+            deleteRes();
+
+
+            req.query(selectMediaCnt).then(function (recordset) {
+
+                var cnt = recordset.recordsets[0][0].cnt;
+
+                if(cnt === 0) {
+                    console.log("No queue found")
+                    req.query(updateMediaCnt).then(function (recordset) {
+                        console.log("Updated media count")
+                    }).catch(function (err) {
+                        console.log(err);
+                        response.end();
+                        return;
+                    });
+                } else {
+                    console.log("Queue found so not updating the media count");
+                }
+
+                req.query(mediaHoldQuery).then(function (recordset) {
+                    console.log("Updated queue")
+                    req.query(updatedateQuery).then(function (recordset) {
+
+                        console.log("Updated Date and Reservation cancelled")
+                        response.write("Reservation cancelled");
+                        response.end();
+
+                    }).catch(function (err) {
+                        console.log(err);
+                        response.end();
+                        return;
+                    });
+                }).catch(function (err) {
+                    console.log(err);
+                    response.end();
+                    return;
+                });
+
+            }).catch(function (err) {
+                console.log(err);
+                response.end();
+                return;
+            });
+
+            function deleteRes() {
+                var delQuery = "";
+                delQuery = "UPDATE Reservation SET Active_Void_Status = 0 WHERE Reservation_Num = '" + Reservation_Num + "';";
+                req.query(delQuery).then(function (recordset) {
+
+                    console.log("Reservation voided for: " + Reservation_Num);
+
+                }).catch(function (err) {
+                    console.log(err);
+                    response.end();
+                    return;
+                });
+            }
+
+        }
+    }).catch(function (err) {
+        console.error("Unable to find reservation");
+        console.log(err);
+    });
+}
+
+function ElectronicdeleteReservation(response, postData, sessionData) {
+    console.log("In My Borrows/Reservations");
+
+    sql.connect(config).then(function () {
+
+        var params = querystring.parse(postData);
+        var Reservation_Num = params['Reservation_Num'];
+        var itemType = params['itemType'];
+
+        var req = new sql.Request();
+        // req.input('userId', sql.NVarChar, sessionData.logginId);
+        req.input('reservnum', sql.NVarChar, Reservation_Num);
+
+        var updateElecAvail = "";
+
+        updateElecAvail = `Update dbo.electronics set Available 
+        where Serial_No in (SELECT Electronics_ID FROM Reservation where Reservation_Num = @reservnum and holdPosition = 0)`;
+
+        if (itemType === 'Electronic') {
+            deleteRes();
+
+
+            req.query(updateElecAvail).then(function (recordset) {
+                console.log("Electronic is now available");
+
+
+            }).catch(function (err) {
+                console.log(err);
+                response.end();
+                return;
+            });
+
+            function deleteRes() {
+                var delQuery = "";
+                delQuery = "UPDATE Reservation SET Active_Void_Status = 0 WHERE Reservation_Num = '" + Reservation_Num + "';";
+                req.query(delQuery).then(function (recordset) {
+
+                    console.log("Reservation voided for: " + Reservation_Num);
+
+                }).catch(function (err) {
+                    console.log(err);
+                    response.end();
+                    return;
+                });
+            }
+
+        }
+    }).catch(function (err) {
+        console.error("Unable to find reservation");
+        console.log(err);
+    });
+}
+
+function bookTransactions(response, postData, sessionData) {
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reciept_num, Book_ID, Book_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Book WHERE StudentID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Transactions.Book_ID = book.ISBN";
+                break;
+            case 'G':
+                queryOne = "select Reciept_num, Book_ID, Book_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Book WHERE GuestID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Transactions.Book_ID = book.ISBN";
+                break;
+            case 'F':
+                queryOne = "select Reciept_num, Book_ID, Book_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Book WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Book_ID is not null and Transactions.Book_ID = book.ISBN";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Transactions Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
+
+function mediaTransactions(response, postData, sessionData) {
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reciept_num, Transactions.Media_ID, Media_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Media WHERE StudentID =@userID AND Active_Void_Status = 1 and Transactions.Media_ID is not null and Transactions.Media_ID = media.Media_ID";
+                break;
+            case 'G':
+                queryOne = "select Reciept_num, Transactions.Media_ID, Media_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Media WHERE GuestID =@userID AND Active_Void_Status = 1 and Transactions.Media_ID is not null and Transactions.Media_ID = media.Media_ID";
+                break;
+            case 'F':
+                queryOne = "select Reciept_num, Transactions.Media_ID, Media_Name, Author, Creation_Date, Return_Due_Date FROM Transactions, Media WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Transactions.Media_ID is not null and Transactions.Media_ID = media.Media_ID";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Transactions Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
+
+function electronicTransactions(response, postData, sessionData) {
+    sql.connect(config).then(function () {
+
+        var req = new sql.Request();
+        req.input('userId', sql.NVarChar, sessionData.logginId);
+        var firstChar = sessionData.logginId.charAt(0);
+
+        switch (firstChar) {
+            case 'S':
+                queryOne = "select Reciept_num, Electronics_ID, Electronics_Name, Creation_Date, Return_Due_Date FROM Transactions, Electronics WHERE StudentID =@userID AND Active_Void_Status = 1 and Electronics_ID is not null and Transactions.Electronics_ID = Electronics.Serial_No";
+                break;
+            case 'G':
+                queryOne = "select Reciept_num, Electronics_ID, Electronics_Name, Creation_Date, Return_Due_Date FROM Transactions, Electronics WHERE GuestID =@userID AND Active_Void_Status = 1 and Electronics_ID is not null and Transactions.Electronics_ID = Electronics.Serial_No";
+                break;
+            case 'F':
+                queryOne = "select Reciept_num, Electronics_ID, Electronics_Name, Creation_Date, Return_Due_Date FROM Transactions, Electronics WHERE Faculty_ID =@userID AND Active_Void_Status = 1 and Electronics_ID is not null and Transactions.Electronics_ID = Electronics.Serial_No";
+        }
+
+        req.query(queryOne).then(function (recordset) {
+            console.log("Transactions Search Complete");
+
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                var jsontxt = JSON.stringify(resultArray);
+                response.write(jsontxt);
+                //response.write(resultArray);
+
+                response.end();
+            }
+            else {
+                console.log("No records found")
+                response.write("No records found");
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+
+    }).catch(function (err) {
+        console.error("Unable to search");
+        console.log(err);
+    });
+}
 
 exports.memberUI = memberUI;
+
 exports.bookSearch = bookSearch;
 exports.mediaSearch = mediaSearch;
 exports.electronicSearch = electronicSearch;
 exports.librarySearch = librarySearch;
+
 exports.bookReserve = bookReserve;
 exports.mediaReserve = mediaReserve;
 exports.electronicReserve = electronicReserve;
 exports.borrowHolds = borrowHolds;
-exports.bookReservations = bookReservations;
+
 exports.profile = profile;
+
+exports.bookReservations = bookReservations;
 exports.mediaReservations = mediaReservations;
 exports.electronicReservations = electronicReservations;
+
+exports.BookdeleteReservation = BookdeleteReservation;
+exports.MediadeleteReservation = MediadeleteReservation;
+exports.ElectronicdeleteReservation = ElectronicdeleteReservation;
+
+exports.bookTransactions = bookTransactions;
+exports.mediaTransactions = mediaTransactions;
+exports.electronicTransactions = electronicTransactions;
