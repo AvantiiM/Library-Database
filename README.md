@@ -44,4 +44,4 @@ their names are
 
         AdminReportLateFee.html
         AdminTransactionstatus.html
-        
+        AdminNewUserReport.html
