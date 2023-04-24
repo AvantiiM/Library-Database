@@ -551,7 +551,7 @@ function TransactionStatusLate(response, postData) {
         console.log(year);
         console.log(month);
 
-        query1 = `       
+        query1 = `   
             SELECT *
             FROM Transactions t 
             LEFT JOIN Students s ON t.StudentID = s.StudentID
@@ -567,6 +567,7 @@ function TransactionStatusLate(response, postData) {
                 const resultArray = recordset.recordsets[0]; // concatenate the two arrays
                 response.writeHead(200, { "Content-Type": "application/json" });
                 response.write(JSON.stringify(resultArray));
+                console.log("Sent response array.")
                 response.end();
             }
             else {
@@ -609,7 +610,7 @@ function TransactionStatusObjects(response, postData) {
         if (recordset.recordsets.length > 0) {
           console.log("Found " + recordset.recordsets.length + " records");
           console.log(recordset);
-          const resultArray = recordset.recordsets[0];
+          const resultArray = filter(recordset.recordsets[0]);
           response.writeHead(200, { "Content-Type": "application/json" });
           response.write(JSON.stringify(resultArray));
           response.end();
