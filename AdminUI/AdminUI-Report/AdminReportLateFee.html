@@ -157,71 +157,93 @@
 		}
 	</style>
 	<script type = "text/javascript">
-		function ModificationManager(event) {
-			event.preventDefault(); // prevent the default form submission behavior
-			// get form from data
-			const form = document.getElementById('searchForm');
-			const formData = new FormData(form);
-			const xhr = new XMLHttpRequest();
-			xhr.open('POST', 'TransactionStatusLate');
-			const totaltable = document.getElementById('TotalsTable');
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.send(new URLSearchParams(formData).toString());	
-			const objectIDs = new Set();
-			const DLItems = new Set();
-			const dlBooks = document.getElementById("DamagedLostBooks");
-			const CostBooks = document.getElementById("CostBooks");
-			distinctItems.textContent = 0;
-			dlBooks.textContent = 0;
-			CostBooks.textContent = 0;
-			xhr.onload = function(){
-				if (xhr.status === 200){
-					let responseData = [];
-					responseData = JSON.parse(xhr.responseText);
-					//console.log(responseData[0].Reciept_num);
-					const table = document.getElementById('TransactionsTableFee');
-					responseData.forEach(function(record) {
-						const row = document.createElement('tr');
+function ModificationManager(event) {
+	event.preventDefault(); // prevent the default form submission behavior
+	// get form from data
+	const form = document.getElementById('searchForm');
+	const formData = new FormData(form);
+	const xhr = new XMLHttpRequest();
+	xhr.open('POST', 'TransactionStatusLate');
+	const totaltable = document.getElementById('TotalsTable');
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.send(new URLSearchParams(formData).toString());	
+	const objectIDs = new Set();
+	const DLItems = new Set();
+	xhr.onload = function(){
+		if (xhr.status === 200){
+		let responseData = [];
+		responseData = JSON.parse(xhr.responseText); 
+    responseData = Array.from(new Set(responseData.filter(record => record != null)));
+    console.log(responseData);
+		console.log("HTML Recieved Response")
+		const table = document.getElementById('TransactionsTableFee');
+		responseData.forEach(function(record) {
+      
+			if (record.StudentID || record.Faculty_ID || record.GuestID) {
+				const row = document.createElement('tr');
+				const member_ID = document.createElement('td');
+				const fullName = document.createElement('td');
+				const Transaction_ID = document.createElement('td');
+				const Item_ID = document.createElement('td');
+				const Late_Fee = document.createElement('td');
+				const Balance = document.createElement('td');
+				const Creation_Date = document.createElement('td');
+				const Return_Date = document.createElement('td');
+        let middleN = "";
 
-						const member_ID = document.createElement('td');
-						const fullName = document.createElement('td');
-						const Transaction_ID = document.createElement('td');
-						const Item_ID = document.createElement('td');
-						const Late_Fee = document.createElement('td');
-            const Balance = document.createElement('td');
-            const Creation_Date = document.createElement('td');
-            const Return_Date = document.createElement('td');
+        
+        for (let i = 0; i < record.FirstN.length; i++) {
+          if (record.FirstN[i]) {
+            fullName.textContent += record.FirstN[i] + " ";
+          }
+        }
+        for (let i = 0; i < record.MiddleN.length; i++) {
+          if (record.MiddleN[i]) {
+            fullName.textContent += record.MiddleN[i] + " ";
+          }
+        }
+        for (let i = 0; i < record.LastN.length; i++) {
+          if (record.LastN[i]) {
+            fullName.textContent += record.LastN[i];
+          }
+        }
 
-            if(record.MiddleN.length > 0){
-              middleN = record.MiddleN + " "
-            }
-            fullName.textContent = record.FirstN + " " + middleN + record.LastN;
-            member_ID.textContent = record.Faculty_ID || record.StudentID || record.GuestID;
-						Transaction_ID.textContent = record.Reciept_num;
-						Item_ID.textContent = record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID;
-						Late_Fee.textContent = record.Late_Fees;
-            Balance.textContent = record.Balance;
-            Creation_Date.textContent = record.Creation_Date;
-            Return_Date.textContent = record.Return_Due_Date;
+        
+        for (let i = 0; i < record.Balance.length; i++) {
+          if (record.Balance[i]) {
+            Balance.textContent += '$' + record.Balance[i];
+          }
+        }
+        member_ID.textContent = record.Faculty_ID[0] || record.StudentID[0] || record.GuestID;
+				Transaction_ID.textContent = record.Reciept_num || "";
+				Item_ID.textContent = record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID;
+				Late_Fee.textContent = '$' + record.Late_Fees || "";
+				Creation_Date.textContent = record.Creation_Date.substr(0, 10);
+				Return_Date.textContent = record.Return_Due_Date.substr(0, 10);
+				objectIDs.add(record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID);
+				DLItems.add(record.Reciept_num);
 
-						objectIDs.add(record.Book_ID || record.Object_ID || record.Electronics_ID || record.Media_ID);
-						distinctItems.textContent = objectIDs.size;
-						DLItems.add(record.Reciept_num);
-						dlBooks.textContent = DLItems.size;
-
-						row.appendChild(member_ID);
-						row.appendChild(fullName);
-						row.appendChild(Transaction_ID);
-						row.appendChild(Item_ID);
-						row.appendChild(Late_Fee);
-            row.appendChild(Balance);
-            row.appendChild(Creation_Date);
-            row.appendChild(Return_Date);
-						table.appendChild(row);
-					});
-				}
+				if(member_ID != "" || member_ID != null)
+					row.appendChild(member_ID);
+				if(fullName !="" || fullName != null)
+					row.appendChild(fullName);
+				if(Transaction_ID !="" || Transaction_ID != null)
+					row.appendChild(Transaction_ID);
+				if(Item_ID !="" || Item_ID != null)
+					row.appendChild(Item_ID);
+				if(Late_Fee !="" ||Late_Fee != null)
+					row.appendChild(Late_Fee);
+				if(Balance !="" || Balance != null)
+					row.appendChild(Balance);
+          
+        row.appendChild(Creation_Date);
+        row.appendChild(Return_Date);
+				table.appendChild(row);
 			}
-		}
+		});
+	}
+}
+}
 	</script>
     <body>
 		<form onsubmit="ModificationManager(event)" method="post" id="searchForm">
