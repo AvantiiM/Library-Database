@@ -100,7 +100,7 @@
         </style>
     </head>
     <body>
-        <button class="Button" onclick="window.location.href='adminUI'">Return Home</button>
+        <button class="Button" style="background-color: #ad6f66;" onclick="window.location.href='adminUI'">Return Home</button> <br><br>
         <h1>Check In</h1>
         <div style="overflow-x: auto;">
             <form onsubmit="tSearchManager(event)" id="loadTransaction">
@@ -211,9 +211,9 @@
                                 User_ID.innerText = Transaction.GuestID;
                             }
                             const Creation_Date = row.insertCell();
-                            Creation_Date.innerText = Transaction.Creation_Date;
+                            Creation_Date.innerText = Transaction.Creation_Date.substr(0, 10);
                             const Return_Due_Date = row.insertCell();
-                            Return_Due_Date.innerText = Transaction.Return_Due_Date;
+                            Return_Due_Date.innerText = Transaction.Return_Due_Date.substr(0, 10);
                             const Created_By = row.insertCell();
                             Created_By.innerText = Transaction.Created_BY;
                             const Updated_By = row.insertCell();
