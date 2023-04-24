@@ -86,9 +86,21 @@
             .requireBID{
                 display: none;
             }
+            .Button{
+                font-family: 'Open Sans', sans-serif;
+                font-weight: 100;
+                width: 150px;
+                height: 30px;
+                border-radius: 10px;
+                border: 2px solid #75443c;
+                text-align: center;
+                background-color: #ce796b;
+                color: white;
+            }
         </style>
     </head>
     <body>
+        <button class="Button" onclick="window.location.href='adminUI'">Return Home</button>
         <h1>Check In</h1>
         <div style="overflow-x: auto;">
             <form onsubmit="tSearchManager(event)" id="loadTransaction">
