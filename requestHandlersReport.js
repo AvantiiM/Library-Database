@@ -714,6 +714,186 @@ function TransactionStatusMedia(response, postData) {
   }
   )};
 
+  function NewUserBookReport(response, postData) {
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var answer = params['Month'];
+        var year = answer.substring(0, 4);
+        var month = answer.substring(5, 7);
+        console.log(year);
+        console.log(month);
+        req.input('year', sql.NVarChar, year);
+        req.input('month', sql.NVarChar, month);
+        let query1 = `
+        select fc.Faculty_ID  as loginId, fc.FirstN as first_name, fc.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, book bk, faculty fc
+        where res.Faculty_ID in (select Faculty_ID
+            from Faculty
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Book_ID is not NULL
+            and res.Faculty_ID = fc.Faculty_ID
+            and res.Book_ID = bk.ISBN
+    union
+        select stu.StudentID as loginId, stu.FirstN as first_name, stu.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, book bk, Students stu
+        where res.Student_ID in (select StudentID
+            from Students
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Book_ID is not NULL
+            and res.Student_ID = stu.StudentID
+            and res.Book_ID = bk.ISBN
+    union
+        select gst.GuestID as loginId, gst.FirstN as first_name, gst.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, book bk, Guest gst
+        where res.Guest_ID in (select GuestID
+            from Guest
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Book_ID is not NULL
+            and res.Guest_ID = gst.GuestID
+            and res.Book_ID = bk.ISBN
+    union
+        select fc.Faculty_ID  as loginId, fc.FirstN as first_name, fc.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, book bk, faculty fc
+        where trans.Faculty_ID in (select Faculty_ID
+            from Faculty
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Book_ID is not NULL
+            and trans.Faculty_ID = fc.Faculty_ID
+            and trans.Book_ID = bk.ISBN
+    union
+        select stu.StudentID as loginId, stu.FirstN as first_name, stu.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, book bk, Students stu
+        where trans.StudentID in (select StudentID
+            from Students
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Book_ID is not NULL
+            and trans.StudentID = stu.StudentID
+            and trans.Book_ID = bk.ISBN
+    union
+        select gst.GuestID as loginId, gst.FirstN as first_name, gst.LastN as last_name, bk.Book_Name, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, book bk, Guest gst
+        where trans.GuestID in (select GuestID
+            from Guest
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Book_ID is not NULL
+            and trans.GuestID = gst.GuestID
+            and trans.Book_ID = bk.ISBN
+            `;
+        req.query(query1).then(function (recordset) {
+            console.log("Selected new user book reservation data");
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                // console.log(recordset);
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                response.write(JSON.stringify(resultArray));
+                response.end();
+            } else {
+                console.log("No records found")
+                response.write("No records found");
+                response.end();
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+    }
+    )
+};
+
+
+function NewUserMediaReport(response, postData) {
+    sql.connect(config).then(function () {
+        var req = new sql.Request();
+        var querystring = require('querystring');
+        var params = querystring.parse(postData);
+        var answer = params['Month'];
+        var year = answer.substring(0, 4);
+        var month = answer.substring(5, 7);
+        console.log(year);
+        console.log(month);
+        req.input('year', sql.NVarChar, year);
+        req.input('month', sql.NVarChar, month);
+        let query1 = `
+        select fc.Faculty_ID  as loginId, fc.FirstN as first_name, fc.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, Media mda, faculty fc
+        where res.Faculty_ID in (select Faculty_ID
+            from Faculty
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Media_ID is not NULL
+            and res.Faculty_ID = fc.Faculty_ID
+            and res.Media_ID = mda.Media_ID
+    union
+        select stu.StudentID as loginId, stu.FirstN as first_name, stu.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, Media mda, Students stu
+        where res.Student_ID in (select StudentID
+            from Students
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Media_ID is not NULL
+            and res.Student_ID = stu.StudentID
+            and res.Media_ID = mda.Media_ID
+    union
+        select gst.GuestID as loginId, gst.FirstN as first_name, gst.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), res.Creation_Date, 101) as Creation_Date, 'Reserved' as entry_type
+        from reservation res, Media mda, Guest gst
+        where res.Guest_ID in (select GuestID
+            from Guest
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and res.Media_ID is not NULL
+            and res.Guest_ID = gst.GuestID
+            and res.Media_ID = mda.Media_ID
+    union
+        select fc.Faculty_ID  as loginId, fc.FirstN as first_name, fc.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, Media mda, faculty fc
+        where trans.Faculty_ID in (select Faculty_ID
+            from Faculty
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Media_ID is not NULL
+            and trans.Faculty_ID = fc.Faculty_ID
+            and trans.Media_ID = mda.Media_ID
+    union
+        select stu.StudentID as loginId, stu.FirstN as first_name, stu.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, Media mda, Students stu
+        where trans.StudentID in (select StudentID
+            from Students
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Media_ID is not NULL
+            and trans.StudentID = stu.StudentID
+            and trans.Media_ID = mda.Media_ID
+    union
+        select gst.GuestID as loginId, gst.FirstN as first_name, gst.LastN as last_name, mda.Media_Name, mda.Media_Type, CONVERT(VARCHAR(10), trans.Creation_Date, 101) as Creation_Date, 'Borrowed' as entry_type
+        from Transactions trans, Media mda, Guest gst
+        where trans.GuestID in (select GuestID
+            from Guest
+            where YEAR(Created_date) = @year and MONTH(Created_date) = @month)
+            and trans.Media_ID is not NULL
+            and trans.GuestID = gst.GuestID
+            and trans.Media_ID = mda.Media_ID
+            `;
+        req.query(query1).then(function (recordset) {
+            console.log("Selected new user book reservation data");
+            if (recordset.recordsets.length > 0) {
+                console.log("Found " + recordset.recordsets.length + " records");
+                // console.log(recordset);
+                const resultArray = recordset.recordsets[0];
+                response.writeHead(200, { "Content-Type": "application/json" });
+                response.write(JSON.stringify(resultArray));
+                response.end();
+            } else {
+                console.log("No records found")
+                response.write("No records found");
+                response.end();
+            }
+        }).catch(function (err) {
+            console.error("error");
+            console.log(err);
+        });
+
+    }
+    )
+};
 
 
 
@@ -733,3 +913,5 @@ function TransactionStatusMedia(response, postData) {
     exports.TransactionStatusMedia = TransactionStatusMedia;
     exports.TransactionStatusObjects = TransactionStatusObjects;
     exports.TransactionStatusLate = TransactionStatusLate;
+    exports.NewUserBookReport = NewUserBookReport
+    exports.NewUserMediaReport = NewUserMediaReport

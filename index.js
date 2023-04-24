@@ -138,6 +138,12 @@ handle['/SuspendedGuests'] = requestHandlersReport.SuspendedGuests; //http://loc
 handle['/AdminReportLateFee'] = requestHandlers.AdminReportLateFee; //http://localhost:3000/AdminReportLateFees
 handle['/TransactionStatusLate'] = requestHandlersReport.TransactionStatusLate; //http://localhost:3000/TransactionStatusLate
 
+handle["/AdminNewUserReport"] = requestHandlers.AdminNewUserReport; //http://localhost:3000/AdminNewUserReport
+
+handle['/NewUserBookReport'] = requestHandlersReport.NewUserBookReport; //http://localhost:3000/TransactionperiodsBalance
+handle['/NewUserElecReport'] = requestHandlersReport.NewUserElecReport; //http://localhost:3000/TransactionperiodsBalance
+handle['/NewUserMediaReport'] = requestHandlersReport.NewUserMediaReport; //http://localhost:3000/TransactionperiodsBalance
+
 server.start(router.route, handle);
 
 

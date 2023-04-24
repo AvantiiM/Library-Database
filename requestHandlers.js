@@ -1970,6 +1970,13 @@ function rTot(response, postData, sessionData) {
     });
 }
 
+function AdminNewUserReport(response){
+    console.log("Request handler 'AdminNewUserReport' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminNewUserReport.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
 
 
 
@@ -2022,3 +2029,5 @@ exports.pullReservation = pullReservation;
 exports.pullTransactions = pullTransactions;
 exports.checkInItem = checkInItem;
 exports.rTot = rTot;
+
+exports.AdminNewUserReport = AdminNewUserReport;
