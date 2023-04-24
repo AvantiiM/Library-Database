@@ -1605,9 +1605,21 @@ function checkInItem(response, postData, sessionData) {
                 } else {
                     console.log("Update Queue");
                     console.log(rs.recordsets[0].length);
+                    
+                    var expDate = new Date();
+                    expDate.setDate(new Date().getDate() + 7);
+                    req.input('expDate', sql.Date, expDate);
 
                     for (var i = 0; i < rs.recordsets[0].length; i++) {
-                        req.query("UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + " WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;").then(function(recordset) {
+                        var query = "";
+                        if (i === 0) {
+                            console.log(true);
+                            query = "UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + ", Expiration_Date=@expDate WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;";
+                        } else {
+                            query = "UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + " WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;";
+                        }
+                        console.log(query);
+                        req.query(query).then(function(recordset) {
                             console.log("voodoo magic");
                         }).catch(function(err) {
                             console.error("error");
