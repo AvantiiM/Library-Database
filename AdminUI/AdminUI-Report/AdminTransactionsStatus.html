@@ -193,7 +193,7 @@
 						itemNameCell.textContent = record.Book_Name;
 						transactionIDCell.textContent = record.Reciept_num;
 						costCell.textContent = record.Dollar_Value;
-						dateCell.textContent = record.Creation_Date;
+						dateCell.textContent = record.Creation_Date.substr(0, 10);;
 
 						bookIDs.add(record.Book_ID);
 						distinctBooks.textContent = bookIDs.size;
@@ -242,7 +242,7 @@
 							itemNameCell.textContent = record.Object_Name;
 							transactionIDCell.textContent = record.Reciept_num;
 							costCell.textContent = record.Dollar_Value;
-							dateCell.textContent = record.Creation_Date;
+							dateCell.textContent = record.Creation_Date.substr(0, 10);;
 
 							objectIDs.add(record.Object_ID);
 							distinctObjects.textContent = objectIDs.size;
@@ -291,7 +291,7 @@
 							itemNameCell.textContent = record.Electronics_Name;
 							transactionIDCell.textContent = record.Reciept_num;
 							costCell.textContent = record.Dollar_Value;
-							dateCell.textContent = record.Creation_Date;
+							dateCell.textContent = record.Creation_Date.substr(0, 10);;
 
 							electronicsIDs.add(record.Electronics_ID);
 							distinctElectronics.textContent = electronicsIDs.size;
@@ -340,7 +340,7 @@
 							itemNameCell.textContent = record.Media_Name;
 							transactionIDCell.textContent = record.Reciept_num;
 							costCell.textContent = record.Dollar_Value;
-							dateCell.textContent = record.Creation_Date;
+							dateCell.textContent = record.Creation_Date.substr(0, 10);;
 
 							mediaIDs.add(record.Media_ID);
 							distinctMedia.textContent = mediaIDs.size;

@@ -121,17 +121,8 @@ function sendEJSFile(response, filename, msgtxt) {
 function getInfo(response, postData, sessionData){
     var req = new sql.Request();
     req.input('userId', sql.NVarChar, sessionData.logginId);
-
-    let firstN;
-    let lastN;
-    let middleN;
-    let fullName;
-    let email;
-    let dep;
-    let balance;
     console.log(sessionData.logginId)
     sql.connect(config).then(function() {
-    
       var username = sessionData.logginId;
       var req = new sql.Request();
       req.query("SELECT Faculty_ID, StudentID, GuestID FROM Login WHERE Username=" + '\'' + username + '\'', function (result, recordset) {
@@ -145,7 +136,6 @@ function getInfo(response, postData, sessionData){
             console.log("This is the Faculty ID called: " + faculty)
             req.query("SELECT Faculty_ID, FirstN, LastN, MiddleN, Email, Department, Balance FROM Faculty WHERE Faculty_ID=" + '\'' + faculty + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -155,23 +145,12 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = recordset.recordsets[0][0].MiddleN;
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // dep = recordset.recordsets[0][0].Department;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
         }else if(stud != null){
-            
-            req.query("SELECT Student_ID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
+            req.query("SELECT StudentID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -181,15 +160,6 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // major = recordset.recordsets[0][0].Major;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
@@ -198,7 +168,6 @@ function getInfo(response, postData, sessionData){
             req.query("SELECT GuestID, FirstN, LastN, MiddleN, Email, Balance FROM Guest WHERE GuestID=" + '\'' + guest + '\'', function (result, recordset) {
             // console.log(result);
             if (recordset.recordsets[0].length > 0) { 
-
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
                 // perform any database queries or other operations as needed...
@@ -208,14 +177,6 @@ function getInfo(response, postData, sessionData){
                 // response.write("<p>User ID: " + userId + "</p>");
                 response.write(JSON.stringify(userId));
                 response.end();
-
-                // firstN = recordset.recordsets[0][0].FirstN;
-                // lastN = recordset.recordsets[0][0].LastN;
-                // middleN = ' ' + recordset.recordsets[0][0].MiddleN + ' ';
-                // fullName = firstN +' '+ lastN;
-                // email = recordset.recordsets[0][0].Email;
-                // balance = recordset.recordsets[0][0].Balance;
-                // balance = balance + '.00';
                 return;
             }
           })
@@ -224,7 +185,6 @@ function getInfo(response, postData, sessionData){
             console.log('Error');
             return;
         }
-      
         })
     });
 }
@@ -934,6 +894,15 @@ function AdminReportBookSearch(response){
     response.end();
 }
 
+function AdminReportLateFee(response){
+    console.log("Request handler 'AdminReportLateFee' was called.");
+    var edata = fs.readFileSync('AdminUI/AdminUI-Report/AdminReportLateFee.html');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(edata);
+    response.end();
+}
+
+
 
 function SearchBooks(response, postData) {
 
@@ -1488,12 +1457,14 @@ function checkInItem(response, postData, sessionData) {
         var damageQuery = "SELECT Dollar_Value FROM ";
         var availQuery = "SELECT ";
         var lateQuery = "SELECT Return_Due_Date FROM Transactions WHERE Active_Void_Status=1 AND ";
+        var holdQuery = "SELECT holdPosition FROM Reservation WHERE holdPosition>0 AND Active_Void_Status=1 AND ";
 
         switch (itemType) {
             case 'Book':
                 damageQuery += "Book WHERE ISBN=@itemID;";
                 availQuery += "Num_of_Copies FROM Book WHERE ISBN=@itemID;";
                 lateQuery += "Book_ID=@itemID AND ";
+                holdQuery += "Book_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Book_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Book_ID=@itemID AND GuestID=@BID);";
@@ -1532,6 +1503,7 @@ function checkInItem(response, postData, sessionData) {
                 damageQuery += "Media WHERE Media_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM Media WHERE Media_ID=@itemID;";
                 lateQuery += "Media_ID=@itemID AND ";
+                holdQuery += "Media_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Media_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Media_ID=@itemID AND GuestID=@BID);";
@@ -1551,6 +1523,7 @@ function checkInItem(response, postData, sessionData) {
                 damageQuery += "[Object] WHERE Object_ID=@itemID;";
                 availQuery += "Num_of_Copies FROM [Object] WHERE Object_ID=@itemID;";
                 lateQuery += "Object_ID=@itemID AND ";
+                holdQuery += "Object_ID=@itemID;";
                 switch (BID.charAt(0)) {
                     case 'G':
                         checkInTwo += "GuestID=@BID AND Object_ID=@itemID AND Reciept_Num=(SELECT TOP 1 Reciept_Num FROM Transactions WHERE Active_Void_Status=1 AND Object_ID=@itemID AND GuestID=@BID);;";
@@ -1575,55 +1548,89 @@ function checkInItem(response, postData, sessionData) {
             } else {
                 available = recordset.recordsets[0][0].Num_of_Copies;
             }
-            available += 1;
 
-            var updateItemQuery = "UPDATE ";
-            switch (itemType) {
-                case 'Book':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
+            req.query(holdQuery).then(function(rs) {
+                console.log(rs.recordsets[0][0]);
+                if (rs.recordsets[0][0] === undefined) {
+                    console.log("Add to inventory");
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Electronics':
-                    req.input('availCopies', sql.Bit, available);
-                    updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
+                    available += 1;
+                    var updateItemQuery = "UPDATE ";
+                    switch (itemType) {
+                        case 'Book':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "Book SET Num_of_Copies=@availCopies WHERE ISBN=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Media':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Electronics':
+                            req.input('availCopies', sql.Bit, available);
+                            updateItemQuery += "Electronics SET available=@availCopies WHERE Serial_No=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-                case 'Object':
-                    req.input('availCopies', sql.Int, available);
-                    updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Media':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "Media SET Num_of_Copies=@availCopies WHERE Media_ID=@itemID;";
 
-                    req.query(updateItemQuery).then(function(recordset) {
-                        console.log("Inventory successfully updated.");
-                    }).catch(function(err) {
-                        console.error("error");
-                        console.log(err);
-                    });
-                    break;
-            }
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                        case 'Object':
+                            req.input('availCopies', sql.Int, available);
+                            updateItemQuery += "[Object] SET Num_of_Copies=@availCopies WHERE Object_ID=@itemID;";
+
+                            req.query(updateItemQuery).then(function(recordset) {
+                                console.log("Inventory successfully updated.");
+                            }).catch(function(err) {
+                                console.error("error");
+                                console.log(err);
+                            });
+                            break;
+                    }
+                } else {
+                    console.log("Update Queue");
+                    console.log(rs.recordsets[0].length);
+                    
+                    var expDate = new Date();
+                    expDate.setDate(new Date().getDate() + 7);
+                    req.input('expDate', sql.Date, expDate);
+
+                    for (var i = 0; i < rs.recordsets[0].length; i++) {
+                        var query = "";
+                        if (i === 0) {
+                            console.log(true);
+                            query = "UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + ", Expiration_Date=@expDate WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;";
+                        } else {
+                            query = "UPDATE Reservation SET holdPosition=" + (rs.recordsets[0][i].holdPosition - 1) + " WHERE holdPosition=" + rs.recordsets[0][i].holdPosition + " AND Active_Void_Status=1 AND Book_ID=@itemID;";
+                        }
+                        console.log(query);
+                        req.query(query).then(function(recordset) {
+                            console.log("voodoo magic");
+                        }).catch(function(err) {
+                            console.error("error");
+                            console.log(err);
+                        }); 
+                    }
+                }
+            }).catch(function(err) {
+                console.error("error");
+                console.log(err);
+            });            
         }).catch(function(err) {
             console.error("error");
             console.log(err);
@@ -1837,14 +1844,14 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Guest_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Book_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                     case 'Media':
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Guest_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Media_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Guest_ID=@BID;";
                         break;
                 }
@@ -1856,7 +1863,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 15 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Student_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Book_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 5;
                         break;
@@ -1872,7 +1879,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Student_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Total_Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Media_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Student_ID=@BID;";
                         itemLimit = 5;
                         break;
@@ -1885,7 +1892,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 30 * DAYSOFWEEK);
                         insertQuery += "Book_ID, ";
                         updateQuery += "Book_ID=@itemID AND Faculty_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Book WHERE ISBN=@itemID) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Book_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Book_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Book_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;
@@ -1901,7 +1908,7 @@ function rTot(response, postData, sessionData) {
                         returnDate.setDate(new Date().getDate() + 2 * DAYSOFWEEK);
                         insertQuery += "Media_ID, ";
                         updateQuery += "Media_ID=@itemID AND Faculty_ID=@BID;";
-                        holdQuery += "SELECT TOP (SELECT Num_of_Copies FROM Media WHERE Media_ID=@itemID) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
+                        holdQuery += "SELECT TOP (SELECT count(*) FROM Reservation WHERE Active_Void_Status=1 AND Media_ID=@itemID AND holdPosition=0) Reservation_Num FROM Reservation WHERE Media_ID=@itemID AND Active_Void_Status=1;";
                         positionQuery += "Media_ID=@itemID AND Active_Void_Status=1 AND Faculty_ID=@BID;";
                         itemLimit = 30;
                         break;
@@ -2004,6 +2011,7 @@ exports.AdminSStudents = AdminSStudents;
 exports.SearchBooks = SearchBooks;
 exports.DeleteBook = DeleteBook;
 exports.UpdateBook = UpdateBook;
+exports.AdminReportLateFee = AdminReportLateFee;
 //exports.searchresults = searchresults;
 
 exports.createUser = createUser;

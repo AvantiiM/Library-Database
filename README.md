@@ -34,3 +34,14 @@ and some search functions
 
 
 
+
+there are 3 corrected reports after the presentation which pull from multiple tables 
+
+
+they are in ADMINUI> ADMINUI-Report 
+
+their names are 
+
+        AdminReportLateFee.html
+        AdminTransactionstatus.html
+        
