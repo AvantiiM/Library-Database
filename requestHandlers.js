@@ -149,7 +149,7 @@ function getInfo(response, postData, sessionData){
             }
           })
         }else if(stud != null){
-            req.query("SELECT Student_ID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
+            req.query("SELECT StudentID, FirstN, LastN, MiddleN, Email, Major, Balance FROM Students WHERE StudentID=" + '\'' + stud + '\'', function (result, recordset) {
             if (recordset.recordsets[0].length > 0) { 
                 const userId = recordset.recordsets[0]
                 console.log("User information pulled: " + userId);
