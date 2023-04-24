@@ -107,7 +107,7 @@
     </head>
 
     <body>
-        <button class="Button" onclick="window.location.href='adminUI'">Return Home</button>
+        <button class="Button" style="background-color: #ad6f66;" onclick="window.location.href='adminUI'">Return Home</button> <br>
         <h1>Transaction Entry Form</h1>
 
         <div class="newTransaction">
@@ -264,9 +264,9 @@
                                 User_ID.innerText = Reservation.Guest_ID;
                             }
                             const Creation_Date = row.insertCell();
-                            Creation_Date.innerText = Reservation.Creation_Date;
+                            Creation_Date.innerText = Reservation.Creation_Date.substr(0, 10);
                             const Expiration_Date = row.insertCell();
-                            Expiration_Date.innerText = Reservation.Expiration_Date;
+                            Expiration_Date.innerText = Reservation.Expiration_Date.substr(0, 10);
                             const Created_By = row.insertCell();
                             Created_By.innerText = Reservation.Created_By;
                             const Updated_By = row.insertCell();
